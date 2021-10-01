@@ -1,6 +1,6 @@
-const NativePoolAddr = ""
+export const NativePoolAddr = ""
 
-const NativeOrders = {
+export const NativeOrders = {
   depositAddr: "",
   redeemAddr: "",
   swapAddr: ""

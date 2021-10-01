@@ -1,3 +1,3 @@
-import {AssetName} from "../../domain/types"
+import {AssetId} from "../../cardano/entities/assetId"
 
-export type PoolId = AssetName
+export type PoolId = AssetId

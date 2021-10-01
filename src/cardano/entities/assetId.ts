@@ -1,7 +1,6 @@
 import {AssetName, PolicyId} from "../types"
 
-export type AssetEntry = {
-  name: AssetName
+export type AssetId = {
   policyId: PolicyId
-  amount: bigint
+  name: AssetName
 }

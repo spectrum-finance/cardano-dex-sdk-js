@@ -36,7 +36,7 @@ export class AmmPool {
   /** @return proportional amount of one token to a given input of the other
    */
   depositAmount(input: AssetAmount): AssetAmount {
-    if (input.name === this.x.name)
+    if (input.id === this.x.id)
       return this.y.withAmount((input.amount * this.priceX.numerator) / this.priceX.denominator)
     else return this.x.withAmount((input.amount * this.priceY.numerator) / this.priceY.denominator)
   }
@@ -44,7 +44,7 @@ export class AmmPool {
   /** @return pair of asset amounts proportional to a given input of LP tokens.
    */
   shares(input: AssetAmount): [AssetAmount, AssetAmount] {
-    if (input.name === this.lp.name) {
+    if (input.id === this.lp.id) {
       return [
         this.x.withAmount((input.amount * this.x.amount) / this.supplyLP),
         this.y.withAmount((input.amount * this.y.amount) / this.supplyLP)
@@ -57,7 +57,7 @@ export class AmmPool {
   /** @return amount of LP asset proportional to the amounts of assets deposited.
    */
   rewardLP(inputX: AssetAmount, inputY: AssetAmount): AssetAmount {
-    if (inputX.name === this.x.name && inputY.name === this.y.name) {
+    if (inputX.id === this.x.id && inputY.id === this.y.id) {
       const rewardXWise = (inputX.amount * this.supplyLP) / this.x.amount
       const rewardYWise = (inputY.amount * this.supplyLP) / this.y.amount
       return this.lp.withAmount(rewardXWise <= rewardYWise ? rewardXWise : rewardYWise)
@@ -71,13 +71,13 @@ export class AmmPool {
   inputAmount(output: AssetAmount, maxSlippage?: number): AssetAmount | undefined {
     const slippage = BigInt((maxSlippage || 0) * 100)
     const minimalOutput = this.outputAmount(output).amount
-    if (output.name === this.x.name && minimalOutput > 0 && output.amount <= this.x.amount) {
+    if (output.id === this.x.id && minimalOutput > 0 && output.amount <= this.x.amount) {
       return this.y.withAmount(
         (this.y.amount * output.amount * this.feeDenom) /
           ((this.x.amount + (this.x.amount * slippage) / (100n * 100n) - output.amount) * this.feeNum) +
           1n
       )
-    } else if (output.name === this.y.name && minimalOutput > 0 && output.amount <= this.y.amount) {
+    } else if (output.id === this.y.id && minimalOutput > 0 && output.amount <= this.y.amount) {
       return this.x.withAmount(
         (this.x.amount * output.amount * this.feeDenom) /
           ((this.y.amount + (this.y.amount * slippage) / (100n * 100n) - output.amount) * this.feeNum) +
@@ -94,7 +94,7 @@ export class AmmPool {
    */
   outputAmount(input: AssetAmount, maxSlippage?: number): AssetAmount {
     const slippage = BigInt((maxSlippage || 0) * 100)
-    if (input.name === this.x.name)
+    if (input.id === this.x.id)
       return this.y.withAmount(
         (this.y.amount * input.amount * this.feeNum) /
           ((this.x.amount + (this.x.amount * slippage) / (100n * 100n)) * this.feeDenom +

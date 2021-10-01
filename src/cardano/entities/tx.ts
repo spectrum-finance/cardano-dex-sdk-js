@@ -1,10 +1,14 @@
-import {TxInput} from "./txInput"
-import {TxOutput} from "./txOutput"
+import {Input} from "./input"
+import {Output} from "./output"
 import {Slot} from "../types"
 
 export type TxBody = {
-  inputs: TxInput[]
-  outputs: TxOutput[]
+  inputs: Input[]
+  outputs: Output[]
   ttl?: Slot
-  collateral?: TxInput[]
+  collateral?: Input[]
+}
+
+export type Tx = {
+  body: TxBody
 }
