@@ -1,5 +1,6 @@
 import {AssetId} from "../cardano/entities/assetId"
 import {AssetEntry} from "../cardano/entities/assetEntry"
+import {AdaPolicyId} from "../constants"
 
 /** ADA in Lovelace units or any other asset.
  */
@@ -8,6 +9,10 @@ export class AssetAmount {
 
   withAmount(amount: bigint): AssetAmount {
     return new AssetAmount(this.id, amount)
+  }
+
+  get isAda(): boolean {
+    return this.id.policyId === AdaPolicyId
   }
 
   get toEntry(): AssetEntry {

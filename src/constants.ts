@@ -1,3 +1,3 @@
-export const NativeAssetId = ""
-export const NativeAssetTicker = ""
-export const NativeAssetDecimals = 18
+export const AdaPolicyId = ""
+export const AdaAssetName = ""
+export const AdaDecimals = 18
