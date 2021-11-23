@@ -1,3 +1,3 @@
 export const AdaPolicyId = ""
 export const AdaAssetName = ""
-export const AdaDecimals = 18
+export const AdaDecimals = 8

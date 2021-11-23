@@ -1,9 +1,9 @@
-import {DepositRequest, RedeemRequest, SwapRequest} from "../models/opRequests"
 import {OutputCandidate} from "../../cardano/entities/output"
-import {NativeOrders} from "../scripts"
 import {PlutusBytes, PlutusMap} from "../../cardano/entities/plutusData"
-import {decodeHex} from "../../utils/hex"
 import {Value} from "../../cardano/entities/value"
+import {decodeHex} from "../../utils/hex"
+import {DepositRequest, RedeemRequest, SwapRequest} from "../models/opRequests"
+import {NativeOrders} from "../scripts"
 
 export interface AmmOutputs {
   deposit(req: DepositRequest): OutputCandidate

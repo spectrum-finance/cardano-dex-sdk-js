@@ -1,7 +1,7 @@
-import {Value} from "./value"
-import {SAddr} from "./address"
 import {Hash32} from "../types"
+import {SAddr} from "./address"
 import {PlutusData} from "./plutusData"
+import {Value} from "./value"
 
 export type Output = {
   value: Value

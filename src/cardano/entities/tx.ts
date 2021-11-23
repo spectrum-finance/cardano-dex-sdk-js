@@ -1,6 +1,6 @@
+import {Slot} from "../types"
 import {Input} from "./input"
 import {Output} from "./output"
-import {Slot} from "../types"
 
 export type TxBody = {
   inputs: Input[]
