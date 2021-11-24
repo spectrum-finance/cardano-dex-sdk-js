@@ -18,7 +18,7 @@ export class AssetAmount {
   get toEntry(): AssetEntry {
     return {
       ...this.id,
-      amount: this.amount
+      quantity: this.amount
     }
   }
 }

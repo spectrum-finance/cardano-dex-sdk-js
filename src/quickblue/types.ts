@@ -3,4 +3,4 @@ export type Paging = {
   limit: number
 }
 
-export type Sorting = "asc" | "desc"
+export type Ordering = "asc" | "desc"

@@ -4,9 +4,9 @@ import {AssetName, Lovelace, PolicyId} from "../types"
 export type AssetEntry = {
   name: AssetName
   policyId: PolicyId
-  amount: bigint
+  quantity: bigint
 }
 
-export function AdaEntry(amount: Lovelace): AssetEntry {
-  return {name: AdaAssetName, policyId: AdaPolicyId, amount}
+export function AdaEntry(quantity: Lovelace): AssetEntry {
+  return {name: AdaAssetName, policyId: AdaPolicyId, quantity}
 }

@@ -1,12 +1,12 @@
-export type Base16 = string
-export type Bech32 = string
+export type HexString = string
+export type Bech32String = string
 
-export type Hash32 = Base16
-export type Hash28 = Base16
+export type Hash32 = HexString
+export type Hash28 = HexString
 
-export type ScriptHash = Base16
+export type ScriptHash = HexString
 
-export type Script = Base16
+export type Script = HexString
 
 export type MintingPolicy = Script
 
@@ -18,10 +18,13 @@ export type AssetRef = string
 export type Lovelace = bigint
 
 export type TxHash = Hash32
+export type BlockHash = Hash32
 
 export type OutputRef = string
 
 export type Slot = number
 
-export type Addr = Bech32
-export type PaymentCred = Base16
+export type ValidityRange = [Slot, Slot]
+
+export type Addr = Bech32String
+export type PaymentCred = HexString

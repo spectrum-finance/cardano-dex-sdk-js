@@ -3,17 +3,17 @@ import {SAddr} from "./address"
 import {PlutusData} from "./plutusData"
 import {Value} from "./value"
 
-export type Output = {
+export type TxOut = {
   value: Value
   addr: SAddr
   dataHash?: Hash32
 }
 
-export type FullOutput = Output & {
+export type FullTxOut = TxOut & {
   data?: PlutusData
 }
 
-export type OutputCandidate = {
+export type TxOutCandidate = {
   value: Value
   addr: SAddr
   data?: PlutusData

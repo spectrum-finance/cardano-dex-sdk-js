@@ -1,6 +1,6 @@
 import {TxHash} from "../types"
 
-export type Input = {
+export type TxIn = {
   outTxHash: TxHash
   outIndex: number
 }

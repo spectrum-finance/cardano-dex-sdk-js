@@ -1,14 +1,20 @@
-import {Slot} from "../types"
-import {Input} from "./input"
-import {Output} from "./output"
-
-export type TxBody = {
-  inputs: Input[]
-  outputs: Output[]
-  ttl?: Slot
-  collateral?: Input[]
-}
+import {TxHash, ValidityRange} from "../types"
+import {TxIn} from "./txIn"
+import {TxOut} from "./txOut"
+import {Value} from "./value"
 
 export type Tx = {
-  body: TxBody
+  hash: TxHash
+  inputs: TxIn[]
+  outputs: TxOut[]
+  validityRange?: ValidityRange
+  collateral?: TxIn[]
+}
+
+export type TxCandidate = {
+  inputs: TxIn[]
+  outputs: TxOut[]
+  valueMint: Value
+  validityRange?: ValidityRange
+  collateral?: TxIn[]
 }

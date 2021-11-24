@@ -2,17 +2,15 @@ import {AssetAmount} from "../../domain/assetAmount"
 import {Lovelace} from "../types"
 import {AdaEntry, AssetEntry} from "./assetEntry"
 
-export type Value = {
-  entries: AssetEntry[]
-}
+export type Value = AssetEntry[]
 
 export function Value(coins: Lovelace, other: AssetAmount | AssetAmount[] | undefined = undefined): Value {
   if (other instanceof AssetAmount) {
-    return {entries: [AdaEntry(coins), other.toEntry]}
+    return [AdaEntry(coins), other.toEntry]
   } else if (other) {
     const ada = other.filter(am => am.isAda).map(am => am.amount).reduce((acc, rhs) => acc + rhs, 0n)
-    return {entries: [AdaEntry(coins + ada), ...other.map(am => am.toEntry)]}
+    return [AdaEntry(coins + ada), ...other.map(am => am.toEntry)]
   } else {
-    return {entries: [AdaEntry(coins)]}
+    return [AdaEntry(coins)]
   }
 }
