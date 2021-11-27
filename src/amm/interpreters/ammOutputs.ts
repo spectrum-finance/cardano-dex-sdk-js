@@ -1,3 +1,4 @@
+import {MinLovelaceInOutput} from "../../cardano/constants"
 import {TxOutCandidate} from "../../cardano/entities/txOut"
 import {Value} from "../../cardano/entities/value"
 import {notImplemented} from "../../utils/notImplemented"
@@ -12,7 +13,7 @@ export interface AmmOutputs {
 
 export class AmmOutputsImpl implements AmmOutputs {
   deposit(req: DepositRequest): TxOutCandidate {
-    const value = Value(0n, [req.x, req.y]) // todo: ADA amount
+    const value = Value(MinLovelaceInOutput, [req.x, req.y])
     const data = notImplemented()
     return {
       value,
@@ -22,7 +23,7 @@ export class AmmOutputsImpl implements AmmOutputs {
   }
 
   redeem(req: RedeemRequest): TxOutCandidate {
-    const value = Value(0n, req.lp) // todo: ADA amount
+    const value = Value(MinLovelaceInOutput, req.lp)
     const data = notImplemented()
     return {
       value,
@@ -32,7 +33,7 @@ export class AmmOutputsImpl implements AmmOutputs {
   }
 
   swap(req: SwapRequest): TxOutCandidate {
-    const value = Value(0n, req.baseInput) // todo: ADA amount
+    const value = Value(MinLovelaceInOutput, req.baseInput)
     const data = notImplemented()
     return {
       value,
