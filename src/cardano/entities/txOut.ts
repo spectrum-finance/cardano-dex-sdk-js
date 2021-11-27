@@ -1,9 +1,11 @@
-import {Hash32} from "../types"
+import {PlutusData} from "@emurgo/cardano-serialization-lib-browser"
+import {Hash32, TxHash} from "../types"
 import {SAddr} from "./address"
-import {PlutusData} from "./plutusData"
 import {Value} from "./value"
 
 export type TxOut = {
+  txHash: TxHash,
+  index: number,
   value: Value
   addr: SAddr
   dataHash?: Hash32

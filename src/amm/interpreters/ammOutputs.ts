@@ -1,7 +1,6 @@
 import {TxOutCandidate} from "../../cardano/entities/txOut"
-import {PlutusBytes, PlutusMap} from "../../cardano/entities/plutusData"
 import {Value} from "../../cardano/entities/value"
-import {decodeHex} from "../../utils/hex"
+import {notImplemented} from "../../utils/notImplemented"
 import {DepositRequest, RedeemRequest, SwapRequest} from "../models/opRequests"
 import {NativeOrders} from "../scripts"
 
@@ -14,9 +13,7 @@ export interface AmmOutputs {
 export class AmmOutputsImpl implements AmmOutputs {
   deposit(req: DepositRequest): TxOutCandidate {
     const value = Value(0n, [req.x, req.y]) // todo: ADA amount
-    const data = PlutusMap({
-      userPubKeyHash: PlutusBytes(decodeHex(req.keyHash))
-    })
+    const data = notImplemented()
     return {
       value,
       addr: NativeOrders.depositAddr,
@@ -26,9 +23,7 @@ export class AmmOutputsImpl implements AmmOutputs {
 
   redeem(req: RedeemRequest): TxOutCandidate {
     const value = Value(0n, req.lp) // todo: ADA amount
-    const data = PlutusMap({
-      userPubKeyHash: PlutusBytes(decodeHex(req.keyHash))
-    })
+    const data = notImplemented()
     return {
       value,
       addr: NativeOrders.redeemAddr,
@@ -38,9 +33,7 @@ export class AmmOutputsImpl implements AmmOutputs {
 
   swap(req: SwapRequest): TxOutCandidate {
     const value = Value(0n, req.baseInput) // todo: ADA amount
-    const data = PlutusMap({
-      userPubKeyHash: PlutusBytes(decodeHex(req.keyHash))
-    })
+    const data = notImplemented()
     return {
       value,
       addr: NativeOrders.swapAddr,

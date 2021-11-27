@@ -22,7 +22,7 @@ export type BlockHash = Hash32
 
 export type OutputRef = string
 
-export type Slot = number
+export type Slot = bigint
 
 export type ValidityRange = [Slot, Slot]
 
