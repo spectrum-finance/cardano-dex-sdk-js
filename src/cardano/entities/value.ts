@@ -4,6 +4,8 @@ import {AdaEntry, AssetEntry} from "./assetEntry"
 
 export type Value = AssetEntry[]
 
+export const emptyValue: Value = []
+
 export function Value(coins: Lovelace, other: AssetAmount | AssetAmount[] | undefined = undefined): Value {
   if (other instanceof AssetAmount) {
     return [AdaEntry(coins), other.toEntry]

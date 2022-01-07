@@ -1,6 +1,6 @@
 import {TxHash, ValidityRange} from "../types"
 import {TxIn} from "./txIn"
-import {TxOut} from "./txOut"
+import {TxOut, TxOutCandidate} from "./txOut"
 import {Value} from "./value"
 
 export type Tx = {
@@ -13,7 +13,7 @@ export type Tx = {
 
 export type TxCandidate = {
   inputs: TxIn[]
-  outputs: TxOut[]
+  outputs: TxOutCandidate[]
   valueMint: Value
   validityRange?: ValidityRange
   collateral?: TxIn[]

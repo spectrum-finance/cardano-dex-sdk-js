@@ -1,24 +1,32 @@
 import {SAddr} from "../../cardano/entities/address"
-import {Value} from "../../cardano/entities/value"
-import {TxHash} from "../../cardano/types"
+import {RawTx} from "../../cardano/entities/rawTx"
+import {txOutToTxIn} from "../../cardano/entities/txOut"
+import {emptyValue, Value} from "../../cardano/entities/value"
 import {TxContext} from "../../cardano/wallet/entities/txContext"
+import {Prover} from "../../cardano/wallet/prover"
+import {TxAsm} from "../../cardano/wallet/txAsm"
 import {notImplemented} from "../../utils/notImplemented"
 import {CreateRequest, OrderRequest, OrderRequestKind} from "../models/opRequests"
 import {AmmOutputs} from "./ammOutputs"
 
 export interface AmmActions {
-  create(req: CreateRequest, ctx: TxContext): Promise<TxHash[]>
-  order(req: OrderRequest, ctx: TxContext): Promise<TxHash>
+  createPool(req: CreateRequest, ctx: TxContext): Promise<RawTx[]>
+  createOrder(req: OrderRequest, ctx: TxContext): Promise<RawTx>
 }
 
 export class AmmActionsImpl implements AmmActions {
-  constructor(public readonly outputs: AmmOutputs, public readonly uiRewardAddr: SAddr) {}
+  constructor(
+    public readonly asm: TxAsm,
+    public readonly prover: Prover,
+    public readonly outputs: AmmOutputs,
+    public readonly uiRewardAddr: SAddr,
+  ) {}
 
-  create(req: CreateRequest, ctx: TxContext): Promise<TxHash[]> {
+  createPool(req: CreateRequest, ctx: TxContext): Promise<RawTx[]> {
     return notImplemented([req, ctx])
   }
 
-  order(req: OrderRequest, ctx: TxContext): Promise<TxHash> {
+  createOrder(req: OrderRequest, ctx: TxContext): Promise<RawTx> {
     const orderCandidate = () => {
       switch (req.kind) {
         case OrderRequestKind.Deposit:
@@ -33,6 +41,11 @@ export class AmmActionsImpl implements AmmActions {
       value: Value(req.uiFee),
       addr: this.uiRewardAddr
     }
-    return notImplemented([orderCandidate(), uiFeeCandidate, ctx])
+    const txc = {
+      inputs: ctx.inputs.map(o => txOutToTxIn(o)),
+      outputs: [orderCandidate(), uiFeeCandidate],
+      valueMint: emptyValue,
+    }
+    return this.asm.finalize(txc).then(c => this.prover.sign(c))
   }
 }
