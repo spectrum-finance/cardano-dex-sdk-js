@@ -1,6 +1,6 @@
 import {AssetName, PolicyId} from "../types"
 
-export type AssetId = {
+export type AssetClass = {
   policyId: PolicyId
   name: AssetName
 }

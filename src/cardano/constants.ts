@@ -1,5 +1,5 @@
 export const AdaPolicyId = ""
 export const AdaAssetName = ""
-export const AdaDecimals = 8
+export const AdaDecimals = 6
 
-export const MinLovelaceInOutput = 100000000n
+export const MinLovelaceInOutput = 1000000n

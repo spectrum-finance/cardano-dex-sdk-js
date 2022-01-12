@@ -1,6 +1,6 @@
 import {decodeHex, encodeHex} from "../../utils/hex"
 import {RustModule} from "../../utils/rustLoader"
-import {HexString, Hash28} from "../types"
+import {Hash28, HexString} from "../types"
 import {SAddr} from "./address"
 
 export type SPubKey = HexString

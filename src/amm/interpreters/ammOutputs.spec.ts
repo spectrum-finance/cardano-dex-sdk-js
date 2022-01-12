@@ -1,25 +1,50 @@
 import test from "ava"
-import {decodeHex, encodeHex} from "../../utils/hex"
+import {AssetClass} from "../../cardano/entities/assetClass"
+import {encodeHex} from "../../utils/hex"
+import {renderPlutusDataTreeUnsafe} from "../../utils/plutus"
 import {RustModule} from "../../utils/rustLoader"
+import {mkAssetClass, mkSwapDatum} from "../contractData"
 
 test.before(async () => {
   await RustModule.load(true)
 })
 
-test("Contract template hash calculation: Pool", async t => {
-  const R = RustModule.CardanoWasm
-  const raw = "d8799f0a02ff"
-  const datumReconstructed = R.PlutusData.from_bytes(decodeHex(raw))
-  t.log(datumReconstructed.as_constr_plutus_data()!.alternative().to_str())
-  t.log(datumReconstructed.as_constr_plutus_data()!.data().get(0).as_integer()!.to_str())
-  t.log(datumReconstructed.as_constr_plutus_data()!.data().get(1).as_integer()!.to_str())
+test("Construct valid Swap Datum", async t => {
+  const raw = "d8799fd8799f45baffeebcdc45dfdaeecbeaffd8799f45cecccafcfa45babbaadeabffd8799f45efffaafebc45bdfcffbdbfff186118640345bbeaecdcba182b1822ff"
+  t.log(renderPlutusDataTreeUnsafe(raw, RustModule.CardanoWasm))
+})
 
-  const plst = R.PlutusList.new()
-  plst.add(R.PlutusData.new_integer(R.BigInt.from_str("10")))
-  plst.add(R.PlutusData.new_integer(R.BigInt.from_str("2")))
-  const eqv = R.ConstrPlutusData.new(R.BigNum.zero(), plst)
-  const eqvHex = encodeHex(eqv.to_bytes())
-  t.log(eqvHex)
+test("Construct valid Deposit Datum", async t => {
+  const raw = "d8799fd8799f45deceaeaabb45cadebdfdaeff0b45feeeeccbdd1837ff"
+  t.log(renderPlutusDataTreeUnsafe(raw, RustModule.CardanoWasm))
+})
 
-  t.deepEqual(raw, eqvHex)
+test("Construct valid Redeem Datum", async t => {
+  const raw = "d8799fd8799f45dbeadfeaed45efaebdabbfff0145ebaaecaecaff"
+  t.log(renderPlutusDataTreeUnsafe(raw, RustModule.CardanoWasm))
+})
+
+test("AssetClass", async t => {
+  const ac: AssetClass = {policyId: "45eaffebffaf", name: "45feffebdeda"}
+  const dt = mkAssetClass(ac, RustModule.CardanoWasm)
+  const raw = encodeHex(dt.to_bytes())
+  t.log(renderPlutusDataTreeUnsafe(raw, RustModule.CardanoWasm))
+})
+
+test("SwapDatum", async t => {
+  const base: AssetClass = {policyId: "45baffeebcdc", name: "45dfdaeecbea"}
+  const quote: AssetClass = {policyId: "45cecccafcfa", name: "45babbaadeab"}
+  const poolNft: AssetClass = {policyId: "45efffaafebc", name: "45bdfcffbdbf"}
+  const dt = mkSwapDatum({
+    base,
+    quote,
+    poolNft,
+    feeNum: 97n,
+    feePerToken: {numerator: 100n, denominator: 3n},
+    rewardPkh: "45bbeaecdcba",
+    baseAmount: 43n,
+    minQuoteAmount: 34n
+  }, RustModule.CardanoWasm)
+  const raw = encodeHex(dt.to_bytes())
+  t.log(renderPlutusDataTreeUnsafe(raw, RustModule.CardanoWasm))
 })

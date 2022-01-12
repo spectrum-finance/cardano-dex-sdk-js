@@ -1,6 +1,6 @@
 import {PoolId} from "../domain/types"
 import {AssetAmount} from "../../domain/assetAmount"
-import {AssetId} from "../../cardano/entities/assetId"
+import {AssetClass} from "../../cardano/entities/assetClass"
 import {Lovelace} from "../../cardano/types"
 import {PubKeyHash} from "../../cardano/entities/publicKey"
 
@@ -43,7 +43,7 @@ export type SwapRequest = {
   readonly keyHash: PubKeyHash
   readonly poolFeeNum: number
   readonly baseInput: AssetAmount
-  readonly quoteAsset: AssetId
+  readonly quoteAsset: AssetClass
   readonly minQuoteOutput: bigint
   readonly exFeePerToken: Lovelace
   readonly uiFee: Lovelace
