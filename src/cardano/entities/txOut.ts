@@ -5,8 +5,8 @@ import {TxIn} from "./txIn"
 import {Value} from "./value"
 
 export type TxOut = {
-  txHash: TxHash,
-  index: number,
+  txHash: TxHash
+  index: number
   value: Value
   addr: SAddr
   dataHash?: Hash32

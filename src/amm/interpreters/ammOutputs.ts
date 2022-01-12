@@ -1,7 +1,8 @@
 import {MinLovelaceInOutput} from "../../cardano/constants"
 import {TxOutCandidate} from "../../cardano/entities/txOut"
 import {Value} from "../../cardano/entities/value"
-import {notImplemented} from "../../utils/notImplemented"
+import {CardanoWasm} from "../../utils/rustLoader"
+import {mkDepositDatum, mkRedeemDatum, mkSwapDatum} from "../contractData"
 import {DepositRequest, RedeemRequest, SwapRequest} from "../models/opRequests"
 import {NativeOrders} from "../scripts"
 
@@ -12,9 +13,11 @@ export interface AmmOutputs {
 }
 
 export class AmmOutputsImpl implements AmmOutputs {
+  constructor(public readonly R: CardanoWasm) {}
+
   deposit(req: DepositRequest): TxOutCandidate {
     const value = Value(MinLovelaceInOutput, [req.x, req.y])
-    const data = notImplemented()
+    const data = mkDepositDatum(req, this.R)
     return {
       value,
       addr: NativeOrders.depositAddr,
@@ -24,7 +27,7 @@ export class AmmOutputsImpl implements AmmOutputs {
 
   redeem(req: RedeemRequest): TxOutCandidate {
     const value = Value(MinLovelaceInOutput, req.lp)
-    const data = notImplemented()
+    const data = mkRedeemDatum(req, this.R)
     return {
       value,
       addr: NativeOrders.redeemAddr,
@@ -34,7 +37,7 @@ export class AmmOutputsImpl implements AmmOutputs {
 
   swap(req: SwapRequest): TxOutCandidate {
     const value = Value(MinLovelaceInOutput, req.baseInput)
-    const data = notImplemented()
+    const data = mkSwapDatum(req, this.R)
     return {
       value,
       addr: NativeOrders.swapAddr,

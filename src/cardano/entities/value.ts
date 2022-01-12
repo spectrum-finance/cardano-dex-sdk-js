@@ -10,7 +10,10 @@ export function Value(coins: Lovelace, other: AssetAmount | AssetAmount[] | unde
   if (other instanceof AssetAmount) {
     return [AdaEntry(coins), other.toEntry]
   } else if (other) {
-    const ada = other.filter(am => am.isAda).map(am => am.amount).reduce((acc, rhs) => acc + rhs, 0n)
+    const ada = other
+      .filter(am => am.isAda)
+      .map(am => am.amount)
+      .reduce((acc, rhs) => acc + rhs, 0n)
     return [AdaEntry(coins + ada), ...other.map(am => am.toEntry)]
   } else {
     return [AdaEntry(coins)]

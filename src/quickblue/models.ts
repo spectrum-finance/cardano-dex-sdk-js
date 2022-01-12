@@ -13,8 +13,8 @@ export type Items<T> = {
 }
 
 export type QuickblueTxOut = {
-  txHash: TxHash,
-  index: number,
+  txHash: TxHash
+  index: number
   value: Value
   addr: SAddr
   dataHash?: Hash32
@@ -33,11 +33,11 @@ export function toCardanoTxOut(qout: QuickblueTxOut): FullTxOut {
 }
 
 export type QuickblueRedeemer = {
-  unitMem: bigint,
-  unitSteps: bigint,
-  fee: Lovelace,
-  purpose: string,
-  index: number,
+  unitMem: bigint
+  unitSteps: bigint
+  fee: Lovelace
+  purpose: string
+  index: number
   scriptHash: Hash28
 }
 
@@ -57,14 +57,14 @@ export type QuickblueMetadata = {
 }
 
 export type QuickblueTx = {
-  blockHash: BlockHash,
-  blockIndex: bigint,
-  hash: TxHash,
-  inputs: [QuickblueTxIn],
-  outputs: [QuickblueTxOut],
-  invalidBefore: bigint,
-  invalidHereafter: bigint,
-  metadata?: QuickblueMetadata,
+  blockHash: BlockHash
+  blockIndex: bigint
+  hash: TxHash
+  inputs: [QuickblueTxIn]
+  outputs: [QuickblueTxOut]
+  invalidBefore: bigint
+  invalidHereafter: bigint
+  metadata?: QuickblueMetadata
 }
 
 export function toCardanoTx(qtx: QuickblueTx): Tx {

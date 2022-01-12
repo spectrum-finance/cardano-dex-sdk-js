@@ -19,7 +19,7 @@ export class AmmActionsImpl implements AmmActions {
     public readonly asm: TxAsm,
     public readonly prover: Prover,
     public readonly outputs: AmmOutputs,
-    public readonly uiRewardAddr: SAddr,
+    public readonly uiRewardAddr: SAddr
   ) {}
 
   createPool(req: CreateRequest, ctx: TxContext): Promise<RawTx[]> {
@@ -44,7 +44,7 @@ export class AmmActionsImpl implements AmmActions {
     const txc = {
       inputs: ctx.inputs.map(o => txOutToTxIn(o)),
       outputs: [orderCandidate(), uiFeeCandidate],
-      valueMint: emptyValue,
+      valueMint: emptyValue
     }
     return this.asm.finalize(txc).then(c => this.prover.sign(c))
   }

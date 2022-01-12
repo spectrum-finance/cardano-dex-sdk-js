@@ -55,7 +55,7 @@ export class Quickblue implements CardanoNetwork {
         url: `/assets/info/${ref}`,
         transformResponse: data => JSONBI.parse(data)
       })
-      .then(res => fix(res.data, ai => ai.quantity = BigInt(ai.quantity)))
+      .then(res => fix(res.data, ai => (ai.quantity = BigInt(ai.quantity))))
   }
 
   getOutput(ref: OutputRef): Promise<FullTxOut | undefined> {

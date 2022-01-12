@@ -17,7 +17,13 @@ export function renderPlutusDataTreeUnsafe(raw: HexString, R: CardanoWasm): stri
         mRepr.push(renderIn(m))
         i++
       } while (i < ln)
-      return "{" + F.zip([...Array(ln).keys()], mRepr).map(([k, v]) => `"${k}": ${v}`).join(", ") + "}"
+      return (
+        "{" +
+        F.zip([...Array(ln).keys()], mRepr)
+          .map(([k, v]) => `"${k}": ${v}`)
+          .join(", ") +
+        "}"
+      )
     } else if (kind === R.PlutusDataKind.Map) {
       return "<map?>"
     } else if (kind === R.PlutusDataKind.List) {
@@ -25,7 +31,7 @@ export function renderPlutusDataTreeUnsafe(raw: HexString, R: CardanoWasm): stri
     } else if (kind === R.PlutusDataKind.Integer) {
       return pd.as_integer()!.to_str()
     } else {
-      return "\"" + encodeHex(pd.to_bytes()) + "\""
+      return '"' + encodeHex(pd.to_bytes()) + '"'
     }
   }
 
