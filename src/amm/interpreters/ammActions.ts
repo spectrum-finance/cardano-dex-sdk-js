@@ -1,6 +1,5 @@
 import {SAddr} from "../../cardano/entities/address"
 import {RawTx} from "../../cardano/entities/rawTx"
-import {txOutToTxIn} from "../../cardano/entities/txOut"
 import {emptyValue, Value} from "../../cardano/entities/value"
 import {TxContext} from "../../cardano/wallet/entities/txContext"
 import {Prover} from "../../cardano/wallet/prover"
@@ -14,7 +13,16 @@ export interface AmmActions {
   createOrder(req: OrderRequest, ctx: TxContext): Promise<RawTx>
 }
 
-export class AmmActionsImpl implements AmmActions {
+export function mkAmmActions(
+  asm: TxAsm,
+  prover: Prover,
+  outputs: AmmOutputs,
+  uiRewardAddr: SAddr
+): AmmActions {
+  return new DefaultAmmActions(asm, prover, outputs, uiRewardAddr)
+}
+
+class DefaultAmmActions implements AmmActions {
   constructor(
     public readonly asm: TxAsm,
     public readonly prover: Prover,
@@ -42,10 +50,11 @@ export class AmmActionsImpl implements AmmActions {
       addr: this.uiRewardAddr
     }
     const txc = {
-      inputs: ctx.inputs.map(o => txOutToTxIn(o)),
+      inputs: ctx.inputs,
       outputs: [orderCandidate(), uiFeeCandidate],
-      valueMint: emptyValue
+      valueMint: emptyValue,
+      changeAddr: ctx.changeAddr
     }
-    return this.asm.finalize(txc).then(c => this.prover.sign(c))
+    return this.prover.sign(this.asm.finalize(txc))
   }
 }

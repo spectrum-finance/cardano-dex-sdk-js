@@ -15,7 +15,7 @@ export type TxCandidate = {
   inputs: FullTxIn[]
   outputs: TxOutCandidate[]
   valueMint: Value
+  changeAddr: Addr
   validityRange?: ValidityRange
   collateral?: TxIn[]
-  changeAddr: Addr
 }

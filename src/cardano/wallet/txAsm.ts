@@ -41,12 +41,16 @@ class DefaultTxAsm implements TxAsm {
     conf.max_tx_size(16384)
     const txb = this.R.TransactionBuilder.new(conf.build())
     for (const i of candidate.inputs) {
+      const txInId = this.R.TransactionHash.from_bytes(decodeHex(i.txOut.txHash))
+      const txIn = this.R.TransactionInput.new(txInId, i.txOut.index)
+      const valueIn = mkWasmValue(i.txOut.value, this.R)
+      const addr = this.R.BaseAddress.from_address(this.R.Address.from_bech32(i.txOut.addr))
       if (i.consumeScript) {
-        const sh = this.R.ScriptHash.from_bech32(i.txOut.addr) // todo
-        const txInId = this.R.TransactionHash.from_bytes(decodeHex(i.txOut.txHash))
-        const txIn = this.R.TransactionInput.new(txInId, i.txOut.index)
-        const valueIn = mkWasmValue(i.txOut.value, this.R)
+        const sh = addr!.payment_cred().to_scripthash()!
         txb.add_script_input(sh, txIn, valueIn)
+      } else {
+        const pkh = addr!.payment_cred().to_keyhash()!
+        txb.add_key_input(pkh, txIn, valueIn)
       }
     }
     for (const o of candidate.outputs) {
