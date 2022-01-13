@@ -1,5 +1,4 @@
-import {PlutusData} from "@emurgo/cardano-serialization-lib-browser"
-import {Hash32, TxHash} from "../types"
+import {Datum, Hash32, TxHash} from "../types"
 import {SAddr} from "./address"
 import {TxIn} from "./txIn"
 import {Value} from "./value"
@@ -17,11 +16,11 @@ export function txOutToTxIn(out: TxOut): TxIn {
 }
 
 export type FullTxOut = TxOut & {
-  data?: PlutusData
+  data?: Datum
 }
 
 export type TxOutCandidate = {
   value: Value
   addr: SAddr
-  data?: PlutusData
+  data?: Datum
 }

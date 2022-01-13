@@ -1,5 +1,5 @@
-import {TxHash, ValidityRange} from "../types"
-import {TxIn} from "./txIn"
+import {Addr, TxHash, ValidityRange} from "../types"
+import {FullTxIn, TxIn} from "./txIn"
 import {TxOut, TxOutCandidate} from "./txOut"
 import {Value} from "./value"
 
@@ -12,9 +12,10 @@ export type Tx = {
 }
 
 export type TxCandidate = {
-  inputs: TxIn[]
+  inputs: FullTxIn[]
   outputs: TxOutCandidate[]
   valueMint: Value
   validityRange?: ValidityRange
   collateral?: TxIn[]
+  changeAddr: Addr
 }

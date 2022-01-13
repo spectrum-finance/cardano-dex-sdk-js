@@ -7,6 +7,8 @@ export type Hash28 = HexString
 export type ScriptHash = HexString
 
 export type Script = HexString
+export type Redeemer = HexString
+export type Datum = HexString
 
 export type MintingPolicy = Script
 
