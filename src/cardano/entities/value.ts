@@ -1,5 +1,7 @@
 import {AssetAmount} from "../../domain/assetAmount"
+import {AdaAssetClass} from "../constants"
 import {Lovelace} from "../types"
+import {AssetClass} from "./assetClass"
 import {AdaEntry, AssetEntry} from "./assetEntry"
 
 export type Value = AssetEntry[]
@@ -18,4 +20,12 @@ export function Value(coins: Lovelace, other: AssetAmount | AssetAmount[] | unde
   } else {
     return [AdaEntry(coins)]
   }
+}
+
+export function getLovelace(v: Value): Lovelace {
+  return assetAmountOf(v, AdaAssetClass)
+}
+
+export function assetAmountOf(v: Value, asset: AssetClass): Lovelace {
+  return v.find(e => e.policyId === asset.policyId && e.name === asset.name)?.quantity ?? 0n
 }

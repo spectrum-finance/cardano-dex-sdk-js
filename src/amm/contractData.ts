@@ -1,10 +1,21 @@
 import {PlutusData} from "@emurgo/cardano-serialization-lib-browser"
 import {PlutusList} from "@emurgo/cardano-serialization-lib-nodejs"
 import {AssetClass} from "../cardano/entities/assetClass"
-import {HexString} from "../cardano/types"
-import {decodeHex} from "../utils/hex"
+import {Datum, HexString} from "../cardano/types"
+import {decodeHex, encodeHex} from "../utils/hex"
 import {CardanoWasm} from "../utils/rustLoader"
 import {DepositRequest, RedeemRequest, SwapRequest} from "./models/opRequests"
+import {PoolDatum} from "./models/poolDatum"
+
+export function parsePoolDatum(raw: Datum, R: CardanoWasm): PoolDatum | undefined {
+  const datum = R.PlutusData.from_bytes(decodeHex(raw)).as_constr_plutus_data()!.data()
+  const nft = parseAssetClass(datum.get(0))
+  const x = parseAssetClass(datum.get(1))
+  const y = parseAssetClass(datum.get(2))
+  const lq = parseAssetClass(datum.get(3))
+  const feeNum = datum.get(4).as_integer()
+  return nft && x && y && lq && feeNum ? {nft, x, y, lq, feeNum: Number(feeNum.to_str())} : undefined
+}
 
 export function mkSwapDatum(conf: SwapRequest, R: CardanoWasm): PlutusData {
   const base = mkAssetClass(conf.baseInput.id, R)
@@ -53,9 +64,16 @@ function mkPlutusData(members: PlutusList, R: CardanoWasm): PlutusData {
   return R.PlutusData.new_constr_plutus_data(R.ConstrPlutusData.new(R.BigNum.zero(), members))
 }
 
-function mkAssetClass(ac: AssetClass, R: CardanoWasm): PlutusData {
+export function mkAssetClass(ac: AssetClass, R: CardanoWasm): PlutusData {
   const assetClass = R.PlutusList.new()
   assetClass.add(mkByteString(ac.policyId, R))
-  assetClass.add(mkByteString(ac.name, R)) // todo:
+  assetClass.add(mkByteString(ac.name, R)) // todo: hex . utf8
   return mkPlutusData(assetClass, R)
+}
+
+export function parseAssetClass(pd: PlutusData): AssetClass | undefined {
+  const ac = pd.as_constr_plutus_data()!.data()
+  const policyId = encodeHex(ac.get(0).as_bytes()!)
+  const name = encodeHex(ac.get(1).as_bytes()!)
+  return {policyId, name}
 }

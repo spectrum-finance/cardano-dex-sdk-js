@@ -4,8 +4,6 @@ import {TxIn} from "../cardano/entities/txIn"
 import {FullTxOut} from "../cardano/entities/txOut"
 import {Value} from "../cardano/entities/value"
 import {BlockHash, Hash28, Hash32, HexString, Lovelace, TxHash} from "../cardano/types"
-import {decodeHex} from "../utils/hex"
-import {RustModule} from "../utils/rustLoader"
 
 export type Items<T> = {
   items: T[]
@@ -28,7 +26,7 @@ export function toCardanoTxOut(qout: QuickblueTxOut): FullTxOut {
     value: qout.value,
     addr: qout.addr,
     dataHash: qout.dataHash,
-    data: qout.dataBytes ? RustModule.CardanoWasm.PlutusData.from_bytes(decodeHex(qout.dataBytes)) : undefined
+    data: qout.dataBytes
   }
 }
 

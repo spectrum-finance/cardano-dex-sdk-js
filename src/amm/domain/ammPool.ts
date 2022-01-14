@@ -1,7 +1,7 @@
-import {PoolId} from "./types"
 import {AssetAmount} from "../../domain/assetAmount"
 import {Price} from "../../domain/price"
 import {EmissionLP} from "../constants"
+import {PoolId} from "./types"
 
 export class AmmPool {
   constructor(

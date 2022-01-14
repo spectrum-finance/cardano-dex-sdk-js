@@ -31,7 +31,7 @@ export function renderPlutusDataTreeUnsafe(raw: HexString, R: CardanoWasm): stri
     } else if (kind === R.PlutusDataKind.Integer) {
       return pd.as_integer()!.to_str()
     } else {
-      return '"' + encodeHex(pd.to_bytes()) + '"'
+      return '"' + encodeHex(pd.as_bytes()!) + '"'
     }
   }
 
