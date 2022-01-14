@@ -22,10 +22,11 @@ export function Value(coins: Lovelace, other: AssetAmount | AssetAmount[] | unde
   }
 }
 
-export function getLovelace(v: Value): Lovelace {
+export function getLovelace(v: Value): AssetAmount {
   return assetAmountOf(v, AdaAssetClass)
 }
 
-export function assetAmountOf(v: Value, asset: AssetClass): Lovelace {
-  return v.find(e => e.policyId === asset.policyId && e.name === asset.name)?.quantity ?? 0n
+export function assetAmountOf(v: Value, asset: AssetClass): AssetAmount {
+  const amt = v.find(e => e.policyId === asset.policyId && e.name === asset.name)?.quantity ?? 0n
+  return new AssetAmount(asset, amt)
 }
