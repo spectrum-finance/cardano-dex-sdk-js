@@ -103,7 +103,7 @@
       }
     },
     "require": [
-      "esm-wallaby",
+      "esm",
       "@babel/polyfill"
     ],
     "babel": true

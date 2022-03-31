@@ -18,7 +18,7 @@ export function parsePoolDatum(raw: Datum, R: CardanoWasm): PoolDatum | undefine
 }
 
 export function mkSwapDatum(conf: SwapRequest, R: CardanoWasm): PlutusData {
-  const base = mkAssetClass(conf.baseInput.id, R)
+  const base = mkAssetClass(conf.baseInput.asset, R)
   const quote = mkAssetClass(conf.quoteAsset, R)
   const poolNft = mkAssetClass(conf.poolId, R)
   const feeNum = R.PlutusData.new_integer(R.BigInt.from_str(conf.poolFeeNum.toString()))
@@ -37,17 +37,23 @@ export function mkSwapDatum(conf: SwapRequest, R: CardanoWasm): PlutusData {
 
 export function mkDepositDatum(conf: DepositRequest, R: CardanoWasm): PlutusData {
   const poolNft = mkAssetClass(conf.poolId, R)
+  const x = mkAssetClass(conf.x.asset, R)
+  const y = mkAssetClass(conf.y.asset, R)
+  const lq = mkAssetClass(conf.lq, R)
   const exFee = R.PlutusData.new_integer(R.BigInt.from_str(conf.exFee.toString()))
   const rewardPkh = R.PlutusData.new_bytes(decodeHex(conf.rewardPkh))
   const collateralAda = R.PlutusData.new_integer(R.BigInt.from_str(conf.collateralAda.toString()))
-  return mkProductN([poolNft, exFee, rewardPkh, collateralAda], R)
+  return mkProductN([poolNft, x, y, lq, exFee, rewardPkh, collateralAda], R)
 }
 
 export function mkRedeemDatum(conf: RedeemRequest, R: CardanoWasm): PlutusData {
   const poolNft = mkAssetClass(conf.poolId, R)
+  const x = mkAssetClass(conf.x, R)
+  const y = mkAssetClass(conf.y, R)
+  const lq = mkAssetClass(conf.lq.asset, R)
   const exFee = R.PlutusData.new_integer(R.BigInt.from_str(conf.exFee.toString()))
   const rewardPkh = R.PlutusData.new_bytes(decodeHex(conf.rewardPkh))
-  return mkProductN([poolNft, exFee, rewardPkh], R)
+  return mkProductN([poolNft, x, y, lq, exFee, rewardPkh], R)
 }
 
 function mkProductN(members: PlutusData[], R: CardanoWasm): PlutusData {
@@ -57,7 +63,7 @@ function mkProductN(members: PlutusData[], R: CardanoWasm): PlutusData {
 }
 
 function mkByteString(hex: HexString, R: CardanoWasm): PlutusData {
-  return R.PlutusData.from_bytes(decodeHex(hex))
+  return R.PlutusData.new_bytes(decodeHex(hex))
 }
 
 function mkPlutusData(members: PlutusList, R: CardanoWasm): PlutusData {

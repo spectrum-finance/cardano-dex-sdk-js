@@ -33,7 +33,7 @@ class AmmOutputsImpl implements AmmOutputs {
   }
 
   redeem(req: RedeemRequest): TxOutCandidate {
-    const value = Value(MinLovelaceInOutput, req.lp)
+    const value = Value(MinLovelaceInOutput, req.lq)
     const data = encodeHex(mkRedeemDatum(req, this.R).to_bytes())
     return {
       value,

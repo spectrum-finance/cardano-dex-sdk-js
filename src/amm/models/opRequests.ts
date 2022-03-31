@@ -1,9 +1,9 @@
+import {AssetClass} from "../../cardano/entities/assetClass"
+import {PubKeyHash} from "../../cardano/entities/publicKey"
+import {Lovelace} from "../../cardano/types"
+import {AssetAmount} from "../../domain/assetAmount"
 import {FeePerToken} from "../domain/models"
 import {PoolId} from "../domain/types"
-import {AssetAmount} from "../../domain/assetAmount"
-import {AssetClass} from "../../cardano/entities/assetClass"
-import {Lovelace} from "../../cardano/types"
-import {PubKeyHash} from "../../cardano/entities/publicKey"
 
 export type CreateRequest = {
   readonly x: AssetAmount
@@ -24,6 +24,7 @@ export type DepositRequest = {
   readonly poolId: PoolId
   readonly x: AssetAmount
   readonly y: AssetAmount
+  readonly lq: AssetClass
   readonly rewardPkh: PubKeyHash
   readonly exFee: Lovelace
   readonly uiFee: Lovelace
@@ -33,7 +34,9 @@ export type DepositRequest = {
 export type RedeemRequest = {
   readonly kind: OrderRequestKind.Redeem
   readonly poolId: PoolId
-  readonly lp: AssetAmount
+  readonly x: AssetClass
+  readonly y: AssetClass
+  readonly lq: AssetAmount
   readonly rewardPkh: PubKeyHash
   readonly exFee: Lovelace
   readonly uiFee: Lovelace
@@ -43,7 +46,7 @@ export type SwapRequest = {
   readonly kind: OrderRequestKind.Swap
   readonly poolId: PoolId
   readonly rewardPkh: PubKeyHash
-  readonly poolFeeNum: bigint
+  readonly poolFeeNum: number
   readonly baseInput: AssetAmount
   readonly quoteAsset: AssetClass
   readonly minQuoteOutput: bigint

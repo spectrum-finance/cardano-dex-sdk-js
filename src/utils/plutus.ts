@@ -1,8 +1,8 @@
 import {PlutusData} from "@emurgo/cardano-serialization-lib-nodejs"
+import * as F from "ramda"
 import {HexString} from "../cardano/types"
 import {decodeHex, encodeHex} from "./hex"
 import {CardanoWasm} from "./rustLoader"
-import * as F from "ramda"
 
 export function renderPlutusDataTreeUnsafe(raw: HexString, R: CardanoWasm): string {
   function renderIn(pd: PlutusData): string {
