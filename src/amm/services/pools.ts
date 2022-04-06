@@ -46,7 +46,7 @@ class NetworkPoolsV1 implements Pools {
   }
 
   async getAll(paging: Paging): Promise<[AmmPool[], number]> {
-    const [boxes, totalBoxes] = await this.network.getUtxosByPaymentCred(this.scripts.ammPoolV1, paging)
+    const [boxes, totalBoxes] = await this.network.getUtxosByPaymentCred(this.scripts.ammPool, paging)
     const pools = this.parser.parseBatch(boxes)
     const invalid = boxes.length - pools.length
     const total = totalBoxes - invalid

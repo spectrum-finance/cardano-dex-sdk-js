@@ -1,9 +1,9 @@
 import {TxIn} from "../../entities/txIn"
 import {TxOut} from "../../entities/txOut"
-import {SAddr} from "../../entities/address"
+import {Addr} from "../../types"
 
 export type TxRequest = {
   inputs: TxIn[]
   outputs: TxOut[]
-  changeAddr: SAddr
+  changeAddr: Addr
 }

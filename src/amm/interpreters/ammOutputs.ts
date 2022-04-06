@@ -5,7 +5,7 @@ import {encodeHex} from "../../utils/hex"
 import {CardanoWasm} from "../../utils/rustLoader"
 import {mkDepositDatum, mkRedeemDatum, mkSwapDatum} from "../contractData"
 import {DepositRequest, RedeemRequest, SwapRequest} from "../models/opRequests"
-import {NativeOrders} from "../scripts"
+import {OrderAddrs} from "../scripts"
 
 export interface AmmOutputs {
   deposit(req: DepositRequest): TxOutCandidate
@@ -15,19 +15,22 @@ export interface AmmOutputs {
   swap(req: SwapRequest): TxOutCandidate
 }
 
-export function mkAmmOutputs(R: CardanoWasm): AmmOutputsImpl {
-  return new AmmOutputsImpl(R)
+export function mkAmmOutputs(addrs: OrderAddrs, R: CardanoWasm): AmmOutputsImpl {
+  return new AmmOutputsImpl(addrs, R)
 }
 
 class AmmOutputsImpl implements AmmOutputs {
-  constructor(public readonly R: CardanoWasm) {}
+  constructor(
+    public readonly addrs: OrderAddrs,
+    public readonly R: CardanoWasm
+  ) {}
 
   deposit(req: DepositRequest): TxOutCandidate {
     const value = Value(MinLovelaceInOutput, [req.x, req.y])
     const data = encodeHex(mkDepositDatum(req, this.R).to_bytes())
     return {
       value,
-      addr: NativeOrders.depositAddr,
+      addr: this.addrs.ammDeposit,
       data
     }
   }
@@ -37,7 +40,7 @@ class AmmOutputsImpl implements AmmOutputs {
     const data = encodeHex(mkRedeemDatum(req, this.R).to_bytes())
     return {
       value,
-      addr: NativeOrders.redeemAddr,
+      addr: this.addrs.ammRedeem,
       data
     }
   }
@@ -47,7 +50,7 @@ class AmmOutputsImpl implements AmmOutputs {
     const data = encodeHex(mkSwapDatum(req, this.R).to_bytes())
     return {
       value,
-      addr: NativeOrders.swapAddr,
+      addr: this.addrs.ammSwap,
       data
     }
   }
