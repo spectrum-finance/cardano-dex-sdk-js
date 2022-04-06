@@ -1,4 +1,4 @@
-import {RawTx, RawUnsignedTx} from "../entities/rawTx"
+import {RawTx, RawUnsignedTx} from "../entities/tx"
 
 export interface Prover {
   sign(tx: RawUnsignedTx): Promise<RawTx>

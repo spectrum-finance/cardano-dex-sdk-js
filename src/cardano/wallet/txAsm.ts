@@ -2,15 +2,14 @@ import {Value as WasmValue} from "@emurgo/cardano-serialization-lib-browser"
 import * as F from "ramda"
 import {decodeHex, encodeHex} from "../../utils/hex"
 import {CardanoWasm} from "../../utils/rustLoader"
-import {RawUnsignedTx} from "../entities/rawTx"
-import {TxCandidate} from "../entities/tx"
+import {RawUnsignedTx, TxCandidate} from "../entities/tx"
 import {Value} from "../entities/value"
 
 export interface TxAsm {
   finalize(candidate: TxCandidate): RawUnsignedTx
 }
 
-export function mkWasmValue(value: Value, R: CardanoWasm): WasmValue {
+function mkWasmValue(value: Value, R: CardanoWasm): WasmValue {
   const maIn = R.MultiAsset.new()
   for (const [p, as] of Object.entries(F.groupBy(a => a.policyId, value))) {
     const policy = R.ScriptHash.from_bytes(decodeHex(p))

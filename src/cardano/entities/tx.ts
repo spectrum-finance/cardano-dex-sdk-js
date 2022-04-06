@@ -1,4 +1,4 @@
-import {Addr, TxHash, ValidityRange} from "../types"
+import {Addr, HexString, TxHash, ValidityRange} from "../types"
 import {FullTxIn, TxIn} from "./txIn"
 import {TxOut, TxOutCandidate} from "./txOut"
 import {Value} from "./value"
@@ -19,3 +19,7 @@ export type TxCandidate = {
   validityRange?: ValidityRange
   collateral?: TxIn[]
 }
+
+export type RawUnsignedTx = HexString
+
+export type RawTx = HexString

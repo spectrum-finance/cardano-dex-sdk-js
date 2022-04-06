@@ -1,40 +1,28 @@
-import {SAddr} from "../../cardano/entities/address"
-import {RawTx} from "../../cardano/entities/rawTx"
+import {TxCandidate} from "../../cardano/entities/tx"
 import {emptyValue, Value} from "../../cardano/entities/value"
+import {Addr} from "../../cardano/types"
 import {TxContext} from "../../cardano/wallet/entities/txContext"
-import {Prover} from "../../cardano/wallet/prover"
-import {TxAsm} from "../../cardano/wallet/txAsm"
-import {notImplemented} from "../../utils/notImplemented"
-import {CreateRequest, OrderRequest, OrderRequestKind} from "../models/opRequests"
+import {OrderRequest, OrderRequestKind} from "../models/opRequests"
 import {AmmOutputs} from "./ammOutputs"
 
 export interface AmmActions {
-  createPool(req: CreateRequest, ctx: TxContext): Promise<RawTx[]>
-  createOrder(req: OrderRequest, ctx: TxContext): Promise<RawTx>
+  createOrder(req: OrderRequest, ctx: TxContext): TxCandidate
 }
 
 export function mkAmmActions(
-  asm: TxAsm,
-  prover: Prover,
   outputs: AmmOutputs,
-  uiRewardAddr: SAddr
+  uiRewardAddr: Addr
 ): AmmActions {
-  return new DefaultAmmActions(asm, prover, outputs, uiRewardAddr)
+  return new DefaultAmmActions(outputs, uiRewardAddr)
 }
 
 class DefaultAmmActions implements AmmActions {
   constructor(
-    public readonly asm: TxAsm,
-    public readonly prover: Prover,
     public readonly outputs: AmmOutputs,
-    public readonly uiRewardAddr: SAddr
+    public readonly uiRewardAddr: Addr
   ) {}
 
-  createPool(req: CreateRequest, ctx: TxContext): Promise<RawTx[]> {
-    return notImplemented([req, ctx])
-  }
-
-  createOrder(req: OrderRequest, ctx: TxContext): Promise<RawTx> {
+  createOrder(req: OrderRequest, ctx: TxContext): TxCandidate {
     const orderCandidate = () => {
       switch (req.kind) {
         case OrderRequestKind.Deposit:
@@ -49,12 +37,11 @@ class DefaultAmmActions implements AmmActions {
       value: Value(req.uiFee),
       addr: this.uiRewardAddr
     }
-    const txc = {
+    return {
       inputs: ctx.inputs,
       outputs: [orderCandidate(), uiFeeCandidate],
       valueMint: emptyValue,
       changeAddr: ctx.changeAddr
     }
-    return this.prover.sign(this.asm.finalize(txc))
   }
 }

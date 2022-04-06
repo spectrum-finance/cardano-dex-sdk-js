@@ -1,5 +1,6 @@
 import axios, {AxiosInstance} from "axios"
-import {AssetInfo} from "../cardano/entities/AssetInfo"
+import {AssetInfo} from "../cardano/entities/assetInfo"
+import {RawDatum} from "../cardano/entities/datum"
 import {Tx} from "../cardano/entities/tx"
 import {FullTxOut} from "../cardano/entities/txOut"
 import {AssetRef, OutputRef, PaymentCred, TxHash} from "../cardano/types"
@@ -31,6 +32,10 @@ export interface CardanoNetwork {
   /**  Get asset info by asset reference.
    */
   getAssetInfo(ref: AssetRef): Promise<AssetInfo | undefined>
+
+  /** Report datum.
+    */
+  reportDatum(datum: RawDatum): Promise<void>
 }
 
 function fix<A, B>(a: A, fixF: (a: A) => B): A {
@@ -55,7 +60,7 @@ export class Quickblue implements CardanoNetwork {
         url: `/assets/info/${ref}`,
         transformResponse: data => JSONBI.parse(data)
       })
-      .then(res => fix(res.data, ai => (ai.quantity = BigInt(ai.quantity))))
+      .then(res => fix(res.data, ai => (ai.emission = BigInt(ai.quantity))))
   }
 
   getOutput(ref: OutputRef): Promise<FullTxOut | undefined> {
@@ -104,5 +109,10 @@ export class Quickblue implements CardanoNetwork {
         transformResponse: data => JSONBI.parse(data)
       })
       .then(res => [res.data.items.map(i => toCardanoTxOut(i)), res.data.total])
+  }
+
+  reportDatum(datum: RawDatum): Promise<void> {
+    return this.backend
+      .post(`/datum/report`, datum, {headers: {"Content-Type": "application/json"}})
   }
 }
