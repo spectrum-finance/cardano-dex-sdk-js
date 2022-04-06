@@ -1,12 +1,11 @@
-import {Datum, Hash32, TxHash} from "../types"
-import {SAddr} from "./address"
+import {Addr, Datum, Hash32, TxHash} from "../types"
 import {Value} from "./value"
 
 export type TxOut = {
   txHash: TxHash
   index: number
   value: Value
-  addr: SAddr
+  addr: Addr
   dataHash?: Hash32
 }
 
@@ -16,6 +15,6 @@ export type FullTxOut = TxOut & {
 
 export type TxOutCandidate = {
   value: Value
-  addr: SAddr
+  addr: Addr
   data?: Datum
 }
