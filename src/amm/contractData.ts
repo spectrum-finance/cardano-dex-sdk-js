@@ -62,7 +62,7 @@ function mkProductN(members: PlutusData[], R: CardanoWasm): PlutusData {
   return mkPlutusData(bf, R)
 }
 
-function mkByteString(hex: HexString, R: CardanoWasm): PlutusData {
+function mkByteStringFromHex(hex: HexString, R: CardanoWasm): PlutusData {
   return R.PlutusData.new_bytes(decodeHex(hex))
 }
 
@@ -72,14 +72,14 @@ function mkPlutusData(members: PlutusList, R: CardanoWasm): PlutusData {
 
 export function mkAssetClass(ac: AssetClass, R: CardanoWasm): PlutusData {
   const assetClass = R.PlutusList.new()
-  assetClass.add(mkByteString(ac.policyId, R))
-  assetClass.add(mkByteString(ac.name, R)) // todo: hex . utf8
+  assetClass.add(mkByteStringFromHex(ac.policyId, R))
+  assetClass.add(R.PlutusData.new_bytes(new TextEncoder().encode(ac.name)))
   return mkPlutusData(assetClass, R)
 }
 
 export function parseAssetClass(pd: PlutusData): AssetClass | undefined {
   const ac = pd.as_constr_plutus_data()!.data()
   const policyId = encodeHex(ac.get(0).as_bytes()!)
-  const name = encodeHex(ac.get(1).as_bytes()!)
+  const name = new TextDecoder().decode(ac.get(1).as_bytes()!)
   return {policyId, name}
 }

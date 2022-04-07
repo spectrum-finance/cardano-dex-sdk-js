@@ -14,5 +14,5 @@ test("Parse Pools in batch", async t => {
   const network = new Quickblue("https://testnet-api.quickblue.io/v1")
   const pools = mkNetworkPoolsV1(network, parser, ScriptCredsV1)
   const res = await pools.getAll({offset: 0, limit: 10})
-  t.log(res)
+  t.notThrows(() => res)
 })
