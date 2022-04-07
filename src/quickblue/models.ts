@@ -15,7 +15,7 @@ export type QuickblueTxOut = {
   value: Value
   addr: Addr
   dataHash?: Hash32
-  dataBytes?: HexString
+  dataBin?: HexString
 }
 
 export function toCardanoTxOut(qout: QuickblueTxOut): FullTxOut {
@@ -25,7 +25,7 @@ export function toCardanoTxOut(qout: QuickblueTxOut): FullTxOut {
     value: qout.value,
     addr: qout.addr,
     dataHash: qout.dataHash,
-    data: qout.dataBytes
+    data: qout.dataBin
   }
 }
 

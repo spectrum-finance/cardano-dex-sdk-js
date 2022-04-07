@@ -7,11 +7,11 @@ test.before(async () => {
   await RustModule.load(true)
 })
 
-const p = mkPoolsParser(RustModule.CardanoWasm)
-
-test("Parse Pools", async t => {
+test("Parse Pools in batch", async t => {
+  const p = mkPoolsParser(RustModule.CardanoWasm)
   const pools = p.parseBatch(utxos)
-  t.log(pools)
+  t.assert(pools.length == 3, "Not all pools parsed")
+  t.log("Parsed pools: " + pools)
 })
 
 const sampleResponse = `
@@ -57,58 +57,7 @@ const sampleResponse = `
             }
         ],
         "dataHash": "071b22e6b6098a46ec82fb0847800eaf22201a803eed5cac1f60e955f1197dbe",
-        "data": {
-            "fields": [
-                {
-                    "fields": [
-                        {
-                            "bytes": "805fe1efcdea11f1e959eff4f422f118aa76dca2d0d797d184e487da"
-                        },
-                        {
-                            "bytes": "6572676f54657374546f6b656e4e4654"
-                        }
-                    ],
-                    "constructor": 0
-                },
-                {
-                    "fields": [
-                        {
-                            "bytes": "805fe1efcdea11f1e959eff4f422f118aa76dca2d0d797d184e487da"
-                        },
-                        {
-                            "bytes": "6572676f54657374546f6b656e41"
-                        }
-                    ],
-                    "constructor": 0
-                },
-                {
-                    "fields": [
-                        {
-                            "bytes": "805fe1efcdea11f1e959eff4f422f118aa76dca2d0d797d184e487da"
-                        },
-                        {
-                            "bytes": "6572676f54657374546f6b656e42"
-                        }
-                    ],
-                    "constructor": 0
-                },
-                {
-                    "fields": [
-                        {
-                            "bytes": "805fe1efcdea11f1e959eff4f422f118aa76dca2d0d797d184e487da"
-                        },
-                        {
-                            "bytes": "6572676f54657374546f6b656e4c50"
-                        }
-                    ],
-                    "constructor": 0
-                },
-                {
-                    "int": 1
-                }
-            ],
-            "constructor": 0
-        },
+        "data": null,
         "dataBin": "d8799fd8799f581c805fe1efcdea11f1e959eff4f422f118aa76dca2d0d797d184e487da506572676f54657374546f6b656e4e4654ffd8799f581c805fe1efcdea11f1e959eff4f422f118aa76dca2d0d797d184e487da4e6572676f54657374546f6b656e41ffd8799f581c805fe1efcdea11f1e959eff4f422f118aa76dca2d0d797d184e487da4e6572676f54657374546f6b656e42ffd8799f581c805fe1efcdea11f1e959eff4f422f118aa76dca2d0d797d184e487da4f6572676f54657374546f6b656e4c50ff01ff",
         "spentByTxHash": null
     },
@@ -153,58 +102,7 @@ const sampleResponse = `
             }
         ],
         "dataHash": "071b22e6b6098a46ec82fb0847800eaf22201a803eed5cac1f60e955f1197dbe",
-        "data": {
-            "fields": [
-                {
-                    "fields": [
-                        {
-                            "bytes": "805fe1efcdea11f1e959eff4f422f118aa76dca2d0d797d184e487da"
-                        },
-                        {
-                            "bytes": "6572676f54657374546f6b656e4e4654"
-                        }
-                    ],
-                    "constructor": 0
-                },
-                {
-                    "fields": [
-                        {
-                            "bytes": "805fe1efcdea11f1e959eff4f422f118aa76dca2d0d797d184e487da"
-                        },
-                        {
-                            "bytes": "6572676f54657374546f6b656e41"
-                        }
-                    ],
-                    "constructor": 0
-                },
-                {
-                    "fields": [
-                        {
-                            "bytes": "805fe1efcdea11f1e959eff4f422f118aa76dca2d0d797d184e487da"
-                        },
-                        {
-                            "bytes": "6572676f54657374546f6b656e42"
-                        }
-                    ],
-                    "constructor": 0
-                },
-                {
-                    "fields": [
-                        {
-                            "bytes": "805fe1efcdea11f1e959eff4f422f118aa76dca2d0d797d184e487da"
-                        },
-                        {
-                            "bytes": "6572676f54657374546f6b656e4c50"
-                        }
-                    ],
-                    "constructor": 0
-                },
-                {
-                    "int": 1
-                }
-            ],
-            "constructor": 0
-        },
+        "data": null,
         "dataBin": "d8799fd8799f581c805fe1efcdea11f1e959eff4f422f118aa76dca2d0d797d184e487da506572676f54657374546f6b656e4e4654ffd8799f581c805fe1efcdea11f1e959eff4f422f118aa76dca2d0d797d184e487da4e6572676f54657374546f6b656e41ffd8799f581c805fe1efcdea11f1e959eff4f422f118aa76dca2d0d797d184e487da4e6572676f54657374546f6b656e42ffd8799f581c805fe1efcdea11f1e959eff4f422f118aa76dca2d0d797d184e487da4f6572676f54657374546f6b656e4c50ff01ff",
         "spentByTxHash": null
     },
@@ -249,58 +147,7 @@ const sampleResponse = `
             }
         ],
         "dataHash": "071b22e6b6098a46ec82fb0847800eaf22201a803eed5cac1f60e955f1197dbe",
-        "data": {
-            "fields": [
-                {
-                    "fields": [
-                        {
-                            "bytes": "805fe1efcdea11f1e959eff4f422f118aa76dca2d0d797d184e487da"
-                        },
-                        {
-                            "bytes": "6572676f54657374546f6b656e4e4654"
-                        }
-                    ],
-                    "constructor": 0
-                },
-                {
-                    "fields": [
-                        {
-                            "bytes": "805fe1efcdea11f1e959eff4f422f118aa76dca2d0d797d184e487da"
-                        },
-                        {
-                            "bytes": "6572676f54657374546f6b656e41"
-                        }
-                    ],
-                    "constructor": 0
-                },
-                {
-                    "fields": [
-                        {
-                            "bytes": "805fe1efcdea11f1e959eff4f422f118aa76dca2d0d797d184e487da"
-                        },
-                        {
-                            "bytes": "6572676f54657374546f6b656e42"
-                        }
-                    ],
-                    "constructor": 0
-                },
-                {
-                    "fields": [
-                        {
-                            "bytes": "805fe1efcdea11f1e959eff4f422f118aa76dca2d0d797d184e487da"
-                        },
-                        {
-                            "bytes": "6572676f54657374546f6b656e4c50"
-                        }
-                    ],
-                    "constructor": 0
-                },
-                {
-                    "int": 1
-                }
-            ],
-            "constructor": 0
-        },
+        "data": null,
         "dataBin": "d8799fd8799f581c805fe1efcdea11f1e959eff4f422f118aa76dca2d0d797d184e487da506572676f54657374546f6b656e4e4654ffd8799f581c805fe1efcdea11f1e959eff4f422f118aa76dca2d0d797d184e487da4e6572676f54657374546f6b656e41ffd8799f581c805fe1efcdea11f1e959eff4f422f118aa76dca2d0d797d184e487da4e6572676f54657374546f6b656e42ffd8799f581c805fe1efcdea11f1e959eff4f422f118aa76dca2d0d797d184e487da4f6572676f54657374546f6b656e4c50ff01ff",
         "spentByTxHash": null
     }
