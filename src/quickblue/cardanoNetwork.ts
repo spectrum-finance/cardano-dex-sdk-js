@@ -4,7 +4,7 @@ import {Tx} from "../cardano/entities/tx"
 import {FullTxOut} from "../cardano/entities/txOut"
 import {AssetRef, Datum, OutputRef, PaymentCred, TxHash} from "../cardano/types"
 import {JSONBI} from "../utils/json"
-import {Items, QuickblueTx, QuickblueTxOut, toCardanoTx, toCardanoTxOut} from "./models"
+import {Items, QuickblueTx, QuickblueTxOut, toCardanoTx, toCardanoTxOut, UtxoSearch} from "./models"
 import {Ordering, Paging} from "./types"
 
 export interface CardanoNetwork {
@@ -27,6 +27,10 @@ export interface CardanoNetwork {
   /**  Get unspent outputs by asset reference.
    */
   getUtxosByAsset(ref: AssetRef, paging: Paging, ordering?: Ordering): Promise<[FullTxOut[], number]>
+
+  /** Search UTxOs.
+   */
+  searchUtxos(req: UtxoSearch, paging: Paging): Promise<[FullTxOut[], number]>
 
   /**  Get asset info by asset reference.
    */
@@ -95,6 +99,15 @@ export class Quickblue implements CardanoNetwork {
       .request<Items<QuickblueTxOut>>({
         url: `/outputs/unspent/byAsset/${ref}`,
         params: {...paging, ordering},
+        transformResponse: data => JSONBI.parse(data)
+      })
+      .then(res => [res.data.items.map(i => toCardanoTxOut(i)), res.data.total])
+  }
+
+  searchUtxos(req: UtxoSearch, paging: Paging): Promise<[FullTxOut[], number]> {
+    return this.backend
+      .post<Items<QuickblueTxOut>>("/outputs/unspent/search", req, {
+        params: {...paging},
         transformResponse: data => JSONBI.parse(data)
       })
       .then(res => [res.data.items.map(i => toCardanoTxOut(i)), res.data.total])

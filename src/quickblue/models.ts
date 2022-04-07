@@ -2,7 +2,17 @@ import {Tx} from "../cardano/entities/tx"
 import {TxIn} from "../cardano/entities/txIn"
 import {FullTxOut} from "../cardano/entities/txOut"
 import {Value} from "../cardano/entities/value"
-import {Addr, BlockHash, Hash28, Hash32, HexString, Lovelace, TxHash} from "../cardano/types"
+import {
+  Addr,
+  AssetRef,
+  BlockHash,
+  Hash28,
+  Hash32,
+  HexString,
+  Lovelace,
+  PaymentCred,
+  TxHash
+} from "../cardano/types"
 
 export type Items<T> = {
   items: T[]
@@ -75,4 +85,10 @@ export function toCardanoTx(qtx: QuickblueTx): Tx {
     outputs: qtx.outputs.map(o => toCardanoTxOut(o)),
     validityRange: [qtx.invalidBefore, qtx.invalidHereafter]
   }
+}
+
+export type UtxoSearch = {
+  paymentCred: PaymentCred
+  containsAllOf?: AssetRef[]
+  containsAnyOf?: AssetRef[]
 }

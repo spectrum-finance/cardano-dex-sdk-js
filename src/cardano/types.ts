@@ -1,3 +1,5 @@
+import {AssetClass} from "./entities/assetClass"
+
 export type HexString = string
 export type Bech32String = string
 
@@ -16,6 +18,10 @@ export type PolicyId = ScriptHash
 export type AssetName = string
 
 export type AssetRef = string
+
+export function makeAssetRef(ac: AssetClass): AssetRef {
+  return `${ac.policyId}.${ac.name}`
+}
 
 export type Lovelace = bigint
 
