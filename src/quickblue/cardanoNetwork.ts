@@ -111,7 +111,6 @@ export class Quickblue implements CardanoNetwork {
   }
 
   reportDatum(datum: Datum): Promise<void> {
-    return this.backend
-      .post(`/datum/report`, datum, {headers: {"Content-Type": "application/json"}})
+    return this.backend.post(`/datum/report`, datum, {headers: {"Content-Type": "application/json"}})
   }
 }

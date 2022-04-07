@@ -20,10 +20,7 @@ export function mkAmmOutputs(addrs: OrderAddrs, R: CardanoWasm): AmmOutputsImpl 
 }
 
 class AmmOutputsImpl implements AmmOutputs {
-  constructor(
-    public readonly addrs: OrderAddrs,
-    public readonly R: CardanoWasm
-  ) {}
+  constructor(public readonly addrs: OrderAddrs, public readonly R: CardanoWasm) {}
 
   deposit(req: DepositRequest): TxOutCandidate {
     const value = Value(MinLovelaceInOutput, [req.x, req.y])

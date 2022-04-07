@@ -155,4 +155,3 @@ const sampleResponse = `
 `
 const explorerUtxos: QuickblueTxOut[] = JSON.parse(sampleResponse)
 const utxos = explorerUtxos.map(x => toCardanoTxOut(x))
-

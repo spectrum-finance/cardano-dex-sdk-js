@@ -9,18 +9,12 @@ export interface AmmActions {
   createOrder(req: OrderRequest, ctx: TxContext): TxCandidate
 }
 
-export function mkAmmActions(
-  outputs: AmmOutputs,
-  uiRewardAddr: Addr
-): AmmActions {
+export function mkAmmActions(outputs: AmmOutputs, uiRewardAddr: Addr): AmmActions {
   return new DefaultAmmActions(outputs, uiRewardAddr)
 }
 
 class DefaultAmmActions implements AmmActions {
-  constructor(
-    public readonly outputs: AmmOutputs,
-    public readonly uiRewardAddr: Addr
-  ) {}
+  constructor(public readonly outputs: AmmOutputs, public readonly uiRewardAddr: Addr) {}
 
   createOrder(req: OrderRequest, ctx: TxContext): TxCandidate {
     const orderCandidate = () => {

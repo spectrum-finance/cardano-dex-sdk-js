@@ -25,11 +25,7 @@ export interface Pools {
   getByTokensUnion(tokens: AssetRef[], paging: Paging): Promise<[AmmPool[], number]>
 }
 
-export function mkNetworkPoolsV1(
-  network: CardanoNetwork,
-  parser: PoolsParser,
-  scripts: ScriptCreds
-): Pools {
+export function mkNetworkPoolsV1(network: CardanoNetwork, parser: PoolsParser, scripts: ScriptCreds): Pools {
   return new NetworkPoolsV1(network, parser, scripts)
 }
 
@@ -38,8 +34,7 @@ class NetworkPoolsV1 implements Pools {
     public readonly network: CardanoNetwork,
     public readonly parser: PoolsParser,
     public readonly scripts: ScriptCreds
-  ) {
-  }
+  ) {}
 
   get(id: PoolId): Promise<AmmPool | undefined> {
     return notImplemented([id])
