@@ -12,7 +12,7 @@ test("Parse Pools in batch", async t => {
   const p = mkPoolsParser(RustModule.CardanoWasm)
   const pools = p.parseBatch(utxos)
   t.assert(pools.length == 3, "Not all pools parsed")
-  t.log("Parsed pools: " + pools)
+  t.log(pools)
 })
 
 const sampleResponse = `

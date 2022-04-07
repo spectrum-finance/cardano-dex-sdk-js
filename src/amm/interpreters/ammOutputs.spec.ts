@@ -1,7 +1,6 @@
 import test from "ava"
 import {AssetAmount} from "../../domain/assetAmount"
 import {encodeHex} from "../../utils/hex"
-import {renderPlutusDataTreeUnsafe} from "../../utils/plutus"
 import {RustModule} from "../../utils/rustLoader"
 import {mkDepositDatum, mkRedeemDatum, mkSwapDatum, parsePoolDatum} from "../contractData"
 import {DepositRequest, OrderRequestKind, RedeemRequest, SwapRequest} from "../models/opRequests"
@@ -13,19 +12,19 @@ test.before(async () => {
 
 const poolTokens = {
   lq: {
-    name: "706f6f6c5f6c71",
+    name: "pool_lq",
     policyId: "6c71"
   },
   nft: {
-    name: "706f6f6c5f6e6674",
+    name: "pool_nft",
     policyId: "6e6674"
   },
   x: {
-    name: "706f6f6c5f78",
+    name: "pool_x",
     policyId: "78"
   },
   y: {
-    name: "706f6f6c5f79",
+    name: "pool_y",
     policyId: "79"
   }
 }
@@ -92,7 +91,6 @@ test("Construct valid Redeem datum", async t => {
     "d8799fd8799f436e667448706f6f6c5f6e6674ffd8799f417846706f6f6c5f78ffd8799f" +
     "417946706f6f6c5f79ffd8799f426c7147706f6f6c5f6c71ff1864581cd74d26c5029cf2" +
     "90094fce1a0670da7369b9026571dfb977c6fa234fff"
-  t.log(renderPlutusDataTreeUnsafe(sampleHex, RustModule.CardanoWasm))
   const redeemReq: RedeemRequest = {
     kind: OrderRequestKind.Redeem,
     poolId: poolTokens.nft,
