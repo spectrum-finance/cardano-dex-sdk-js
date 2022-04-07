@@ -18,11 +18,15 @@ export type QuickblueTxOut = {
   dataBin?: HexString
 }
 
+function fixValue(value: Value): Value {
+  return value.map(e => ({...e, quantity: BigInt(e.quantity)}))
+}
+
 export function toCardanoTxOut(qout: QuickblueTxOut): FullTxOut {
   return {
     txHash: qout.txHash,
     index: qout.index,
-    value: qout.value,
+    value: fixValue(qout.value),
     addr: qout.addr,
     dataHash: qout.dataHash,
     data: qout.dataBin
