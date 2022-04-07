@@ -1,5 +1,6 @@
 import test from "ava"
 import {QuickblueTxOut, toCardanoTxOut} from "../../quickblue/models"
+import {JSONBI} from "../../utils/json"
 import {RustModule} from "../../utils/rustLoader"
 import {mkPoolsParser} from "./poolsParser"
 
@@ -153,5 +154,5 @@ const sampleResponse = `
     }
 ]
 `
-const explorerUtxos: QuickblueTxOut[] = JSON.parse(sampleResponse)
+const explorerUtxos: QuickblueTxOut[] = JSONBI.parse(sampleResponse)
 const utxos = explorerUtxos.map(x => toCardanoTxOut(x))
