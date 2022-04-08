@@ -4,35 +4,41 @@ type Unpacked<T> = T extends (infer U)[]
   ? U
   : T extends Promise<infer U>
   ? U
-  : T
+  : T;
 
-type TransformerFn<T> = (v: any) => T
+type TransformerFn<T> = (v: any) => T;
 
-type TransformerObj<T> = T extends Record<string, any>
-  ? {[key in keyof T]: TransformerObj<T[key]>}
-  : TransformerFn<T>
+type TransformerObj<T> = T extends (infer U)[]
+  ? Partial<{ [key in keyof U]: TransformerObj<U[key]> }>
+  : T extends Record<string, any>
+  ? Partial<{ [key in keyof T]: TransformerObj<T[key]> }>
+  : TransformerFn<T>;
 
-export class JsonTransformer<T> {
-  constructor(private rules: Partial<TransformerObj<Unpacked<Unpacked<T>>>>) {}
+const transformKey = (
+  value: any,
+  rules: TransformerObj<Unpacked<any>> | undefined
+): any => {
+  if (value instanceof Array) {
+    return value.map((cv) => transformKey(cv, rules))
+  }
+  if (value instanceof Object) {
+    return Object.entries(value).reduce<Record<string, any>>((acc, [key, cv]) => {
+      acc[key] = transformKey(
+        cv,
+        rules ? (rules as any)[key] : undefined
+      )
 
-  transform(raw: string): T {
-    const parsed = JSON.parse(raw)
-
-    return this.transformKey(parsed, this.rules)
+      return acc
+    }, {})
   }
 
-  private transformKey(value: any, rules: Partial<TransformerObj<Unpacked<any>>> | undefined): any {
-    if (value instanceof Array) {
-      return value.map(cv => this.transformKey(cv, rules))
-    }
-    if (value instanceof Object) {
-      return Object.entries(value).reduce<Record<string, any>>((acc, [key, cv]) => {
-        acc[key] = this.transformKey(cv, rules ? (rules as any)[key] : undefined)
+  return rules && rules instanceof Function ? rules(value) : value
+}
 
-        return acc
-      }, {})
-    }
+export const mkJsonTransformer = <T>(rules: TransformerObj<Unpacked<Unpacked<T>>>): ((raw: string) => T) => {
+  return  (raw: string) => {
+    const parsed = JSON.parse(raw)
 
-    return rules && rules instanceof Function ? rules(value) : value
+    return transformKey(parsed, rules)
   }
 }

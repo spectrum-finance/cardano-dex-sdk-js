@@ -4,6 +4,7 @@ import {Tx} from "../cardano/entities/tx"
 import {FullTxOut} from "../cardano/entities/txOut"
 import {AssetRef, Datum, OutputRef, PaymentCred, TxHash} from "../cardano/types"
 import {JSONBI} from "../utils/json"
+import {mkJsonTransformer} from "../utils/jsonTransformer"
 import {Items, QuickblueTx, QuickblueTxOut, toCardanoTx, toCardanoTxOut, UtxoSearch} from "./models"
 import {Ordering, Paging} from "./types"
 
@@ -45,6 +46,10 @@ function fix<A, B>(a: A, fixF: (a: A) => B): A {
   fixF(a)
   return a
 }
+
+const quickblueTxOutJsonTransformer = mkJsonTransformer<Items<QuickblueTxOut>>({
+  items: { value: { quantity: (v: number) => BigInt(v) }}
+})
 
 export class Quickblue implements CardanoNetwork {
   readonly backend: AxiosInstance
@@ -118,7 +123,7 @@ export class Quickblue implements CardanoNetwork {
       .request<Items<QuickblueTxOut>>({
         url: `/outputs/unspent/byPaymentCred/${pcred}`,
         params: paging,
-        transformResponse: data => JSONBI.parse(data)
+        transformResponse: quickblueTxOutJsonTransformer
       })
       .then(res => [res.data.items.map(i => toCardanoTxOut(i)), res.data.total])
   }
