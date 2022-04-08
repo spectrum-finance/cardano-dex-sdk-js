@@ -2,7 +2,6 @@ import {AssetRef, makeAssetRef} from "../../cardano/types"
 import {CardanoNetwork} from "../../quickblue/cardanoNetwork"
 import {UtxoSearch} from "../../quickblue/models"
 import {Paging} from "../../quickblue/types"
-import {notImplemented} from "../../utils/notImplemented"
 import {AmmPool} from "../domain/ammPool"
 import {PoolId} from "../domain/types"
 import {PoolsParser} from "../parsers/poolsParser"
@@ -54,12 +53,17 @@ class NetworkPoolsV1 implements Pools {
     return [pools, total]
   }
 
-  getByTokens(tokens: AssetRef[], paging: Paging): Promise<[AmmPool[], number]> {
-    return notImplemented([tokens, paging])
+  async getByTokens(tokens: AssetRef[], paging: Paging): Promise<[AmmPool[], number]> {
+    const req: UtxoSearch = {paymentCred: this.scripts.ammPool, containsAllOf: tokens}
+    return this.searchPools(req, paging)
   }
 
   async getByTokensUnion(tokens: AssetRef[], paging: Paging): Promise<[AmmPool[], number]> {
-    const req: UtxoSearch = {paymentCred: this.scripts.ammPool, containsAllOf: tokens}
+    const req: UtxoSearch = {paymentCred: this.scripts.ammPool, containsAnyOf: tokens}
+    return this.searchPools(req, paging)
+  }
+
+  private async searchPools(req: UtxoSearch, paging: Paging): Promise<[AmmPool[], number]> {
     const [boxes, totalBoxes] = await this.network.searchUtxos(req, paging)
     const pools = this.parser.parseBatch(boxes)
     const invalid = boxes.length - pools.length
