@@ -15,6 +15,7 @@ export type Datum = HexString
 export type MintingPolicy = Script
 
 export type PolicyId = ScriptHash
+export type Subject = HexString;
 export type AssetName = string
 
 export type AssetRef = string

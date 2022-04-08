@@ -13,19 +13,23 @@ test.before(async () => {
 const poolTokens = {
   lq: {
     name: "pool_lq",
-    policyId: "6c71"
+    policyId: "6c71",
+    subject: '6c71706f6f6c5f6c71'
   },
   nft: {
     name: "pool_nft",
-    policyId: "6e6674"
+    policyId: "6e6674",
+    subject: '6e6674706f6f6c5f6e6674'
   },
   x: {
     name: "pool_x",
-    policyId: "78"
+    policyId: "78",
+    subject: '78706f6f6c5f78'
   },
   y: {
     name: "pool_y",
-    policyId: "79"
+    policyId: "79",
+    subject: '79706f6f6c5f79'
   }
 }
 

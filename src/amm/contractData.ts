@@ -80,6 +80,9 @@ export function mkAssetClass(ac: AssetClass, R: CardanoWasm): PlutusData {
 export function parseAssetClass(pd: PlutusData): AssetClass | undefined {
   const ac = pd.as_constr_plutus_data()!.data()
   const policyId = encodeHex(ac.get(0).as_bytes()!)
+  const nameHex = encodeHex(ac.get(1).as_bytes()!);
   const name = new TextDecoder().decode(ac.get(1).as_bytes()!)
-  return {policyId, name}
+  const subject = `${policyId}${nameHex}`;
+
+  return {policyId, name, subject}
 }
