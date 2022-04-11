@@ -1,6 +1,6 @@
+import {Addr} from "../../cardano/entities/address"
 import {TxCandidate} from "../../cardano/entities/tx"
 import {emptyValue, Value} from "../../cardano/entities/value"
-import {Addr} from "../../cardano/types"
 import {TxContext} from "../../cardano/wallet/entities/txContext"
 import {OrderRequest, OrderRequestKind} from "../models/opRequests"
 import {AmmOutputs} from "./ammOutputs"

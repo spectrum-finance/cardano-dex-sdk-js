@@ -1,5 +1,6 @@
 import test from "ava"
 import {RustModule} from "../../utils/rustLoader"
+import {decodeAddr} from "./address"
 import {pubKeyHashFromAddr, pubKeyHashFromRawAddr} from "./publicKey"
 
 test.before(async () => {
@@ -13,11 +14,16 @@ const rawAddr =
   "01f62ccc5df2270b4450e55e39bb60cc0b19ef6498ac280ce854a3daa44c06673ad29cbd475cfaaf68ee4c3bf081913eeeab9393ee012bed4c"
 
 test("Parse Addr", async t => {
-  const r = pubKeyHashFromAddr(bech32Addr)
+  const r = pubKeyHashFromAddr(bech32Addr, RustModule.CardanoWasm)
   t.deepEqual(r, keyHash)
 })
 
 test("Parse RawAddr", async t => {
-  const r = pubKeyHashFromRawAddr(rawAddr)
+  const r = pubKeyHashFromRawAddr(rawAddr, RustModule.CardanoWasm)
   t.deepEqual(r, keyHash)
+})
+
+test("Decode RawAddr", async t => {
+  const r = decodeAddr(rawAddr, RustModule.CardanoWasm)
+  t.deepEqual(r, bech32Addr)
 })

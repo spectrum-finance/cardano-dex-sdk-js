@@ -17,8 +17,6 @@ export {
   OutputRef,
   Slot,
   ValidityRange,
-  Addr,
-  RawAddr,
   PaymentCred
 } from "./cardano/types"
 export * from "./cardano/constants"
@@ -34,6 +32,7 @@ export {AssetEntry} from "./cardano/entities/assetEntry"
 export {AssetInfo} from "./cardano/entities/assetInfo"
 export {Network} from "./cardano/entities/network"
 export {PubKeyHash, SPubKey, pubKeyHashFromAddr, pubKeyHashFromRawAddr} from "./cardano/entities/publicKey"
+export {Addr, RawAddr, decodeAddr} from "./cardano/entities/address"
 export {Tx, TxCandidate, RawUnsignedTx, RawTx} from "./cardano/entities/tx"
 export {TxIn, ConsumeScriptInput, FullTxIn} from "./cardano/entities/txIn"
 export {TxOut, TxOutCandidate, FullTxOut} from "./cardano/entities/txOut"

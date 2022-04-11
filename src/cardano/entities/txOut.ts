@@ -1,4 +1,5 @@
-import {Addr, Datum, Hash32, TxHash} from "../types"
+import {Datum, Hash32, TxHash} from "../types"
+import {Addr} from "./address"
 import {Value} from "./value"
 
 export type TxOut = {
