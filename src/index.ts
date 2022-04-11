@@ -22,6 +22,7 @@ export {
 export * from "./cardano/constants"
 
 export {Prover} from "./cardano/wallet/prover"
+export {Wallet} from "./cardano/wallet/wallet"
 export {TxAsm, mkTxAsm} from "./cardano/wallet/txAsm"
 
 export {TxContext} from "./cardano/wallet/entities/txContext"
@@ -74,3 +75,5 @@ export {Pools, mkNetworkPoolsV1} from "./amm/services/pools"
 export * from "./amm/constants"
 export {ScriptCreds, OrderAddrs, ScriptCredsV1, OrderAddrsV1} from "./amm/scripts"
 export * from "./amm/contractData"
+
+export {fromWasmValue, decodeWasmValue} from "./interop/serlib"
