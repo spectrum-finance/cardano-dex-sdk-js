@@ -76,4 +76,11 @@ export * from "./amm/constants"
 export {ScriptCreds, OrderAddrs, ScriptCredsV1, OrderAddrsV1} from "./amm/scripts"
 export * from "./amm/contractData"
 
-export {fromWasmValue, decodeWasmValue} from "./interop/serlib"
+export {
+  fromWasmValue,
+  decodeWasmValue,
+  encodeWasmValue,
+  toWasmValue,
+  fromWasmUtxo,
+  decodeWasmUtxo
+} from "./interop/serlib"
