@@ -6,5 +6,5 @@ export type AssetClass = {
   name: AssetName
 }
 
-export const mkSubject = ({ policyId, name }: AssetClass): Subject =>
-  `${policyId}${encodeHex(new TextEncoder().encode(name))}`;
+export const mkSubject = ({policyId, name}: AssetClass): Subject =>
+  `${policyId}${encodeHex(new TextEncoder().encode(name))}`

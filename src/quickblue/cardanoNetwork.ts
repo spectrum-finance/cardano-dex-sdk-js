@@ -48,7 +48,7 @@ function fix<A, B>(a: A, fixF: (a: A) => B): A {
 }
 
 const quickblueTxOutJsonTransformer = mkJsonTransformer<Items<QuickblueTxOut>>({
-  items: { value: { quantity: (v: number) => BigInt(v) }}
+  items: {value: {quantity: (v: number) => BigInt(v)}}
 })
 
 export class Quickblue implements CardanoNetwork {

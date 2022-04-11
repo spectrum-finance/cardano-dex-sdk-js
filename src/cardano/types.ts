@@ -14,7 +14,7 @@ export type Datum = HexString
 
 export type MintingPolicy = Script
 
-export type Subject = ScriptHash;
+export type Subject = ScriptHash
 export type PolicyId = ScriptHash
 export type AssetName = string
 
@@ -36,4 +36,5 @@ export type Slot = bigint
 export type ValidityRange = [Slot, Slot]
 
 export type Addr = Bech32String
+export type RawAddr = HexString
 export type PaymentCred = HexString
