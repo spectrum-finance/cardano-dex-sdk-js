@@ -1,3 +1,4 @@
+import {isAssetClassEquals} from "../../cardano/entities/assetClass"
 import {AssetAmount} from "../../domain/assetAmount"
 import {Price} from "../../domain/price"
 import {EmissionLP} from "../constants"
@@ -36,7 +37,7 @@ export class AmmPool {
   /** @return proportional amount of one token to a given input of the other
    */
   depositAmount(input: AssetAmount): AssetAmount {
-    if (input.asset === this.x.asset)
+    if (isAssetClassEquals(input.asset, this.x.asset))
       return this.y.withAmount((input.amount * this.priceX.numerator) / this.priceX.denominator)
     else return this.x.withAmount((input.amount * this.priceY.numerator) / this.priceY.denominator)
   }
@@ -44,7 +45,7 @@ export class AmmPool {
   /** @return pair of asset amounts proportional to a given input of LP tokens.
    */
   shares(input: AssetAmount): [AssetAmount, AssetAmount] {
-    if (input.asset === this.lp.asset) {
+    if (isAssetClassEquals(input.asset, this.lp.asset)) {
       return [
         this.x.withAmount((input.amount * this.x.amount) / this.supplyLP),
         this.y.withAmount((input.amount * this.y.amount) / this.supplyLP)
@@ -57,7 +58,7 @@ export class AmmPool {
   /** @return amount of LP asset proportional to the amounts of assets deposited.
    */
   rewardLP(inputX: AssetAmount, inputY: AssetAmount): AssetAmount {
-    if (inputX.asset === this.x.asset && inputY.asset === this.y.asset) {
+    if (isAssetClassEquals(inputX.asset, this.x.asset) && isAssetClassEquals(inputY.asset, this.y.asset)) {
       const rewardXWise = (inputX.amount * this.supplyLP) / this.x.amount
       const rewardYWise = (inputY.amount * this.supplyLP) / this.y.amount
       return this.lp.withAmount(rewardXWise <= rewardYWise ? rewardXWise : rewardYWise)
@@ -71,13 +72,13 @@ export class AmmPool {
   inputAmount(output: AssetAmount, maxSlippage?: number): AssetAmount | undefined {
     const slippage = BigInt((maxSlippage || 0) * 100)
     const minimalOutput = this.outputAmount(output).amount
-    if (output.asset === this.x.asset && minimalOutput > 0 && output.amount <= this.x.amount) {
+    if (isAssetClassEquals(output.asset, this.x.asset) && minimalOutput > 0 && output.amount <= this.x.amount) {
       return this.y.withAmount(
         (this.y.amount * output.amount * this.feeDenom) /
           ((this.x.amount + (this.x.amount * slippage) / (100n * 100n) - output.amount) * this.feeNum) +
           1n
       )
-    } else if (output.asset === this.y.asset && minimalOutput > 0 && output.amount <= this.y.amount) {
+    } else if (isAssetClassEquals(output.asset, this.y.asset) && minimalOutput > 0 && output.amount <= this.y.amount) {
       return this.x.withAmount(
         (this.x.amount * output.amount * this.feeDenom) /
           ((this.y.amount + (this.y.amount * slippage) / (100n * 100n) - output.amount) * this.feeNum) +
@@ -94,7 +95,7 @@ export class AmmPool {
    */
   outputAmount(input: AssetAmount, maxSlippage?: number): AssetAmount {
     const slippage = BigInt((maxSlippage || 0) * 100)
-    if (input.asset === this.x.asset)
+    if (isAssetClassEquals(input.asset, this.x.asset))
       return this.y.withAmount(
         (this.y.amount * input.amount * this.feeNum) /
           ((this.x.amount + (this.x.amount * slippage) / (100n * 100n)) * this.feeDenom +
