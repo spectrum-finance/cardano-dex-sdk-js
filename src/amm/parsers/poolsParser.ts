@@ -25,7 +25,7 @@ class DefaultPoolsParser implements PoolsParser {
         const x = assetAmountOf(box.value, poolConfig.x)
         const y = assetAmountOf(box.value, poolConfig.y)
         const lq = assetAmountOf(box.value, poolConfig.lq)
-        return new AmmPool(nft.asset, x, y, lq, poolConfig.feeNum)
+        return new AmmPool(nft.asset, lq, x, y, poolConfig.feeNum)
       }
     }
     return undefined
