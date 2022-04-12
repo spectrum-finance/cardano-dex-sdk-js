@@ -1,5 +1,5 @@
 import * as WASM from "@emurgo/cardano-serialization-lib-browser"
-import F from "ramda"
+import * as F from "ramda"
 import {AdaPolicyId} from "../cardano/constants"
 import {AdaEntry, AssetEntry} from "../cardano/entities/assetEntry"
 import {TxOut} from "../cardano/entities/txOut"
