@@ -6,7 +6,7 @@ import {PoolId} from "./types"
 export class AmmPool {
   constructor(
     public readonly id: PoolId,
-    public readonly lq: AssetAmount,
+    public readonly lp: AssetAmount,
     public readonly x: AssetAmount,
     public readonly y: AssetAmount,
     public readonly poolFeeNum: number
@@ -18,7 +18,7 @@ export class AmmPool {
   readonly feeNum: bigint
 
   get supplyLP(): bigint {
-    return EmissionLP - this.lq.amount
+    return EmissionLP - this.lp.amount
   }
 
   /** @return Price of tokenX in tokenY units.
@@ -44,7 +44,7 @@ export class AmmPool {
   /** @return pair of asset amounts proportional to a given input of LP tokens.
    */
   shares(input: AssetAmount): [AssetAmount, AssetAmount] {
-    if (input.asset === this.lq.asset) {
+    if (input.asset === this.lp.asset) {
       return [
         this.x.withAmount((input.amount * this.x.amount) / this.supplyLP),
         this.y.withAmount((input.amount * this.y.amount) / this.supplyLP)
@@ -60,9 +60,9 @@ export class AmmPool {
     if (inputX.asset === this.x.asset && inputY.asset === this.y.asset) {
       const rewardXWise = (inputX.amount * this.supplyLP) / this.x.amount
       const rewardYWise = (inputY.amount * this.supplyLP) / this.y.amount
-      return this.lq.withAmount(rewardXWise <= rewardYWise ? rewardXWise : rewardYWise)
+      return this.lp.withAmount(rewardXWise <= rewardYWise ? rewardXWise : rewardYWise)
     } else {
-      return this.lq.withAmount(0n)
+      return this.lp.withAmount(0n)
     }
   }
 
