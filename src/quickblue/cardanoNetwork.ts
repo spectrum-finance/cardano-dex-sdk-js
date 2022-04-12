@@ -1,15 +1,17 @@
 import axios, {AxiosInstance} from "axios"
 import {AssetInfo} from "../cardano/entities/assetInfo"
+import {NetworkParams} from "../cardano/entities/env"
 import {Tx} from "../cardano/entities/tx"
 import {FullTxOut} from "../cardano/entities/txOut"
-import {AssetRef, Datum, OutputRef, PaymentCred, TxHash} from "../cardano/types"
+import {AssetRef, Datum, PaymentCred, TxHash, TxOutRef} from "../cardano/types"
 import {JSONBI, JSONBI_ALWAYS} from "../utils/json"
-import {mkJsonTransformer} from "../utils/jsonTransformer"
 import {
   Items,
   NetworkContext,
+  quickblueNetworkParamsTransformer,
   QuickblueTx,
   QuickblueTxOut,
+  quickblueTxOutJsonTransformer,
   toCardanoTx,
   toCardanoTxOut,
   UtxoSearch
@@ -23,7 +25,7 @@ export interface CardanoNetwork {
 
   /** Get output by output reference.
    */
-  getOutput(ref: OutputRef): Promise<FullTxOut | undefined>
+  getOutput(ref: TxOutRef): Promise<FullTxOut | undefined>
 
   /** Get unspent outputs by payment credential.
    */
@@ -52,16 +54,16 @@ export interface CardanoNetwork {
   /** Get network context.
    */
   getNetworkContext(): Promise<NetworkContext>
+
+  /** Get network params.
+   */
+  getNetworkParams(): Promise<NetworkParams>
 }
 
 function fix<A, B>(a: A, fixF: (a: A) => B): A {
   fixF(a)
   return a
 }
-
-const quickblueTxOutJsonTransformer = mkJsonTransformer<Items<QuickblueTxOut>>({
-  items: {value: {quantity: (v: number) => BigInt(v)}}
-})
 
 export class Quickblue implements CardanoNetwork {
   readonly backend: AxiosInstance
@@ -83,7 +85,7 @@ export class Quickblue implements CardanoNetwork {
       .then(res => fix(res.data, ai => (ai.emission = BigInt(ai.emission))))
   }
 
-  getOutput(ref: OutputRef): Promise<FullTxOut | undefined> {
+  getOutput(ref: TxOutRef): Promise<FullTxOut | undefined> {
     return this.backend
       .request<QuickblueTxOut>({
         url: `/outputs/${ref}`,
@@ -149,6 +151,15 @@ export class Quickblue implements CardanoNetwork {
       .request<NetworkContext>({
         url: "/blocks/bestBlock",
         transformResponse: data => JSONBI_ALWAYS.parse(data)
+      })
+      .then(res => res.data)
+  }
+
+  getNetworkParams(): Promise<NetworkParams> {
+    return this.backend
+      .request<NetworkParams>({
+        url: "/networkParams",
+        transformResponse: quickblueNetworkParamsTransformer
       })
       .then(res => res.data)
   }

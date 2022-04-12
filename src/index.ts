@@ -11,10 +11,12 @@ export {
   PolicyId,
   AssetName,
   AssetRef,
+  mkAssetRef,
   Lovelace,
   TxHash,
   BlockHash,
-  OutputRef,
+  TxOutRef,
+  mkTxOutRef,
   Slot,
   ValidityRange,
   PaymentCred

@@ -1,4 +1,4 @@
-import {AssetRef, makeAssetRef} from "../../cardano/types"
+import {AssetRef, mkAssetRef} from "../../cardano/types"
 import {CardanoNetwork} from "../../quickblue/cardanoNetwork"
 import {UtxoSearch} from "../../quickblue/models"
 import {Paging} from "../../quickblue/types"
@@ -37,7 +37,7 @@ class NetworkPoolsV1 implements Pools {
   ) {}
 
   async get(id: PoolId): Promise<AmmPool | undefined> {
-    const [boxes] = await this.network.getUtxosByAsset(makeAssetRef(id), {offset: 0, limit: 1})
+    const [boxes] = await this.network.getUtxosByAsset(mkAssetRef(id), {offset: 0, limit: 1})
     if (boxes.length > 0) {
       const poolBox = boxes[0]
       return this.parser.parse(poolBox)

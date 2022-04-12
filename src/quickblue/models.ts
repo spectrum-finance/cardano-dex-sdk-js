@@ -1,9 +1,11 @@
 import {Addr} from "../cardano/entities/address"
+import {NetworkParams} from "../cardano/entities/env"
 import {Tx} from "../cardano/entities/tx"
 import {TxIn} from "../cardano/entities/txIn"
 import {FullTxOut} from "../cardano/entities/txOut"
 import {Value} from "../cardano/entities/value"
 import {AssetRef, BlockHash, Hash28, Hash32, HexString, Lovelace, PaymentCred, TxHash} from "../cardano/types"
+import {mkJsonTransformer} from "../utils/jsonTransformer"
 
 export type Items<T> = {
   items: T[]
@@ -18,6 +20,12 @@ export type QuickblueTxOut = {
   dataHash?: Hash32
   dataBin?: HexString
 }
+
+const toBigInt = (v: number) => BigInt(v)
+
+export const quickblueTxOutJsonTransformer = mkJsonTransformer<Items<QuickblueTxOut>>({
+  items: {value: {quantity: toBigInt}}
+})
 
 export function toCardanoTxOut(qout: QuickblueTxOut): FullTxOut {
   return {
@@ -85,3 +93,15 @@ export type NetworkContext = {
   slotNo: bigint
   epochNo: bigint
 }
+
+export type QNetworkParams = NetworkParams
+
+export const quickblueNetworkParamsTransformer = mkJsonTransformer<QNetworkParams>({
+  pparams: {
+    txFeeFixed: toBigInt,
+    txFeePerByte: toBigInt,
+    stakeAddressDeposit: toBigInt,
+    stakePoolDeposit: toBigInt,
+    utxoCostPerWord: toBigInt
+  }
+})

@@ -1,26 +1,34 @@
 import {toWasmValue} from "../../interop/serlib"
 import {decodeHex, encodeHex} from "../../utils/hex"
 import {CardanoWasm} from "../../utils/rustLoader"
+import {NetworkParams} from "../entities/env"
 import {RawUnsignedTx, TxCandidate} from "../entities/tx"
 
 export interface TxAsm {
   finalize(candidate: TxCandidate): RawUnsignedTx
 }
 
-export function mkTxAsm(R: CardanoWasm): TxAsm {
-  return new DefaultTxAsm(R)
+export function mkTxAsm(env: NetworkParams, R: CardanoWasm): TxAsm {
+  return new DefaultTxAsm(env, R)
 }
 
 class DefaultTxAsm implements TxAsm {
-  constructor(public readonly R: CardanoWasm) {}
+  constructor(public readonly env: NetworkParams, public readonly R: CardanoWasm) {}
+
   finalize(candidate: TxCandidate): RawUnsignedTx {
     const conf = this.R.TransactionBuilderConfigBuilder.new()
-    conf.fee_algo(this.R.LinearFee.new(this.R.BigNum.from_str("44"), this.R.BigNum.from_str("155381")))
-    conf.coins_per_utxo_word(this.R.BigNum.from_str("1000000"))
-    conf.pool_deposit(this.R.BigNum.from_str("500000000"))
-    conf.key_deposit(this.R.BigNum.from_str("2000000"))
-    conf.max_value_size(5000)
-    conf.max_tx_size(16384)
+    const pparams = this.env.pparams
+    conf.fee_algo(
+      this.R.LinearFee.new(
+        this.R.BigNum.from_str(pparams.txFeePerByte.toString()),
+        this.R.BigNum.from_str(pparams.txFeeFixed.toString())
+      )
+    )
+    conf.coins_per_utxo_word(this.R.BigNum.from_str(pparams.utxoCostPerWord.toString()))
+    conf.pool_deposit(this.R.BigNum.from_str(pparams.stakePoolDeposit.toString()))
+    conf.key_deposit(this.R.BigNum.from_str(pparams.stakeAddressDeposit.toString()))
+    conf.max_value_size(pparams.maxValueSize)
+    conf.max_tx_size(pparams.maxTxSize)
     const txb = this.R.TransactionBuilder.new(conf.build())
     for (const i of candidate.inputs) {
       const txInId = this.R.TransactionHash.from_bytes(decodeHex(i.txOut.txHash))

@@ -20,7 +20,7 @@ export type AssetName = string
 
 export type AssetRef = string
 
-export function makeAssetRef(ac: AssetClass): AssetRef {
+export function mkAssetRef(ac: AssetClass): AssetRef {
   return `${ac.policyId}.${ac.name}`
 }
 
@@ -29,7 +29,11 @@ export type Lovelace = bigint
 export type TxHash = Hash32
 export type BlockHash = Hash32
 
-export type OutputRef = string
+export type TxOutRef = string
+
+export function mkTxOutRef(txHash: TxHash, index: number): TxOutRef {
+  return `${txHash}#${index}`
+}
 
 export type Slot = bigint
 

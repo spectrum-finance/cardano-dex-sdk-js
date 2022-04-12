@@ -1,3 +1,5 @@
+import {JSONBI} from "./json"
+
 type Unpacked<T> = T extends (infer U)[]
   ? U
   : T extends (...args: any[]) => infer U
@@ -31,7 +33,7 @@ const transformKey = (value: any, rules: TransformerObj<Unpacked<any>> | undefin
 
 export const mkJsonTransformer = <T>(rules: TransformerObj<Unpacked<Unpacked<T>>>): ((raw: string) => T) => {
   return (raw: string) => {
-    const parsed = JSON.parse(raw)
+    const parsed = JSONBI.parse(raw)
 
     return transformKey(parsed, rules)
   }
