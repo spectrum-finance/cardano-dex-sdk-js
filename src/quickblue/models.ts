@@ -79,3 +79,9 @@ export type UtxoSearch = {
   containsAllOf?: AssetRef[]
   containsAnyOf?: AssetRef[]
 }
+
+export type NetworkContext = {
+  blockNo: bigint
+  slotNo: bigint
+  epochNo: bigint
+}
