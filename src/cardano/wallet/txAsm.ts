@@ -16,19 +16,20 @@ class DefaultTxAsm implements TxAsm {
   constructor(public readonly env: NetworkParams, public readonly R: CardanoWasm) {}
 
   finalize(candidate: TxCandidate): RawUnsignedTx {
-    const conf = this.R.TransactionBuilderConfigBuilder.new()
     const pparams = this.env.pparams
-    conf.fee_algo(
-      this.R.LinearFee.new(
-        this.R.BigNum.from_str(pparams.txFeePerByte.toString()),
-        this.R.BigNum.from_str(pparams.txFeeFixed.toString())
+    const conf = this.R.TransactionBuilderConfigBuilder
+      .new()
+      .fee_algo(
+        this.R.LinearFee.new(
+          this.R.BigNum.from_str(pparams.txFeePerByte.toString()),
+          this.R.BigNum.from_str(pparams.txFeeFixed.toString())
+        )
       )
-    )
-    conf.coins_per_utxo_word(this.R.BigNum.from_str(pparams.utxoCostPerWord.toString()))
-    conf.pool_deposit(this.R.BigNum.from_str(pparams.stakePoolDeposit.toString()))
-    conf.key_deposit(this.R.BigNum.from_str(pparams.stakeAddressDeposit.toString()))
-    conf.max_value_size(pparams.maxValueSize)
-    conf.max_tx_size(pparams.maxTxSize)
+      .coins_per_utxo_word(this.R.BigNum.from_str(pparams.utxoCostPerWord.toString()))
+      .pool_deposit(this.R.BigNum.from_str(pparams.stakePoolDeposit.toString()))
+      .key_deposit(this.R.BigNum.from_str(pparams.stakeAddressDeposit.toString()))
+      .max_value_size(pparams.maxValueSize)
+      .max_tx_size(pparams.maxTxSize)
     const txb = this.R.TransactionBuilder.new(conf.build())
     for (const i of candidate.inputs) {
       const txInId = this.R.TransactionHash.from_bytes(decodeHex(i.txOut.txHash))
