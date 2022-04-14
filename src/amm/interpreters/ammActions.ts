@@ -35,7 +35,8 @@ class DefaultAmmActions implements AmmActions {
       inputs: ctx.inputs,
       outputs: [orderCandidate(), uiFeeCandidate],
       valueMint: emptyValue,
-      changeAddr: ctx.changeAddr
+      changeAddr: ctx.changeAddr,
+      ttl: ctx.ttl
     }
   }
 }

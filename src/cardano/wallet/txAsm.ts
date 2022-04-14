@@ -51,6 +51,7 @@ class DefaultTxAsm implements TxAsm {
     }
     const changeAddr = this.R.Address.from_bech32(candidate.changeAddr)
     txb.add_change_if_needed(changeAddr)
+    if (candidate.ttl) txb.set_ttl(candidate.ttl)
     return encodeHex(txb.build().to_bytes())
   }
 }

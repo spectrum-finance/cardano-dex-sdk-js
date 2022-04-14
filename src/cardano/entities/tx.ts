@@ -19,6 +19,7 @@ export type TxCandidate = {
   changeAddr: Addr
   validityRange?: ValidityRange
   collateral?: TxIn[]
+  ttl?: number
 }
 
 export type RawUnsignedTx = HexString
