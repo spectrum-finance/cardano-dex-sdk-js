@@ -1,11 +1,12 @@
+import {Transaction} from "@emurgo/cardano-serialization-lib-nodejs"
 import {toWasmValue} from "../../interop/serlib"
-import {decodeHex, encodeHex} from "../../utils/hex"
+import {decodeHex} from "../../utils/hex"
 import {CardanoWasm} from "../../utils/rustLoader"
 import {NetworkParams} from "../entities/env"
-import {RawUnsignedTx, TxCandidate} from "../entities/tx"
+import {TxCandidate} from "../entities/tx"
 
 export interface TxAsm {
-  finalize(candidate: TxCandidate): RawUnsignedTx
+  finalize(candidate: TxCandidate): Transaction
 }
 
 export function mkTxAsm(env: NetworkParams, R: CardanoWasm): TxAsm {
@@ -15,7 +16,7 @@ export function mkTxAsm(env: NetworkParams, R: CardanoWasm): TxAsm {
 class DefaultTxAsm implements TxAsm {
   constructor(public readonly env: NetworkParams, public readonly R: CardanoWasm) {}
 
-  finalize(candidate: TxCandidate): RawUnsignedTx {
+  finalize(candidate: TxCandidate): Transaction {
     const pparams = this.env.pparams
     const conf = this.R.TransactionBuilderConfigBuilder
       .new()
@@ -53,6 +54,6 @@ class DefaultTxAsm implements TxAsm {
     const changeAddr = this.R.Address.from_bech32(candidate.changeAddr)
     txb.add_change_if_needed(changeAddr)
     if (candidate.ttl) txb.set_ttl(candidate.ttl)
-    return encodeHex(txb.build().to_bytes())
+    return this.R.Transaction.new(txb.build(), this.R.TransactionWitnessSet.new());
   }
 }

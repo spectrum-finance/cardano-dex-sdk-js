@@ -25,3 +25,5 @@ export type TxCandidate = {
 export type RawUnsignedTx = HexString
 
 export type RawTx = HexString
+
+export type RawTxWitnessSet = HexString

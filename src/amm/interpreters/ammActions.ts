@@ -27,13 +27,16 @@ class DefaultAmmActions implements AmmActions {
           return this.outputs.swap(req)
       }
     }
-    const uiFeeCandidate = {
-      value: Value(req.uiFee),
-      addr: this.uiRewardAddr
+
+
+    const outputs = [orderCandidate()];
+    if (req.uiFee > 0n) {
+     outputs.push({ value: Value(req.uiFee), addr: this.uiRewardAddr})
     }
+
     return {
       inputs: ctx.inputs,
-      outputs: [orderCandidate(), uiFeeCandidate],
+      outputs: outputs,
       valueMint: emptyValue,
       changeAddr: ctx.changeAddr,
       ttl: ctx.ttl
