@@ -26,6 +26,7 @@ export * from "./cardano/constants"
 export {Prover} from "./cardano/wallet/prover"
 export {Wallet} from "./cardano/wallet/wallet"
 export {TxAsm, mkTxAsm} from "./cardano/wallet/txAsm"
+export {TxMath, mkTxMath} from "./cardano/wallet/txMath"
 
 export {TxContext} from "./cardano/wallet/entities/txContext"
 export {TxRequest} from "./cardano/wallet/entities/txRequest"
