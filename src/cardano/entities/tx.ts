@@ -22,6 +22,6 @@ export type TxCandidate = {
   ttl?: number
 }
 
-export type RawUnsignedTxBody = HexString
+export type RawUnsignedTx = HexString
 
 export type RawTx = HexString

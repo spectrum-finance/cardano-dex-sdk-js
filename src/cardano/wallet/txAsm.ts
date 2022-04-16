@@ -2,10 +2,10 @@ import {toWasmValue} from "../../interop/serlib"
 import {decodeHex, encodeHex} from "../../utils/hex"
 import {CardanoWasm} from "../../utils/rustLoader"
 import {NetworkParams} from "../entities/env"
-import {RawUnsignedTxBody, TxCandidate} from "../entities/tx"
+import {RawUnsignedTx, TxCandidate} from "../entities/tx"
 
 export interface TxAsm {
-  finalize(candidate: TxCandidate): RawUnsignedTxBody
+  finalize(candidate: TxCandidate): RawUnsignedTx
 }
 
 export function mkTxAsm(env: NetworkParams, R: CardanoWasm): TxAsm {
@@ -15,7 +15,7 @@ export function mkTxAsm(env: NetworkParams, R: CardanoWasm): TxAsm {
 class DefaultTxAsm implements TxAsm {
   constructor(public readonly env: NetworkParams, public readonly R: CardanoWasm) {}
 
-  finalize(candidate: TxCandidate): RawUnsignedTxBody {
+  finalize(candidate: TxCandidate): RawUnsignedTx {
     const pparams = this.env.pparams
     const conf = this.R.TransactionBuilderConfigBuilder.new()
       .fee_algo(
@@ -54,6 +54,8 @@ class DefaultTxAsm implements TxAsm {
     const changeAddr = this.R.Address.from_bech32(candidate.changeAddr)
     txb.add_change_if_needed(changeAddr)
     if (candidate.ttl) txb.set_ttl(candidate.ttl)
-    return encodeHex(txb.build().to_bytes())
+    const txbody = txb.build()
+    const unsignedTx = this.R.Transaction.new(txbody, this.R.TransactionWitnessSet.new())
+    return encodeHex(unsignedTx.to_bytes())
   }
 }
