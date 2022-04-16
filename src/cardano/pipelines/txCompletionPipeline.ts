@@ -23,8 +23,8 @@ class DefaultTxCompletionPipeline implements TxCompletionPipeline {
   ) {}
   async complete(txc: TxCandidate): Promise<RawTx> {
     const collectedData = txc.outputs.map(x => x.data)
-    const rawTx = this.prover.sign(this.asm.finalize(txc))
-    collectedData.forEach(x => x && this.network.reportDatum(x))
+    const rawTx = await this.prover.sign(this.asm.finalize(txc))
+    await Promise.all(collectedData.map(x => (x ? this.network.reportDatum(x) : Promise.resolve())))
     return rawTx
   }
 }
