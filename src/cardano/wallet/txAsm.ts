@@ -2,10 +2,10 @@ import {toWasmValue} from "../../interop/serlib"
 import {decodeHex, encodeHex} from "../../utils/hex"
 import {CardanoWasm} from "../../utils/rustLoader"
 import {NetworkParams} from "../entities/env"
-import {RawUnsignedTx, TxCandidate} from "../entities/tx"
+import {RawUnsignedTxBody, TxCandidate} from "../entities/tx"
 
 export interface TxAsm {
-  finalize(candidate: TxCandidate): RawUnsignedTx
+  finalize(candidate: TxCandidate): RawUnsignedTxBody
 }
 
 export function mkTxAsm(env: NetworkParams, R: CardanoWasm): TxAsm {
@@ -15,7 +15,7 @@ export function mkTxAsm(env: NetworkParams, R: CardanoWasm): TxAsm {
 class DefaultTxAsm implements TxAsm {
   constructor(public readonly env: NetworkParams, public readonly R: CardanoWasm) {}
 
-  finalize(candidate: TxCandidate): RawUnsignedTx {
+  finalize(candidate: TxCandidate): RawUnsignedTxBody {
     const pparams = this.env.pparams
     const conf = this.R.TransactionBuilderConfigBuilder
       .new()
@@ -30,7 +30,9 @@ class DefaultTxAsm implements TxAsm {
       .key_deposit(this.R.BigNum.from_str(pparams.stakeAddressDeposit.toString()))
       .max_value_size(pparams.maxValueSize)
       .max_tx_size(pparams.maxTxSize)
-    const txb = this.R.TransactionBuilder.new(conf.build())
+      .prefer_pure_change(true)
+      .build()
+    const txb = this.R.TransactionBuilder.new(conf)
     for (const i of candidate.inputs) {
       const txInId = this.R.TransactionHash.from_bytes(decodeHex(i.txOut.txHash))
       const txIn = this.R.TransactionInput.new(txInId, i.txOut.index)

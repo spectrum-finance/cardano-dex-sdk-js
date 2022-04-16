@@ -1,4 +1,4 @@
-import {MinLovelaceInOutput} from "../../cardano/constants"
+import {ProtocolParams} from "../../cardano/entities/env"
 import {TxOutCandidate} from "../../cardano/entities/txOut"
 import {Value} from "../../cardano/entities/value"
 import {encodeHex} from "../../utils/hex"
@@ -15,15 +15,24 @@ export interface AmmOutputs {
   swap(req: SwapRequest): TxOutCandidate
 }
 
-export function mkAmmOutputs(addrs: OrderAddrs, R: CardanoWasm): AmmOutputsImpl {
-  return new AmmOutputsImpl(addrs, R)
+export function mkAmmOutputs(
+  addrs: OrderAddrs,
+  params: ProtocolParams,
+  R: CardanoWasm
+): AmmOutputsImpl {
+  return new AmmOutputsImpl(addrs, params, R)
 }
 
 class AmmOutputsImpl implements AmmOutputs {
-  constructor(public readonly addrs: OrderAddrs, public readonly R: CardanoWasm) {}
+  constructor(
+    public readonly addrs: OrderAddrs,
+    public readonly params: ProtocolParams,
+    public readonly R: CardanoWasm
+  ) {
+  }
 
   deposit(req: DepositRequest): TxOutCandidate {
-    const value = Value(MinLovelaceInOutput, [req.x, req.y])
+    const value = Value(BigInt(this.params.minUTxOValue), [req.x, req.y])
     const data = encodeHex(mkDepositDatum(req, this.R).to_bytes())
     return {
       value,
@@ -33,7 +42,7 @@ class AmmOutputsImpl implements AmmOutputs {
   }
 
   redeem(req: RedeemRequest): TxOutCandidate {
-    const value = Value(MinLovelaceInOutput, req.lq)
+    const value = Value(BigInt(this.params.minUTxOValue), req.lq)
     const data = encodeHex(mkRedeemDatum(req, this.R).to_bytes())
     return {
       value,
@@ -43,7 +52,7 @@ class AmmOutputsImpl implements AmmOutputs {
   }
 
   swap(req: SwapRequest): TxOutCandidate {
-    const value = Value(MinLovelaceInOutput, req.baseInput)
+    const value = Value(BigInt(this.params.minUTxOValue), req.baseInput)
     const data = encodeHex(mkSwapDatum(req, this.R).to_bytes())
     return {
       value,

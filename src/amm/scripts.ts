@@ -6,7 +6,7 @@ export type OrderAddrs = {
   ammSwap: HexString
 }
 
-export const OrderAddrsV1: OrderAddrs = {
+export const OrderAddrsV1Testnet: OrderAddrs = {
   ammDeposit: "addr_test1wz7dga0aws836aczvpc84pnwu8uxy3n3qnqzcy3njj3j9mqnwc6xa",
   ammRedeem: "addr_test1wzg0he87708wywu7mwq75pcqpuvkd9kydklyfxh7vjrz65g9cfd2w",
   ammSwap: "addr_test1wpe2d075jnnhyj24dce8ukyrwyry4a570d9n3ydcuh0yv6qk8dvr7"
