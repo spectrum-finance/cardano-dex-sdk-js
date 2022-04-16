@@ -49,6 +49,10 @@ class DefaultTxAsm implements TxAsm {
       const addr = this.R.Address.from_bech32(o.addr)
       const value = toWasmValue(o.value, this.R)
       const out = this.R.TransactionOutput.new(addr, value)
+      if (o.data) {
+        const pd = this.R.PlutusData.from_bytes(decodeHex(o.data))
+        out.set_data_hash(this.R.hash_plutus_data(pd))
+      }
       txb.add_output(out)
     }
     const changeAddr = this.R.Address.from_bech32(candidate.changeAddr)

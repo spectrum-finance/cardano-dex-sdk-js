@@ -37,7 +37,7 @@ class NetworkPoolsV1 implements Pools {
   ) {}
 
   async get(id: PoolId): Promise<AmmPool | undefined> {
-    const [boxes] = await this.network.getUtxosByAsset(mkAssetRef(id), {offset: 0, limit: 1})
+    const [boxes] = await this.network.getUtxosByAsset(mkAssetRef(id), {offset: 0, limit: 1}, "desc")
     if (boxes.length > 0) {
       const poolBox = boxes[0]
       return this.parser.parse(poolBox)
