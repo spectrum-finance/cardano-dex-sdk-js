@@ -15,11 +15,7 @@ export interface AmmOutputs {
   swap(req: SwapRequest): TxOutCandidate
 }
 
-export function mkAmmOutputs(
-  addrs: OrderAddrs,
-  params: ProtocolParams,
-  R: CardanoWasm
-): AmmOutputsImpl {
+export function mkAmmOutputs(addrs: OrderAddrs, params: ProtocolParams, R: CardanoWasm): AmmOutputsImpl {
   return new AmmOutputsImpl(addrs, params, R)
 }
 
@@ -28,8 +24,7 @@ class AmmOutputsImpl implements AmmOutputs {
     public readonly addrs: OrderAddrs,
     public readonly params: ProtocolParams,
     public readonly R: CardanoWasm
-  ) {
-  }
+  ) {}
 
   deposit(req: DepositRequest): TxOutCandidate {
     const value = Value(BigInt(this.params.minUTxOValue), [req.x, req.y])

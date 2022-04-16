@@ -72,13 +72,21 @@ export class AmmPool {
   inputAmount(output: AssetAmount, maxSlippage?: number): AssetAmount | undefined {
     const slippage = BigInt((maxSlippage || 0) * 100)
     const minimalOutput = this.outputAmount(output).amount
-    if (isAssetClassEquals(output.asset, this.x.asset) && minimalOutput > 0 && output.amount <= this.x.amount) {
+    if (
+      isAssetClassEquals(output.asset, this.x.asset) &&
+      minimalOutput > 0 &&
+      output.amount <= this.x.amount
+    ) {
       return this.y.withAmount(
         (this.y.amount * output.amount * this.feeDenom) /
           ((this.x.amount + (this.x.amount * slippage) / (100n * 100n) - output.amount) * this.feeNum) +
           1n
       )
-    } else if (isAssetClassEquals(output.asset, this.y.asset) && minimalOutput > 0 && output.amount <= this.y.amount) {
+    } else if (
+      isAssetClassEquals(output.asset, this.y.asset) &&
+      minimalOutput > 0 &&
+      output.amount <= this.y.amount
+    ) {
       return this.x.withAmount(
         (this.x.amount * output.amount * this.feeDenom) /
           ((this.y.amount + (this.y.amount * slippage) / (100n * 100n) - output.amount) * this.feeNum) +

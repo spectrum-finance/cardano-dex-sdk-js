@@ -20,7 +20,7 @@ const transformKey = (value: any, rules: TransformerObj<Unpacked<any>> | undefin
   if (value instanceof Array) {
     return value.map(cv => transformKey(cv, rules))
   }
-  if (typeof value === 'object' && value !== null) {
+  if (typeof value === "object" && value !== null) {
     return Object.entries(value).reduce<Record<string, any>>((acc, [key, cv]) => {
       acc[key] = transformKey(cv, rules ? (rules as any)[key] : undefined)
 

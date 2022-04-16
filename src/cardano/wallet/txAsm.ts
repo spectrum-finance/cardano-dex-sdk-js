@@ -17,8 +17,7 @@ class DefaultTxAsm implements TxAsm {
 
   finalize(candidate: TxCandidate): RawUnsignedTxBody {
     const pparams = this.env.pparams
-    const conf = this.R.TransactionBuilderConfigBuilder
-      .new()
+    const conf = this.R.TransactionBuilderConfigBuilder.new()
       .fee_algo(
         this.R.LinearFee.new(
           this.R.BigNum.from_str(pparams.txFeePerByte.toString()),
