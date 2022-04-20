@@ -20,7 +20,7 @@ export type ScriptCreds = {
 }
 
 export const ScriptCredsV1: ScriptCreds = {
-  ammPool: "32213c4939bdbaa294394e792099e58f5f2b7dd6013f6fd1610cc4c8",
+  ammPool: "16e0ada5bd12f81108c67f9b1bd6467e5bbcca823e99edbe3dcb2fe5",
   ammDeposit: "",
   ammRedeem: "",
   ammSwap: ""
