@@ -8,8 +8,8 @@ export type OrderAddrs = {
 
 export const OrderAddrsV1Testnet: OrderAddrs = {
   ammDeposit: "addr_test1wq373plcv2z25nu3uf4tmpvkc460cneucqfcnqecphplkvs9dstfw",
-  ammRedeem: "addr_test1wqpzdfz0tn4juc9y0nqwl6hq0wn2w0jwffvqnj0nr9mjfsqz0lj5t",
-  ammSwap: "addr_test1wq7g34n9je3putggyhnar9e49nvtcnh89wltarwgzc2cppqe73pz0"
+  ammRedeem: "addr_test1wq7g34n9je3putggyhnar9e49nvtcnh89wltarwgzc2cppqe73pz0",
+  ammSwap: "addr_test1wqpzdfz0tn4juc9y0nqwl6hq0wn2w0jwffvqnj0nr9mjfsqz0lj5t"
 }
 
 export type ScriptCreds = {
