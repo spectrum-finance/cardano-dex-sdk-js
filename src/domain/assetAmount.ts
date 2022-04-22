@@ -11,6 +11,10 @@ export class AssetAmount {
     return new AssetAmount(this.asset, amount)
   }
 
+  add(x: bigint): AssetAmount {
+    return new AssetAmount(this.asset, this.amount + x)
+  }
+
   get isAda(): boolean {
     return this.asset.policyId === AdaPolicyId
   }

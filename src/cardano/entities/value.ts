@@ -8,7 +8,7 @@ export type Value = AssetEntry[]
 
 export function add(value: Value, x: AssetEntry): Value {
   const amt = assetAmountOf(value, assetEntryToClass(x))
-  return [...value.filter(e => e !== x), amt.toEntry] // todo: check comparison
+  return [...value.filter(e => e !== x), amt.add(x.quantity).toEntry] // todo: check comparison
 }
 
 export const emptyValue: Value = []
