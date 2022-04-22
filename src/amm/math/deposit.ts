@@ -8,10 +8,11 @@ import {AmmTxFeeMapping, minExFeeForOrder} from "./order"
 
 export type DepositBudget = Value
 export type DepositValue = Value
+export type DepositCollateral = Lovelace
 
 /** Estimate min Value required for Deposit operation.
  *  Note: SwapBudget includes SwapValue
- *  @return [SwapBudget, SwapValue, FeePerToken, SwapExtremums]
+ *  @return [DepositBudget, DepositValue, DepositCollateral]
  */
 export function minBudgetForDeposit(
   inputX: AssetAmount,
@@ -21,11 +22,11 @@ export function minBudgetForDeposit(
   minExecutorReward: Lovelace,
   uiFee: Lovelace,
   txMath: TxMath
-): DepositBudget {
+): [DepositBudget, DepositValue, DepositCollateral] {
   const minExFee = minExFeeForOrder(OrderKind.Deposit, fees, minExecutorReward)
-  const [depositValue] = minDepositValue(inputX, inputY, estimatedOutputLq, minExFee, txMath)
+  const [depositValue, collat] = minDepositValue(inputX, inputY, estimatedOutputLq, minExFee, txMath)
   const orderTxFee = fees.depositOrder
-  return add(add(depositValue, AdaEntry(orderTxFee)), AdaEntry(uiFee))
+  return [add(add(depositValue, AdaEntry(orderTxFee)), AdaEntry(uiFee)), depositValue, collat]
 }
 
 /** Calculate min Value for Deposit order output.
@@ -37,7 +38,7 @@ export function minDepositValue(
   estimatedOutputLq: AssetAmount,
   exFee: Lovelace,
   txMath: TxMath
-): [DepositValue, Lovelace] {
+): [DepositValue, DepositCollateral] {
   const preValue = Value(1n, estimatedOutputLq)
   const minCollateral = txMath.minUtxoValue(preValue, false)
   return [add(add(add(Value(exFee), inputX.toEntry), inputY.toEntry), AdaEntry(minCollateral)), minCollateral]
