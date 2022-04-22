@@ -2,7 +2,7 @@ import {Addr} from "../../cardano/entities/address"
 import {TxCandidate} from "../../cardano/entities/tx"
 import {emptyValue, Value} from "../../cardano/entities/value"
 import {TxContext} from "../../cardano/wallet/entities/txContext"
-import {OrderRequest, OrderRequestKind} from "../models/opRequests"
+import {OrderKind, OrderRequest} from "../models/opRequests"
 import {AmmOutputs} from "./ammOutputs"
 
 export interface AmmActions {
@@ -19,11 +19,11 @@ class DefaultAmmActions implements AmmActions {
   createOrder(req: OrderRequest, ctx: TxContext): TxCandidate {
     const orderCandidate = () => {
       switch (req.kind) {
-        case OrderRequestKind.Deposit:
+        case OrderKind.Deposit:
           return this.outputs.deposit(req)
-        case OrderRequestKind.Redeem:
+        case OrderKind.Redeem:
           return this.outputs.redeem(req)
-        case OrderRequestKind.Swap:
+        case OrderKind.Swap:
           return this.outputs.swap(req)
       }
     }

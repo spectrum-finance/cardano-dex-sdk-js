@@ -1,5 +1,4 @@
 import {TxOutCandidate} from "../../cardano/entities/txOut"
-import {Value} from "../../cardano/entities/value"
 import {TxMath} from "../../cardano/wallet/txMath"
 import {encodeHex} from "../../utils/hex"
 import {CardanoWasm} from "../../utils/rustLoader"
@@ -27,36 +26,27 @@ class AmmOutputsImpl implements AmmOutputs {
   ) {}
 
   deposit(req: DepositRequest): TxOutCandidate {
-    const preValue = Value(1n, [req.x, req.y])
-    const minLovelace = this.txMath.minUtxoValue(preValue, true)
-    const value = Value(minLovelace, [req.x, req.y])
     const data = encodeHex(mkDepositDatum(req, this.R).to_bytes())
     return {
-      value,
+      value: req.orderValue,
       addr: this.addrs.ammDeposit,
       data
     }
   }
 
   redeem(req: RedeemRequest): TxOutCandidate {
-    const preValue = Value(1n, req.lq)
-    const minLovelace = this.txMath.minUtxoValue(preValue, true)
-    const value = Value(minLovelace, req.lq)
     const data = encodeHex(mkRedeemDatum(req, this.R).to_bytes())
     return {
-      value,
+      value: req.orderValue,
       addr: this.addrs.ammRedeem,
       data
     }
   }
 
   swap(req: SwapRequest): TxOutCandidate {
-    const preValue = Value(1n, req.baseInput)
-    const minLovelace = this.txMath.minUtxoValue(preValue, true)
-    const value = Value(minLovelace, req.baseInput)
     const data = encodeHex(mkSwapDatum(req, this.R).to_bytes())
     return {
-      value,
+      value: req.orderValue,
       addr: this.addrs.ammSwap,
       data
     }

@@ -2,9 +2,14 @@ import {AssetAmount} from "../../domain/assetAmount"
 import {AdaAssetClass} from "../constants"
 import {Lovelace} from "../types"
 import {AssetClass} from "./assetClass"
-import {AdaEntry, AssetEntry} from "./assetEntry"
+import {AdaEntry, AssetEntry, assetEntryToClass} from "./assetEntry"
 
 export type Value = AssetEntry[]
+
+export function add(value: Value, x: AssetEntry): Value {
+  const amt = assetAmountOf(value, assetEntryToClass(x))
+  return [...value.filter(e => e !== x), amt.toEntry] // todo: check comparison
+}
 
 export const emptyValue: Value = []
 

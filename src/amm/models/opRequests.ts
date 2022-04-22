@@ -1,5 +1,6 @@
 import {AssetClass} from "../../cardano/entities/assetClass"
 import {PubKeyHash} from "../../cardano/entities/publicKey"
+import {Value} from "../../cardano/entities/value"
 import {Lovelace} from "../../cardano/types"
 import {AssetAmount} from "../../domain/assetAmount"
 import {FeePerToken} from "../domain/models"
@@ -13,14 +14,31 @@ export type CreateRequest = {
   readonly uiFee: Lovelace
 }
 
-export enum OrderRequestKind {
+export enum OrderKind {
   Deposit,
   Redeem,
   Swap
 }
 
+export function foldOrderKind<A>(
+  onDeposit: () => A,
+  onRedeem: () => A,
+  onSwap: () => A
+): (kind: OrderKind) => A {
+  return (kind: OrderKind) => {
+    switch (kind) {
+      case OrderKind.Deposit:
+        return onDeposit()
+      case OrderKind.Redeem:
+        return onRedeem()
+      case OrderKind.Swap:
+        return onSwap()
+    }
+  }
+}
+
 export type DepositRequest = {
-  readonly kind: OrderRequestKind.Deposit
+  readonly kind: OrderKind.Deposit
   readonly poolId: PoolId
   readonly x: AssetAmount
   readonly y: AssetAmount
@@ -29,10 +47,11 @@ export type DepositRequest = {
   readonly exFee: Lovelace
   readonly uiFee: Lovelace
   readonly collateralAda: Lovelace
+  readonly orderValue: Value
 }
 
 export type RedeemRequest = {
-  readonly kind: OrderRequestKind.Redeem
+  readonly kind: OrderKind.Redeem
   readonly poolId: PoolId
   readonly x: AssetClass
   readonly y: AssetClass
@@ -40,10 +59,11 @@ export type RedeemRequest = {
   readonly rewardPkh: PubKeyHash
   readonly exFee: Lovelace
   readonly uiFee: Lovelace
+  readonly orderValue: Value
 }
 
 export type SwapRequest = {
-  readonly kind: OrderRequestKind.Swap
+  readonly kind: OrderKind.Swap
   readonly poolId: PoolId
   readonly rewardPkh: PubKeyHash
   readonly poolFeeNum: number
@@ -52,6 +72,7 @@ export type SwapRequest = {
   readonly minQuoteOutput: bigint
   readonly exFeePerToken: FeePerToken
   readonly uiFee: Lovelace
+  readonly orderValue: Value
 }
 
 export type OrderRequest = DepositRequest | RedeemRequest | SwapRequest

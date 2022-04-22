@@ -70,9 +70,12 @@ export {
   RedeemRequest,
   DepositRequest,
   OrderRequest,
-  OrderRequestKind,
+  OrderKind,
   CreateRequest
 } from "./amm/models/opRequests"
+export {SwapExtremums, SwapBudget, SwapValue, swapVars, minBudgetForSwap, minSwapValue} from "./amm/math/swap"
+export {DepositBudget, DepositValue, minBudgetForDeposit, minDepositValue} from "./amm/math/deposit"
+export {AmmTxFeeMapping, minExFeeForOrder} from "./amm/math/order"
 export {PoolDatum} from "./amm/models/poolDatum"
 export {PoolsParser, mkPoolsParser} from "./amm/parsers/poolsParser"
 export {Pools, mkNetworkPoolsV1} from "./amm/services/pools"
