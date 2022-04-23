@@ -15,3 +15,9 @@ export function assetEntryToClass(e: AssetEntry): AssetClass {
 export function AdaEntry(quantity: Lovelace): AssetEntry {
   return {name: AdaAssetName, policyId: AdaPolicyId, quantity}
 }
+
+export function isAssetEntryEquals(e1: AssetEntry, e2: AssetEntry): boolean {
+  return e1.name === e2.name &&
+    e1.quantity === e2.quantity &&
+    e1.policyId === e2.policyId
+}
