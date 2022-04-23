@@ -24,7 +24,7 @@ jobs:
           command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
       - run:
           name: Publish
-          command: npm run build --scripts-prepend-node-path=auto && npm publish --access=public
+          command: npm install && npm run build --scripts-prepend-node-path=auto && npm publish --access=public
 workflows:
   version: 2
   test-deploy:
