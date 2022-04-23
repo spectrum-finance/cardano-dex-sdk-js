@@ -1,21 +1,21 @@
 version: 2.1
 jobs:
   test-and-lint:
-    docker: 
+    docker:
       - image: circleci/node:14-bullseye-browsers
     steps:
       - checkout
-      - run: 
+      - run:
           name: Install deps
           command: npm install
       - run:
           name: Run Eslint
           command: npm run fix:lint
-      - run: 
+      - run:
           name: Run Tests
           command: npm run test --passWithNoTests
-  deploy: 
-    docker: 
+  deploy:
+    docker:
       - image: circleci/node:14-bullseye-browsers
     steps:
       - checkout
@@ -24,7 +24,7 @@ jobs:
           command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
       - run:
           name: Publish
-          command: run-p build:* && npm publish --access=public
+          command: npm run build --scripts-prepend-node-path=auto && npm publish --access=public
 workflows:
   version: 2
   test-deploy:
@@ -32,7 +32,7 @@ workflows:
       - test-and-lint
       - deploy:
           filters:
-            tags: 
+            tags:
               only: /^\d+\.\d+\.\d+$/
             branches:
               ignore: /.*/
