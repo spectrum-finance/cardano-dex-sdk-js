@@ -71,7 +71,13 @@ export function minBudgetForSwap(
   const vars = swapVars(minExFee, nitro, minOutput)
   if (vars) {
     const [fpt, extremums] = vars
-    const swapValue = minSwapValue(input, extremums.maxExFee, extremums.maxOutput, txMath)
+    const swapValue = minSwapValue(
+      input,
+      extremums.maxExFee,
+      extremums.minOutput,
+      extremums.maxOutput,
+      txMath
+    )
     const orderTxFee = fees.swapOrder
     const swapBudget = add(add(swapValue, AdaEntry(orderTxFee)), AdaEntry(uiFee))
     return [swapBudget, swapValue, fpt, extremums]
@@ -85,14 +91,13 @@ export function minBudgetForSwap(
 export function minSwapValue(
   input: AssetAmount,
   maxExFee: Lovelace,
+  minOutput: AssetAmount,
   maxOutput: AssetAmount,
   txMath: TxMath
 ): SwapValue {
-  let baseValue = add(Value(maxExFee), input.toEntry)
-  if (!maxOutput.isAda) {
-    const preValue = Value(1n, maxOutput)
-    const minLovelace = txMath.minUtxoValue(preValue, false)
-    baseValue = add(baseValue, AdaEntry(minLovelace))
-  }
-  return baseValue
+  const minOutputLovelace = minOutput.isAda ? minOutput.amount : 0n
+  const preValue = Value(1000000n, maxOutput)
+  const minLovelace = txMath.minUtxoValue(preValue, false)
+  const addedLovelace = minLovelace > minOutputLovelace ? minLovelace - minOutputLovelace : 0n
+  return add(add(Value(maxExFee), input.toEntry), AdaEntry(addedLovelace))
 }

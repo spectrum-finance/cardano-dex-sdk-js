@@ -17,7 +17,5 @@ export function AdaEntry(quantity: Lovelace): AssetEntry {
 }
 
 export function isAssetEntryEquals(e1: AssetEntry, e2: AssetEntry): boolean {
-  return e1.name === e2.name &&
-    e1.quantity === e2.quantity &&
-    e1.policyId === e2.policyId
+  return e1.name === e2.name && e1.quantity === e2.quantity && e1.policyId === e2.policyId
 }
