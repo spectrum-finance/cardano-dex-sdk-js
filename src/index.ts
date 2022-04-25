@@ -81,6 +81,7 @@ export {
   minBudgetForDeposit,
   minDepositValue
 } from "./amm/math/deposit"
+export {RedeemBudget, RedeemValue, minBudgetForRedeem, minRedeemValue} from "./amm/math/redeem"
 export {AmmTxFeeMapping, minExFeeForOrder} from "./amm/math/order"
 export {PoolDatum} from "./amm/models/poolDatum"
 export {PoolsParser, mkPoolsParser} from "./amm/parsers/poolsParser"

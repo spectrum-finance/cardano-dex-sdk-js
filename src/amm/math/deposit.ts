@@ -11,7 +11,7 @@ export type DepositValue = Value
 export type DepositCollateral = Lovelace
 
 /** Estimate min Value required for Deposit operation.
- *  Note: SwapBudget includes SwapValue
+ *  Note: DepositBudget includes DepositValue
  *  @return [DepositBudget, DepositValue, DepositCollateral]
  */
 export function minBudgetForDeposit(
@@ -39,7 +39,7 @@ export function minDepositValue(
   exFee: Lovelace,
   txMath: TxMath
 ): [DepositValue, DepositCollateral] {
-  const preValue = Value(1n, estimatedOutputLq)
+  const preValue = Value(1000000n, estimatedOutputLq)
   const minCollateral = txMath.minUtxoValue(preValue, false)
   return [add(add(add(Value(exFee), inputX.toEntry), inputY.toEntry), AdaEntry(minCollateral)), minCollateral]
 }
