@@ -1,6 +1,8 @@
+import {BaseAddress, EnterpriseAddress} from "@emurgo/cardano-serialization-lib-nodejs"
 import {toWasmValue} from "../../interop/serlib"
 import {decodeHex, encodeHex} from "../../utils/hex"
 import {CardanoWasm} from "../../utils/rustLoader"
+import {Addr} from "../entities/address"
 import {NetworkParams} from "../entities/env"
 import {RawUnsignedTx, TxCandidate} from "../entities/tx"
 
@@ -36,12 +38,13 @@ class DefaultTxAsm implements TxAsm {
       const txInId = this.R.TransactionHash.from_bytes(decodeHex(i.txOut.txHash))
       const txIn = this.R.TransactionInput.new(txInId, i.txOut.index)
       const valueIn = toWasmValue(i.txOut.value, this.R)
-      const addr = this.R.BaseAddress.from_address(this.R.Address.from_bech32(i.txOut.addr))
+      const addr = this.toBaseOrEnterpriseAddress(i.txOut.addr);
+
       if (i.consumeScript) {
-        const sh = addr!.payment_cred().to_scripthash()!
+        const sh = addr.payment_cred().to_scripthash()!
         txb.add_script_input(sh, txIn, valueIn)
       } else {
-        const pkh = addr!.payment_cred().to_keyhash()!
+        const pkh = addr.payment_cred().to_keyhash()!
         txb.add_key_input(pkh, txIn, valueIn)
       }
     }
@@ -61,5 +64,12 @@ class DefaultTxAsm implements TxAsm {
     const txbody = txb.build()
     const unsignedTx = this.R.Transaction.new(txbody, this.R.TransactionWitnessSet.new())
     return encodeHex(unsignedTx.to_bytes())
+  }
+
+  private toBaseOrEnterpriseAddress(addr: Addr): BaseAddress | EnterpriseAddress {
+    const address = this.R.Address.from_bech32(addr);
+
+    return this.R.BaseAddress.from_address(address) ??
+      this.R.EnterpriseAddress.from_address(address)!
   }
 }
