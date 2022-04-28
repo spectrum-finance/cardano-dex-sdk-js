@@ -44,6 +44,7 @@ export type DepositRequest = {
   readonly y: AssetAmount
   readonly lq: AssetClass
   readonly rewardPkh: PubKeyHash
+  readonly stakePkh: PubKeyHash | undefined
   readonly exFee: Lovelace
   readonly uiFee: Lovelace
   readonly collateralAda: Lovelace
@@ -57,6 +58,7 @@ export type RedeemRequest = {
   readonly y: AssetClass
   readonly lq: AssetAmount
   readonly rewardPkh: PubKeyHash
+  readonly stakePkh: PubKeyHash | undefined
   readonly exFee: Lovelace
   readonly uiFee: Lovelace
   readonly orderValue: Value
@@ -66,6 +68,7 @@ export type SwapRequest = {
   readonly kind: OrderKind.Swap
   readonly poolId: PoolId
   readonly rewardPkh: PubKeyHash
+  readonly stakePkh: PubKeyHash | undefined
   readonly poolFeeNum: number
   readonly baseInput: AssetAmount
   readonly quoteAsset: AssetClass

@@ -27,10 +27,22 @@ export function mkSwapDatum(conf: SwapRequest, R: CardanoWasm): PlutusData {
     R.BigInt.from_str(conf.exFeePerToken.denominator.toString())
   )
   const rewardPkh = R.PlutusData.new_bytes(decodeHex(conf.rewardPkh))
+  const stakePkh = mkMaybe(conf.stakePkh ? mkByteStringFromHex(conf.stakePkh, R) : undefined, R)
   const baseAmount = R.PlutusData.new_integer(R.BigInt.from_str(conf.baseInput.amount.toString()))
   const minQuoteAmount = R.PlutusData.new_integer(R.BigInt.from_str(conf.minQuoteOutput.toString()))
   return mkProductN(
-    [base, quote, poolNft, feeNum, feePerTokenNum, feePerTokenDen, rewardPkh, baseAmount, minQuoteAmount],
+    [
+      base,
+      quote,
+      poolNft,
+      feeNum,
+      feePerTokenNum,
+      feePerTokenDen,
+      rewardPkh,
+      stakePkh,
+      baseAmount,
+      minQuoteAmount
+    ],
     R
   )
 }
@@ -42,8 +54,9 @@ export function mkDepositDatum(conf: DepositRequest, R: CardanoWasm): PlutusData
   const lq = mkAssetClass(conf.lq, R)
   const exFee = R.PlutusData.new_integer(R.BigInt.from_str(conf.exFee.toString()))
   const rewardPkh = R.PlutusData.new_bytes(decodeHex(conf.rewardPkh))
+  const stakePkh = mkMaybe(conf.stakePkh ? mkByteStringFromHex(conf.stakePkh, R) : undefined, R)
   const collateralAda = R.PlutusData.new_integer(R.BigInt.from_str(conf.collateralAda.toString()))
-  return mkProductN([poolNft, x, y, lq, exFee, rewardPkh, collateralAda], R)
+  return mkProductN([poolNft, x, y, lq, exFee, rewardPkh, stakePkh, collateralAda], R)
 }
 
 export function mkRedeemDatum(conf: RedeemRequest, R: CardanoWasm): PlutusData {
@@ -53,13 +66,24 @@ export function mkRedeemDatum(conf: RedeemRequest, R: CardanoWasm): PlutusData {
   const lq = mkAssetClass(conf.lq.asset, R)
   const exFee = R.PlutusData.new_integer(R.BigInt.from_str(conf.exFee.toString()))
   const rewardPkh = R.PlutusData.new_bytes(decodeHex(conf.rewardPkh))
-  return mkProductN([poolNft, x, y, lq, exFee, rewardPkh], R)
+  const stakePkh = mkMaybe(conf.stakePkh ? mkByteStringFromHex(conf.stakePkh, R) : undefined, R)
+  return mkProductN([poolNft, x, y, lq, exFee, rewardPkh, stakePkh], R)
 }
 
 function mkProductN(members: PlutusData[], R: CardanoWasm): PlutusData {
   const bf = R.PlutusList.new()
   for (const m of members) bf.add(m)
   return mkPlutusData(bf, R)
+}
+
+export function mkMaybe(data: PlutusData | undefined, R: CardanoWasm): PlutusData {
+  const bf = R.PlutusList.new()
+  if (data) {
+    bf.add(data)
+    return R.PlutusData.new_constr_plutus_data(R.ConstrPlutusData.new(R.BigNum.zero(), bf))
+  } else {
+    return R.PlutusData.new_constr_plutus_data(R.ConstrPlutusData.new(R.BigNum.from_str("1"), bf))
+  }
 }
 
 function mkByteStringFromHex(hex: HexString, R: CardanoWasm): PlutusData {

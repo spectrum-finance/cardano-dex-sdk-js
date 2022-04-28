@@ -48,17 +48,18 @@ test("Parse Pool datum", async t => {
 test("Construct valid Swap datum", async t => {
   const sampleHex =
     "d8799fd8799f417846706f6f6c5f78ffd8799f417946706f6f6c5f79ffd8799f436e6674" +
-    "48706f6f6c5f6e6674ff1903e30a14581cd74d26c5029cf290094fce1a0670da7369b902" +
-    "6571dfb977c6fa234f1864190190ff"
+    "48706f6f6c5f6e6674ff1903e31a002625a001581cd74d26c5029cf290094fce1a0670da" +
+    "7369b9026571dfb977c6fa234fd87a800201ff"
   const swapReq: SwapRequest = {
     kind: OrderKind.Swap,
     poolId: poolTokens.nft,
     rewardPkh: rewardPkh,
+    stakePkh: undefined,
     poolFeeNum: poolFeeNum,
-    baseInput: new AssetAmount(poolTokens.x, 100n),
+    baseInput: new AssetAmount(poolTokens.x, 2n),
     quoteAsset: poolTokens.y,
-    minQuoteOutput: 400n,
-    exFeePerToken: {numerator: 10n, denominator: 20n},
+    minQuoteOutput: 1n,
+    exFeePerToken: {numerator: 2500000n, denominator: 1n},
     uiFee: 100n,
     orderValue: emptyValue
   }
@@ -70,8 +71,8 @@ test("Construct valid Swap datum", async t => {
 test("Construct valid Deposit datum", async t => {
   const sampleHex =
     "d8799fd8799f436e667448706f6f6c5f6e6674ffd8799f417846706f6f6c5f78ffd8799f" +
-    "417946706f6f6c5f79ffd8799f426c7147706f6f6c5f6c71ff1864581cd74d26c5029cf2" +
-    "90094fce1a0670da7369b9026571dfb977c6fa234f1901f4ff"
+    "417946706f6f6c5f79ffd8799f426c7147706f6f6c5f6c71ff02581cd74d26c5029cf290" +
+    "094fce1a0670da7369b9026571dfb977c6fa234fd87a8001ff"
   const depositReq: DepositRequest = {
     kind: OrderKind.Deposit,
     poolId: poolTokens.nft,
@@ -79,9 +80,10 @@ test("Construct valid Deposit datum", async t => {
     y: new AssetAmount(poolTokens.y, 0n),
     lq: poolTokens.lq,
     rewardPkh: rewardPkh,
-    exFee: 100n,
+    stakePkh: undefined,
+    exFee: 2n,
     uiFee: 100n,
-    collateralAda: 500n,
+    collateralAda: 1n,
     orderValue: emptyValue
   }
   const datum = mkDepositDatum(depositReq, RustModule.CardanoWasm)
@@ -92,8 +94,9 @@ test("Construct valid Deposit datum", async t => {
 test("Construct valid Redeem datum", async t => {
   const sampleHex =
     "d8799fd8799f436e667448706f6f6c5f6e6674ffd8799f417846706f6f6c5f78ffd8799f" +
-    "417946706f6f6c5f79ffd8799f426c7147706f6f6c5f6c71ff1864581cd74d26c5029cf2" +
-    "90094fce1a0670da7369b9026571dfb977c6fa234fff"
+    "417946706f6f6c5f79ffd8799f426c7147706f6f6c5f6c71ff02581cd74d26c5029cf290" +
+    "094fce1a0670da7369b9026571dfb977c6fa234fd8799f581cd74d26c5029cf290094fce" +
+    "1a0670da7369b9026571dfb977c6fa234fffff"
   const redeemReq: RedeemRequest = {
     kind: OrderKind.Redeem,
     poolId: poolTokens.nft,
@@ -101,7 +104,8 @@ test("Construct valid Redeem datum", async t => {
     y: poolTokens.y,
     lq: new AssetAmount(poolTokens.lq, 0n),
     rewardPkh: rewardPkh,
-    exFee: 100n,
+    stakePkh: rewardPkh,
+    exFee: 2n,
     uiFee: 100n,
     orderValue: emptyValue
   }

@@ -38,7 +38,7 @@ class DefaultTxAsm implements TxAsm {
       const txInId = this.R.TransactionHash.from_bytes(decodeHex(i.txOut.txHash))
       const txIn = this.R.TransactionInput.new(txInId, i.txOut.index)
       const valueIn = toWasmValue(i.txOut.value, this.R)
-      const addr = this.toBaseOrEnterpriseAddress(i.txOut.addr);
+      const addr = this.toBaseOrEnterpriseAddress(i.txOut.addr)
 
       if (i.consumeScript) {
         const sh = addr.payment_cred().to_scripthash()!
@@ -67,9 +67,8 @@ class DefaultTxAsm implements TxAsm {
   }
 
   private toBaseOrEnterpriseAddress(addr: Addr): BaseAddress | EnterpriseAddress {
-    const address = this.R.Address.from_bech32(addr);
+    const address = this.R.Address.from_bech32(addr)
 
-    return this.R.BaseAddress.from_address(address) ??
-      this.R.EnterpriseAddress.from_address(address)!
+    return this.R.BaseAddress.from_address(address) ?? this.R.EnterpriseAddress.from_address(address)!
   }
 }
