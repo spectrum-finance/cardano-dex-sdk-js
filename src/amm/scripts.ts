@@ -7,9 +7,9 @@ export type OrderAddrs = {
 }
 
 export const OrderAddrsV1Testnet: OrderAddrs = {
-  ammDeposit: "addr_test1wq373plcv2z25nu3uf4tmpvkc460cneucqfcnqecphplkvs9dstfw",
-  ammRedeem: "addr_test1wq7g34n9je3putggyhnar9e49nvtcnh89wltarwgzc2cppqe73pz0",
-  ammSwap: "addr_test1wqpzdfz0tn4juc9y0nqwl6hq0wn2w0jwffvqnj0nr9mjfsqz0lj5t"
+  ammDeposit: "addr_test1wzs0df8en2dage286us3xgv2mwf0yekj9wddud04gwe9p7sgd4ug7",
+  ammRedeem: "addr_test1wpl7emjypvc2hskfahcq6ttvgeuakua5397cslktfwe9hzg6wxh5g",
+  ammSwap: "addr_test1wrx2hy06cqkwkc3gr4nddrs30t8z4vvhlsltz2ffhxvu5vg88208n"
 }
 
 export type ScriptCreds = {
@@ -20,7 +20,7 @@ export type ScriptCreds = {
 }
 
 export const ScriptCredsV1: ScriptCreds = {
-  ammPool: "16e0ada5bd12f81108c67f9b1bd6467e5bbcca823e99edbe3dcb2fe5",
+  ammPool: "072149fd793f49edebeafe6b242f25cac72fd7fc0c0f9e6bbe18f260",
   ammDeposit: "",
   ammRedeem: "",
   ammSwap: ""
