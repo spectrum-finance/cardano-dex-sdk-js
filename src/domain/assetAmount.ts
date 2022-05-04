@@ -25,4 +25,8 @@ export class AssetAmount {
       quantity: this.amount
     }
   }
+
+  static fromEntry(entry: AssetEntry): AssetAmount {
+    return new AssetAmount({policyId: entry.policyId, name: entry.name}, entry.quantity)
+  }
 }

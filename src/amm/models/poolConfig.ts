@@ -1,6 +1,6 @@
 import {AssetClass} from "../../cardano/entities/assetClass"
 
-export type PoolDatum = {
+export type PoolConfig = {
   nft: AssetClass
   x: AssetClass
   y: AssetClass

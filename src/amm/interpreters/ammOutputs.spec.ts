@@ -3,9 +3,9 @@ import {emptyValue} from "../../cardano/entities/value"
 import {AssetAmount} from "../../domain/assetAmount"
 import {encodeHex} from "../../utils/hex"
 import {RustModule} from "../../utils/rustLoader"
-import {mkDepositDatum, mkRedeemDatum, mkSwapDatum, parsePoolDatum} from "../contractData"
+import {mkDepositDatum, mkRedeemDatum, mkSwapDatum, parsePoolConfig} from "../contractData"
 import {DepositRequest, OrderKind, RedeemRequest, SwapRequest} from "../models/opRequests"
-import {PoolDatum} from "../models/poolDatum"
+import {PoolConfig} from "../models/poolConfig"
 
 test.before(async () => {
   await RustModule.load(true)
@@ -38,11 +38,11 @@ test("Parse Pool datum", async t => {
   const sampleHex =
     "d8799fd8799f436e667448706f6f6c5f6e6674ffd8799f417846706f6f6c5f78ffd8799f" +
     "417946706f6f6c5f79ffd8799f426c7147706f6f6c5f6c71ff1903e3ff"
-  const expected: PoolDatum = {
+  const expected: PoolConfig = {
     ...poolTokens,
     feeNum: poolFeeNum
   }
-  t.deepEqual(parsePoolDatum(sampleHex, RustModule.CardanoWasm), expected)
+  t.deepEqual(parsePoolConfig(sampleHex, RustModule.CardanoWasm), expected)
 })
 
 test("Construct valid Swap datum", async t => {

@@ -1,7 +1,7 @@
 import {FullTxOut} from "../../cardano/entities/txOut"
 import {assetAmountOf} from "../../cardano/entities/value"
 import {CardanoWasm} from "../../utils/rustLoader"
-import {parsePoolDatum} from "../contractData"
+import {parsePoolConfig} from "../contractData"
 import {AmmPool} from "../domain/ammPool"
 
 export interface PoolsParser {
@@ -19,7 +19,7 @@ class DefaultPoolsParser implements PoolsParser {
 
   parse(box: FullTxOut): AmmPool | undefined {
     if (box.data) {
-      const poolConfig = parsePoolDatum(box.data, this.R)
+      const poolConfig = parsePoolConfig(box.data, this.R)
       if (poolConfig) {
         const nft = assetAmountOf(box.value, poolConfig.nft)
         const x = assetAmountOf(box.value, poolConfig.x)

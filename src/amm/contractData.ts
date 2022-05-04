@@ -5,9 +5,11 @@ import {Datum, HexString} from "../cardano/types"
 import {decodeHex, encodeHex} from "../utils/hex"
 import {CardanoWasm} from "../utils/rustLoader"
 import {DepositRequest, RedeemRequest, SwapRequest} from "./models/opRequests"
-import {PoolDatum} from "./models/poolDatum"
+import {OrderAction} from "./models/orderAction"
+import {DepositConfig, RedeemConfig, SwapConfig} from "./models/orderConfig"
+import {PoolConfig} from "./models/poolConfig"
 
-export function parsePoolDatum(raw: Datum, R: CardanoWasm): PoolDatum | undefined {
+export function parsePoolConfig(raw: Datum, R: CardanoWasm): PoolConfig | undefined {
   const datum = R.PlutusData.from_bytes(decodeHex(raw)).as_constr_plutus_data()!.data()
   const nft = parseAssetClass(datum.get(0))
   const x = parseAssetClass(datum.get(1))
@@ -15,6 +17,45 @@ export function parsePoolDatum(raw: Datum, R: CardanoWasm): PoolDatum | undefine
   const lq = parseAssetClass(datum.get(3))
   const feeNum = datum.get(4).as_integer()
   return nft && x && y && lq && feeNum ? {nft, x, y, lq, feeNum: Number(feeNum.to_str())} : undefined
+}
+
+export function parseSwapConfig(raw: Datum, R: CardanoWasm): SwapConfig | undefined {
+  const constr = parseConstrData(raw, R)
+  if (constr) {
+    const base = parseAssetClass(constr.get(0))
+    const quote = parseAssetClass(constr.get(1))
+    const poolId = parseAssetClass(constr.get(2))
+    const feeNum = parseInteger(constr.get(3))
+    const feePerTokenNum = parseInteger(constr.get(4))
+    const feePerTokenDen = parseInteger(constr.get(5))
+    const exFeePerToken =
+      feePerTokenNum && feePerTokenDen ? {numerator: feePerTokenNum, denominator: feePerTokenDen} : undefined
+    const rewardPkh = paseByteString(constr.get(6))
+    const stakePkhPd = parseMaybe(constr.get(7))
+    const stakePkh = stakePkhPd ? paseByteString(stakePkhPd) : undefined
+    const baseAmount = parseInteger(constr.get(8))
+    const minQuoteAmount = parseInteger(constr.get(9))
+    return base && quote && poolId && feeNum && exFeePerToken && rewardPkh && baseAmount && minQuoteAmount
+      ? {base, quote, poolId, feeNum, exFeePerToken, rewardPkh, stakePkh, baseAmount, minQuoteAmount}
+      : undefined
+  } else {
+    return undefined
+  }
+}
+
+export function parseOrderRedeemer(raw: Datum, R: CardanoWasm): OrderAction | undefined {
+  const constr = parseConstrData(raw, R)
+  if (constr) {
+    const actionConstr = parseInteger(constr.get(3))
+    if (actionConstr) return actionConstr === 0n ? "apply" : "refund"
+    else return undefined
+  } else {
+    return undefined
+  }
+}
+
+function parseConstrData(raw: Datum, R: CardanoWasm): PlutusList | undefined {
+  return R.PlutusData.from_bytes(decodeHex(raw)).as_constr_plutus_data()?.data()
 }
 
 export function mkSwapDatum(conf: SwapRequest, R: CardanoWasm): PlutusData {
@@ -59,6 +100,26 @@ export function mkDepositDatum(conf: DepositRequest, R: CardanoWasm): PlutusData
   return mkProductN([poolNft, x, y, lq, exFee, rewardPkh, stakePkh, collateralAda], R)
 }
 
+export function parseDepositConfig(raw: Datum, R: CardanoWasm): DepositConfig | undefined {
+  const constr = parseConstrData(raw, R)
+  if (constr) {
+    const poolId = parseAssetClass(constr.get(0))
+    const x = parseAssetClass(constr.get(1))
+    const y = parseAssetClass(constr.get(2))
+    const lq = parseAssetClass(constr.get(3))
+    const exFee = parseInteger(constr.get(4))
+    const rewardPkh = paseByteString(constr.get(5))
+    const stakePkhPd = parseMaybe(constr.get(6))
+    const stakePkh = stakePkhPd ? paseByteString(stakePkhPd) : undefined
+    const collateralAda = parseInteger(constr.get(7))
+    return poolId && x && y && lq && exFee && rewardPkh && collateralAda
+      ? {poolId, x, y, lq, exFee, rewardPkh, stakePkh, collateralAda}
+      : undefined
+  } else {
+    return undefined
+  }
+}
+
 export function mkRedeemDatum(conf: RedeemRequest, R: CardanoWasm): PlutusData {
   const poolNft = mkAssetClass(conf.poolId, R)
   const x = mkAssetClass(conf.x, R)
@@ -68,6 +129,25 @@ export function mkRedeemDatum(conf: RedeemRequest, R: CardanoWasm): PlutusData {
   const rewardPkh = R.PlutusData.new_bytes(decodeHex(conf.rewardPkh))
   const stakePkh = mkMaybe(conf.stakePkh ? mkByteStringFromHex(conf.stakePkh, R) : undefined, R)
   return mkProductN([poolNft, x, y, lq, exFee, rewardPkh, stakePkh], R)
+}
+
+export function parseRedeemConfig(raw: Datum, R: CardanoWasm): RedeemConfig | undefined {
+  const constr = parseConstrData(raw, R)
+  if (constr) {
+    const poolId = parseAssetClass(constr.get(0))
+    const x = parseAssetClass(constr.get(1))
+    const y = parseAssetClass(constr.get(2))
+    const lq = parseAssetClass(constr.get(3))
+    const exFee = parseInteger(constr.get(4))
+    const rewardPkh = paseByteString(constr.get(5))
+    const stakePkhPd = parseMaybe(constr.get(6))
+    const stakePkh = stakePkhPd ? paseByteString(stakePkhPd) : undefined
+    return poolId && x && y && lq && exFee && rewardPkh
+      ? {poolId, x, y, lq, exFee, rewardPkh, stakePkh}
+      : undefined
+  } else {
+    return undefined
+  }
 }
 
 function mkProductN(members: PlutusData[], R: CardanoWasm): PlutusData {
@@ -86,8 +166,22 @@ export function mkMaybe(data: PlutusData | undefined, R: CardanoWasm): PlutusDat
   }
 }
 
+function parseMaybe(pd: PlutusData): PlutusData | undefined {
+  const constr = pd.as_constr_plutus_data()
+  if (constr) {
+    return constr.alternative().is_zero() ? constr.data().get(0) : undefined
+  } else {
+    return undefined
+  }
+}
+
 function mkByteStringFromHex(hex: HexString, R: CardanoWasm): PlutusData {
   return R.PlutusData.new_bytes(decodeHex(hex))
+}
+
+function paseByteString(pd: PlutusData): HexString | undefined {
+  const bs = pd.as_bytes()
+  return bs ? encodeHex(bs) : undefined
 }
 
 function mkPlutusData(members: PlutusList, R: CardanoWasm): PlutusData {
@@ -106,4 +200,8 @@ export function parseAssetClass(pd: PlutusData): AssetClass | undefined {
   const policyId = encodeHex(ac.get(0).as_bytes()!)
   const name = new TextDecoder().decode(ac.get(1).as_bytes()!)
   return {policyId, name}
+}
+
+function parseInteger(pd: PlutusData): bigint | undefined {
+  return BigInt(pd.as_integer()?.to_str())
 }

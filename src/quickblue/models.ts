@@ -45,6 +45,7 @@ export type QuickblueRedeemer = {
   purpose: string
   index: number
   scriptHash: Hash28
+  dataBin?: HexString
 }
 
 export type QuickblueTxIn = {
