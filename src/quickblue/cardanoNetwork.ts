@@ -71,7 +71,7 @@ export class Quickblue implements CardanoNetwork {
   constructor(uri: string) {
     this.backend = axios.create({
       baseURL: uri,
-      timeout: 5000,
+      timeout: 15000,
       headers: {"Content-Type": "application/json"}
     })
   }
