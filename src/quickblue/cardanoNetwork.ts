@@ -33,7 +33,7 @@ export interface CardanoNetwork {
 
   /** Get transactions related to a given payment credential.
    */
-  getTxsByPaymentCred(pcred: PaymentCred, paging: Paging): Promise<[QuickblueTx[], number]>
+  getTxsByPaymentCred(pcred: PaymentCred, paging: Paging): Promise<QuickblueTx[]>
 
   /**  Get unspent outputs by asset reference.
    */
@@ -103,14 +103,14 @@ export class Quickblue implements CardanoNetwork {
       .then(res => toCardanoTx(res.data))
   }
 
-  getTxsByPaymentCred(pcred: PaymentCred, paging: Paging): Promise<[QuickblueTx[], number]> {
+  getTxsByPaymentCred(pcred: PaymentCred, paging: Paging): Promise<QuickblueTx[]> {
     return this.backend
-      .request<Items<QuickblueTx>>({
+      .request<QuickblueTx[]>({
         url: `/transactions/byPaymentCred/${pcred}`,
         params: paging,
         transformResponse: data => JSONBI.parse(data)
       })
-      .then(res => [res.data.items, res.data.total])
+      .then(res => res.data)
   }
 
   getUtxosByAsset(ref: AssetRef, paging: Paging, ordering?: Ordering): Promise<[FullTxOut[], number]> {

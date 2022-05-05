@@ -28,12 +28,12 @@ class NetworkHistory implements History {
       const limit = 100
       let offset = 0
       while (ops.length < displayLatest) {
-        const [txs, total] = await this.network.getTxsByPaymentCred(cred, {offset, limit})
+        const txs = await this.network.getTxsByPaymentCred(cred, {offset, limit})
         for (const tx of txs) {
           const op = this.parseOp(tx, creds)
           if (op) ops.push(op)
         }
-        if (offset < total) offset += limit
+        if (txs.length > 0) offset += limit
         else break
       }
     }
