@@ -1,4 +1,4 @@
-import {extractPayemntCred} from "../../cardano/entities/address"
+import {extractPaymentCred} from "../../cardano/entities/address"
 import {mkTxOutRef, PaymentCred} from "../../cardano/types"
 import {CardanoNetwork} from "../../quickblue/cardanoNetwork"
 import {QuickblueTx, QuickblueTxIn, QuickblueTxOut} from "../../quickblue/models"
@@ -64,7 +64,7 @@ class NetworkHistory implements History {
       if (action === "refund") {
         return {type: "refund", height: tx.blockIndex, txHash: tx.hash, status: "confirmed", order: summary}
       } else {
-        const value = tx.outputs.find(o => creds.includes(extractPayemntCred(o.addr, this.R)))?.value
+        const value = tx.outputs.find(o => creds.includes(extractPaymentCred(o.addr, this.R)))?.value
         return {
           type: "order",
           height: tx.blockIndex,
