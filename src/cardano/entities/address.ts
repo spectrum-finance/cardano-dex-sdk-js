@@ -18,8 +18,8 @@ export function decodeAddr(raw: RawAddr, R: CardanoWasm): Addr {
 export function extractPaymentCred(addr: Addr, R: CardanoWasm): PaymentCred {
   const wasmAddr = R.Address.from_bech32(addr)
   const wasmCred =
-    R.BaseAddress.from_address(wasmAddr)?.payment_cred() ??
-    R.EnterpriseAddress.from_address(wasmAddr)?.payment_cred()!
+    R.BaseAddress.from_address(wasmAddr)?.payment_cred().to_keyhash() ??
+    R.EnterpriseAddress.from_address(wasmAddr)?.payment_cred()?.to_keyhash()!
 
-  return encodeHex(wasmCred.to_bytes().slice(4))
+  return encodeHex(wasmCred.to_bytes())
 }
