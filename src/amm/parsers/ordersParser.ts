@@ -4,6 +4,7 @@ import {CardanoWasm} from "../../utils/rustLoader"
 import {parseDepositConfig, parseRedeemConfig, parseSwapConfig} from "../contractData"
 import {AmmOrderInfo} from "../models/orderInfo"
 import {ScriptCreds} from "../scripts"
+import {extractPaymentCred} from "../../cardano/entities/address"
 
 export interface OrdersParser {
   parseOrder(out: FullTxOut): AmmOrderInfo | undefined
@@ -14,18 +15,20 @@ export function mkOrdersParser(creds: ScriptCreds, R: CardanoWasm): OrdersParser
 }
 
 class DefaultOrdersParser implements OrdersParser {
-  constructor(public readonly creds: ScriptCreds, public readonly R: CardanoWasm) {}
+  constructor(public readonly creds: ScriptCreds, public readonly R: CardanoWasm) {
+  }
+
   parseOrder(out: FullTxOut): AmmOrderInfo | undefined {
-    if (out.addr === this.creds.ammSwap && out.data) {
-      const swap = parseSwapConfig(out.data, this.R)
+    if (extractPaymentCred(out.addr, this.R) === this.creds.ammSwap && out.dataBin) {
+      const swap = parseSwapConfig(out.dataBin, this.R);
       if (swap) {
         const from = new AssetAmount(swap.base, swap.baseAmount)
         return {type: "swap", poolId: swap.poolId, from, to: swap.quote, toMinAmount: swap.minQuoteAmount}
       } else {
         return undefined
       }
-    } else if (out.addr === this.creds.ammDeposit && out.data) {
-      const deposit = parseDepositConfig(out.data, this.R)
+    } else if (out.addr === this.creds.ammDeposit && out.dataBin) {
+      const deposit = parseDepositConfig(out.dataBin, this.R)
       if (deposit) {
         const inXAmount = out.value.find(
           v => v.policyId === deposit.x.policyId && v.name === deposit.x.name
@@ -43,8 +46,8 @@ class DefaultOrdersParser implements OrdersParser {
       } else {
         return undefined
       }
-    } else if (out.addr === this.creds.ammRedeem && out.data) {
-      const redeem = parseRedeemConfig(out.data, this.R)
+    } else if (out.addr === this.creds.ammRedeem && out.dataBin) {
+      const redeem = parseRedeemConfig(out.dataBin, this.R)
       if (redeem) {
         const inLqAmount = out.value.find(
           v => v.policyId === redeem.lq.policyId && v.name === redeem.lq.name
