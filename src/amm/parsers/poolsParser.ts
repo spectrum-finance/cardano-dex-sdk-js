@@ -18,8 +18,8 @@ class DefaultPoolsParser implements PoolsParser {
   constructor(public readonly R: CardanoWasm) {}
 
   parse(box: FullTxOut): AmmPool | undefined {
-    if (box.data) {
-      const poolConfig = parsePoolConfig(box.data, this.R)
+    if (box.dataBin) {
+      const poolConfig = parsePoolConfig(box.dataBin, this.R)
       if (poolConfig) {
         const nft = assetAmountOf(box.value, poolConfig.nft)
         const x = assetAmountOf(box.value, poolConfig.x)

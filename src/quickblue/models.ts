@@ -34,7 +34,7 @@ export function toCardanoTxOut(qout: QuickblueTxOut): FullTxOut {
     value: qout.value,
     addr: qout.addr,
     dataHash: qout.dataHash,
-    data: qout.dataBin
+    dataBin: qout.dataBin
   }
 }
 

@@ -11,7 +11,7 @@ export type TxOut = {
 }
 
 export type FullTxOut = TxOut & {
-  data?: Datum
+  dataBin?: Datum
 }
 
 export type TxOutCandidate = {
