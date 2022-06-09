@@ -2,7 +2,7 @@ name: Publish packages to NPM
 on:
   push:
     tags:
-      - '[0-9].[0-9].[0-9]'
+      - '[0-9]+.[0-100].[0-100]'
 jobs:
   publish:
     name: Publish package. 
