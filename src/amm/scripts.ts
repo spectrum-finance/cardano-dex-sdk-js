@@ -7,9 +7,9 @@ export type OrderAddrs = {
 }
 
 export const OrderAddrsV1Testnet: OrderAddrs = {
-  ammDeposit: "addr_test1wzs0df8en2dage286us3xgv2mwf0yekj9wddud04gwe9p7sgd4ug7",
-  ammRedeem: "addr_test1wpl7emjypvc2hskfahcq6ttvgeuakua5397cslktfwe9hzg6wxh5g",
-  ammSwap: "addr_test1wrx2hy06cqkwkc3gr4nddrs30t8z4vvhlsltz2ffhxvu5vg88208n"
+  ammDeposit: "addr_test1wqr4uz0tp75fu8wrg6gm83t20aphuc9vt6n8kvu09ctkugq6ch8kj",
+  ammRedeem: "addr_test1wzpa5704x8qel88ympf4natfdzn59nc9esj7609y3sczmmsxcd9lz",
+  ammSwap: "addr_test1wqv0z64y09p7u2h2n6w7mkadgk9q93jkfq86uhp7ydpuays0cetvn"
 }
 
 export type ScriptCreds = {
@@ -20,9 +20,9 @@ export type ScriptCreds = {
 }
 
 export const ScriptCredsV1: ScriptCreds = {
-  ammPool: "072149fd793f49edebeafe6b242f25cac72fd7fc0c0f9e6bbe18f260",
-  ammDeposit: "a0f6a4f99a9bd46547d72113218adb92f266d22b9ade35f543b250fa",
-  ammRedeem: "7fecee440b30abc2c9edf00d2d6c4679db73b4897d887ecb4bb25b89",
-  ammSwap: "ccab91fac02ceb62281d66d68e117ace2ab197fc3eb12929b999ca31"
+  ammPool: "b9eebc6add3b4684debb0d91c5da5677ae308279786c1e955ee34942",
+  ammDeposit: "075e09eb0fa89e1dc34691b3c56a7f437e60ac5ea67b338f2e176e20",
+  ammRedeem: "83da79f531c19f9ce4d85359f56968a742cf05cc25ed3ca48c302dee",
+  ammSwap: "18f16aa47943ee2aea9e9deddbad458a02c656480fae5c3e2343ce92"
 }
 
