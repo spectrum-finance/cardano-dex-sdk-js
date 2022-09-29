@@ -54,13 +54,14 @@ class DefaultTxAsm implements TxAsm {
       const out = this.R.TransactionOutput.new(addr, value)
       if (o.data) {
         const pd = this.R.PlutusData.from_bytes(decodeHex(o.data))
-        out.set_data_hash(this.R.hash_plutus_data(pd))
+        out.set_plutus_data(pd);
       }
       txb.add_output(out)
     }
     const changeAddr = this.R.Address.from_bech32(candidate.changeAddr)
     txb.add_change_if_needed(changeAddr)
     if (candidate.ttl) txb.set_ttl(candidate.ttl)
+
     const txbody = txb.build()
     const unsignedTx = this.R.Transaction.new(txbody, this.R.TransactionWitnessSet.new())
     return encodeHex(unsignedTx.to_bytes())

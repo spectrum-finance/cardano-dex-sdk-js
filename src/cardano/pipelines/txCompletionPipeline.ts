@@ -27,13 +27,11 @@ class DefaultTxCompletionPipeline implements TxCompletionPipeline {
   ) {}
 
   async complete(txc: TxCandidate): Promise<RawTx> {
-    const collectedData = txc.outputs.map(x => x.data)
     const unsignedTxRaw = this.asm.finalize(txc)
     const unsignedTx = this.R.Transaction.from_bytes(decodeHex(unsignedTxRaw))
     const witsRaw = await this.prover.sign(unsignedTxRaw)
     const wits = this.R.TransactionWitnessSet.from_bytes(decodeHex(witsRaw))
     const tx = this.R.Transaction.new(unsignedTx.body(), wits)
-    await Promise.all(collectedData.map(x => (x ? this.network.reportDatum(x) : Promise.resolve())))
     return encodeHex(tx.to_bytes())
   }
 }
