@@ -7,9 +7,9 @@ export type OrderAddrs = {
 }
 
 export const OrderAddrsV1Testnet: OrderAddrs = {
-  ammDeposit: "addr_test1wqr4uz0tp75fu8wrg6gm83t20aphuc9vt6n8kvu09ctkugq6ch8kj",
-  ammRedeem: "addr_test1wzpa5704x8qel88ympf4natfdzn59nc9esj7609y3sczmmsxcd9lz",
-  ammSwap: "addr_test1wqv0z64y09p7u2h2n6w7mkadgk9q93jkfq86uhp7ydpuays0cetvn"
+  ammDeposit: "addr_test1wzpu072y4v0kt80k70rty77htd97ww4yks6j39033asy32sswjg62",
+  ammRedeem: "addr_test1wq7z5gr0agkgsv3a36kldcdfs086jhplrvr8emany3dmw9g4t6yxh",
+  ammSwap: "addr_test1wr25fmfe8de3tljl2sjdx8zs2z0yv5h9q56ethxnj7acvtglthg75"
 }
 
 export type ScriptCreds = {
