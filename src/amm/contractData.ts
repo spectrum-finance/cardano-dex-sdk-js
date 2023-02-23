@@ -10,13 +10,17 @@ import {DepositConfig, RedeemConfig, SwapConfig} from "./models/orderConfig"
 import {PoolConfig} from "./models/poolConfig"
 
 export function parsePoolConfig(raw: Datum, R: CardanoWasm): PoolConfig | undefined {
-  const datum = R.PlutusData.from_bytes(decodeHex(raw)).as_constr_plutus_data()!.data()
-  const nft = parseAssetClass(datum.get(0))
-  const x = parseAssetClass(datum.get(1))
-  const y = parseAssetClass(datum.get(2))
-  const lq = parseAssetClass(datum.get(3))
-  const feeNum = datum.get(4).as_integer()
-  return nft && x && y && lq && feeNum ? {nft, x, y, lq, feeNum: Number(feeNum.to_str())} : undefined
+  try {
+    const datum = R.PlutusData.from_bytes(decodeHex(raw)).as_constr_plutus_data()!.data()
+    const nft = parseAssetClass(datum.get(0))
+    const x = parseAssetClass(datum.get(1))
+    const y = parseAssetClass(datum.get(2))
+    const lq = parseAssetClass(datum.get(3))
+    const feeNum = datum.get(4).as_integer()
+    return nft && x && y && lq && feeNum ? {nft, x, y, lq, feeNum: Number(feeNum.to_str())} : undefined
+  } catch {
+    return undefined;
+  }
 }
 
 export function parseSwapConfig(raw: Datum, R: CardanoWasm): SwapConfig | undefined {
