@@ -44,9 +44,9 @@ class DefaultTxAsm implements TxAsm {
 
       if (i.consumeScript) {
         const plutusWitness = this.R.PlutusWitness.new(
-          this.R.PlutusScript.from_bytes(decodeHex(i.consumeScript.validator)),
-          this.R.PlutusData.from_bytes(decodeHex(i.consumeScript.datum!)),
-          this.R.Redeemer.from_bytes(decodeHex(i.consumeScript.redeemer))
+          this.R.PlutusScript.from_hex(i.consumeScript.validator),
+          this.R.PlutusData.from_hex(i.consumeScript.datum!),
+          this.R.Redeemer.from_hex(i.consumeScript.redeemer)
         );
         txb.add_plutus_script_input(plutusWitness, txIn, valueIn);
       } else {
