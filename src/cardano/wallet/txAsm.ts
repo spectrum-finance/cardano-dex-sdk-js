@@ -1,11 +1,10 @@
-import {BaseAddress, EnterpriseAddress} from "@emurgo/cardano-serialization-lib-nodejs"
+import {BaseAddress, EnterpriseAddress, PlutusData, PlutusScript, PlutusWitness, Redeemer} from "@emurgo/cardano-serialization-lib-nodejs"
 import {toWasmValue} from "../../interop/serlib"
 import {decodeHex, encodeHex} from "../../utils/hex"
 import {CardanoWasm} from "../../utils/rustLoader"
 import {Addr} from "../entities/address"
 import {NetworkParams} from "../entities/env"
 import {RawUnsignedTx, TxCandidate} from "../entities/tx"
-import {PlutusData, PlutusScript, PlutusWitness, Redeemer} from "@emurgo/cardano-serialization-lib-browser"
 
 export interface TxAsm {
   finalize(candidate: TxCandidate): RawUnsignedTx
