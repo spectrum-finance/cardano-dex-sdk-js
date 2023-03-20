@@ -5,6 +5,7 @@ import {CardanoWasm} from "../../utils/rustLoader"
 import {Addr} from "../entities/address"
 import {NetworkParams} from "../entities/env"
 import {RawUnsignedTx, TxCandidate} from "../entities/tx"
+import {PlutusData, PlutusScript, PlutusWitness, Redeemer} from "@emurgo/cardano-serialization-lib-browser"
 
 export interface TxAsm {
   finalize(candidate: TxCandidate): RawUnsignedTx
@@ -33,7 +34,9 @@ class DefaultTxAsm implements TxAsm {
       .max_tx_size(pparams.maxTxSize)
       .prefer_pure_change(true)
       .build()
-    const txb = this.R.TransactionBuilder.new(conf)
+    const txb = this.R.TransactionBuilder.new(conf);
+    const userAddr = this.toBaseOrEnterpriseAddress(candidate.changeAddr);
+    txb.add_required_signer(userAddr.payment_cred().to_keyhash()!);
     for (const i of candidate.inputs) {
       const txInId = this.R.TransactionHash.from_bytes(decodeHex(i.txOut.txHash))
       const txIn = this.R.TransactionInput.new(txInId, i.txOut.index)
@@ -41,8 +44,12 @@ class DefaultTxAsm implements TxAsm {
       const addr = this.toBaseOrEnterpriseAddress(i.txOut.addr)
 
       if (i.consumeScript) {
-        const sh = addr.payment_cred().to_scripthash()!
-        txb.add_script_input(sh, txIn, valueIn)
+        const plutusWitness = PlutusWitness.new(
+          PlutusScript.from_hex(i.consumeScript.validator),
+          PlutusData.from_hex(i.consumeScript.datum!),
+          Redeemer.from_hex(i.consumeScript.redeemer)
+        );
+        txb.add_plutus_script_input(plutusWitness, txIn, valueIn);
       } else {
         const pkh = addr.payment_cred().to_keyhash()!
         txb.add_key_input(pkh, txIn, valueIn)
