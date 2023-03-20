@@ -1,4 +1,4 @@
-import {BaseAddress, EnterpriseAddress, PlutusData, PlutusScript, PlutusWitness, Redeemer} from "@emurgo/cardano-serialization-lib-nodejs"
+import {BaseAddress, EnterpriseAddress} from "@emurgo/cardano-serialization-lib-nodejs"
 import {toWasmValue} from "../../interop/serlib"
 import {decodeHex, encodeHex} from "../../utils/hex"
 import {CardanoWasm} from "../../utils/rustLoader"
@@ -43,10 +43,10 @@ class DefaultTxAsm implements TxAsm {
       const addr = this.toBaseOrEnterpriseAddress(i.txOut.addr)
 
       if (i.consumeScript) {
-        const plutusWitness = PlutusWitness.new(
-          PlutusScript.from_bytes(decodeHex(i.consumeScript.validator)),
-          PlutusData.from_bytes(decodeHex(i.consumeScript.datum!)),
-          Redeemer.from_bytes(decodeHex(i.consumeScript.redeemer))
+        const plutusWitness = this.R.PlutusWitness.new(
+          this.R.PlutusScript.from_bytes(decodeHex(i.consumeScript.validator)),
+          this.R.PlutusData.from_bytes(decodeHex(i.consumeScript.datum!)),
+          this.R.Redeemer.from_bytes(decodeHex(i.consumeScript.redeemer))
         );
         txb.add_plutus_script_input(plutusWitness, txIn, valueIn);
       } else {
