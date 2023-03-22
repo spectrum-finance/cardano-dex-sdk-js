@@ -5,6 +5,7 @@ import {emptyValue} from "../../cardano/entities/value"
 import {CardanoNetwork} from "../../quickblue/cardanoNetwork"
 import {RefundParams} from "../models/refundParams"
 import {OrderAddrsV1Testnet, ScriptCredsV1} from "../scripts"
+import {AdaAssetName, AdaPolicyId} from "../../cardano/constants"
 
 export interface Refunds {
   /** Redeem assets from a proxy order box.
@@ -44,7 +45,9 @@ export class AmmOrderRefunds implements Refunds {
 
       const refundOut: TxOutCandidate = {
         addr:  params.recipientAddress,
-        value: outputToRefund.value
+        value: outputToRefund.value.map(item => item.policyId === AdaPolicyId && item.name === AdaAssetName ?
+          ({ ...item, quantity: item.quantity - 1292460n  }) : item
+        )
       }
 
       return Promise.resolve({
