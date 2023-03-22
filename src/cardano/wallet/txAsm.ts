@@ -43,10 +43,19 @@ class DefaultTxAsm implements TxAsm {
       const addr = this.toBaseOrEnterpriseAddress(i.txOut.addr)
 
       if (i.consumeScript) {
+        const plutusData = this.R.PlutusData.from_hex(i.consumeScript.datum!);
         const plutusWitness = this.R.PlutusWitness.new(
           this.R.PlutusScript.from_hex(i.consumeScript.validator),
-          this.R.PlutusData.from_hex(i.consumeScript.datum!),
-          this.R.Redeemer.from_hex(i.consumeScript.redeemer)
+          plutusData,
+          this.R.Redeemer.new(
+            this.R.RedeemerTag.new_spend(),
+            this.R.BigNum.zero(),
+            plutusData,
+            this.R.ExUnits.new(
+              this.R.BigNum.from_str('18221176'),
+              this.R.BigNum.from_str('61300'),
+            )
+          )
         );
         txb.add_plutus_script_input(plutusWitness, txIn, valueIn);
       } else {
