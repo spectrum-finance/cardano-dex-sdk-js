@@ -21,8 +21,8 @@ class DefaultTxAsm implements TxAsm {
 
   finalize(candidate: TxCandidate): RawUnsignedTx {
     const pparams = this.env.pparams
-    const [mem_price_num, mem_price_denom] = decimalToFractional(pparams.executionUnitPrices.priceMemory);
-    const [step_price_num, step_price_denom] = decimalToFractional(pparams.executionUnitPrices.priceSteps);
+    const [mem_price_num, mem_price_denom] = decimalToFractional(pparams.executionUnitPrices.priceMemory)
+    const [step_price_num, step_price_denom] = decimalToFractional(pparams.executionUnitPrices.priceSteps)
     const conf = this.R.TransactionBuilderConfigBuilder.new()
       .fee_algo(
         this.R.LinearFee.new(
@@ -92,8 +92,34 @@ class DefaultTxAsm implements TxAsm {
     if (candidate.ttl) txb.set_ttl(candidate.ttl)
 
     const txbody = txb.build()
-    console.log(txb.get_plutus_input_scripts());
-    const unsignedTx = this.R.Transaction.new(txbody, this.R.TransactionWitnessSet.new())
+    const txWitness = this.R.TransactionWitnessSet.new()
+
+    const plutusInputScripts = txb.get_plutus_input_scripts()
+
+    if (plutusInputScripts && plutusInputScripts.len()) {
+      const plutusList = this.R.PlutusList.new();
+      const redeemers = this.R.Redeemers.new();
+      const plutusScripts = this.R.PlutusScripts.new();
+
+      for (let i = 0; i < plutusInputScripts.len(); i++) {
+        const plutusWitness = plutusInputScripts.get(i);
+        const plutusData = plutusWitness.datum();
+        const redeemer = plutusWitness.redeemer();
+        const plutusScript = plutusWitness.script();
+
+        if (plutusData) {
+          plutusList.add(plutusData);
+        }
+        if (plutusScript) {
+          plutusScripts.add(plutusScript)
+        }
+        redeemers.add(redeemer);
+      }
+      txWitness.set_plutus_data(plutusList);
+      txWitness.set_redeemers(redeemers);
+      txWitness.set_plutus_scripts(plutusScripts);
+    }
+    const unsignedTx = this.R.Transaction.new(txbody, txWitness)
     return encodeHex(unsignedTx.to_bytes())
   }
 
