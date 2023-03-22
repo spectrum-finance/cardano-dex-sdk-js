@@ -5,6 +5,7 @@ import {CardanoWasm} from "../../utils/rustLoader"
 import {Addr} from "../entities/address"
 import {NetworkParams} from "../entities/env"
 import {RawUnsignedTx, TxCandidate} from "../entities/tx"
+import {decimalToFractional} from "../../utils/math"
 
 export interface TxAsm {
   finalize(candidate: TxCandidate): RawUnsignedTx
@@ -20,6 +21,8 @@ class DefaultTxAsm implements TxAsm {
 
   finalize(candidate: TxCandidate): RawUnsignedTx {
     const pparams = this.env.pparams
+    const [mem_price_num, mem_price_denom] = decimalToFractional(pparams.executionUnitPrices.priceMemory);
+    const [step_price_num, step_price_denom] = decimalToFractional(pparams.executionUnitPrices.priceSteps);
     const conf = this.R.TransactionBuilderConfigBuilder.new()
       .fee_algo(
         this.R.LinearFee.new(
@@ -27,10 +30,16 @@ class DefaultTxAsm implements TxAsm {
           this.R.BigNum.from_str(pparams.txFeeFixed.toString())
         )
       )
-      .ex_unit_prices(this.R.ExUnitPrices.from_json(JSON.stringify({
-        mem_price:  pparams.executionUnitPrices.priceMemory,
-        step_price: pparams.executionUnitPrices.priceSteps
-      })))
+      .ex_unit_prices(this.R.ExUnitPrices.new(
+        this.R.UnitInterval.new(
+          this.R.BigNum.from_str(mem_price_num.toString()),
+          this.R.BigNum.from_str(mem_price_denom.toString())
+        ),
+        this.R.UnitInterval.new(
+          this.R.BigNum.from_str(step_price_num.toString()),
+          this.R.BigNum.from_str(step_price_denom.toString())
+        )
+      ))
       .coins_per_utxo_word(this.R.BigNum.from_str(pparams.utxoCostPerWord.toString()))
       .pool_deposit(this.R.BigNum.from_str(pparams.stakePoolDeposit.toString()))
       .key_deposit(this.R.BigNum.from_str(pparams.stakeAddressDeposit.toString()))
