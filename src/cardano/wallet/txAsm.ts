@@ -15,7 +15,8 @@ export function mkTxAsm(env: NetworkParams, R: CardanoWasm): TxAsm {
 }
 
 class DefaultTxAsm implements TxAsm {
-  constructor(public readonly env: NetworkParams, public readonly R: CardanoWasm) {}
+  constructor(public readonly env: NetworkParams, public readonly R: CardanoWasm) {
+  }
 
   finalize(candidate: TxCandidate): RawUnsignedTx {
     const pparams = this.env.pparams
@@ -26,6 +27,10 @@ class DefaultTxAsm implements TxAsm {
           this.R.BigNum.from_str(pparams.txFeeFixed.toString())
         )
       )
+      .ex_unit_prices(this.R.ExUnitPrices.from_json(JSON.stringify({
+        mem_price:  pparams.executionUnitPrices.priceMemory,
+        step_price: pparams.executionUnitPrices.priceSteps
+      })))
       .coins_per_utxo_word(this.R.BigNum.from_str(pparams.utxoCostPerWord.toString()))
       .pool_deposit(this.R.BigNum.from_str(pparams.stakePoolDeposit.toString()))
       .key_deposit(this.R.BigNum.from_str(pparams.stakeAddressDeposit.toString()))
@@ -33,9 +38,9 @@ class DefaultTxAsm implements TxAsm {
       .max_tx_size(pparams.maxTxSize)
       .prefer_pure_change(true)
       .build()
-    const txb = this.R.TransactionBuilder.new(conf);
-    const userAddr = this.toBaseOrEnterpriseAddress(candidate.changeAddr);
-    txb.add_required_signer(userAddr.payment_cred().to_keyhash()!);
+    const txb = this.R.TransactionBuilder.new(conf)
+    const userAddr = this.toBaseOrEnterpriseAddress(candidate.changeAddr)
+    txb.add_required_signer(userAddr.payment_cred().to_keyhash()!)
     for (const i of candidate.inputs) {
       const txInId = this.R.TransactionHash.from_bytes(decodeHex(i.txOut.txHash))
       const txIn = this.R.TransactionInput.new(txInId, i.txOut.index)
@@ -43,21 +48,21 @@ class DefaultTxAsm implements TxAsm {
       const addr = this.toBaseOrEnterpriseAddress(i.txOut.addr)
 
       if (i.consumeScript) {
-        const plutusData = this.R.PlutusData.from_hex(i.consumeScript.datum!);
+        const plutusData = this.R.PlutusData.from_hex(i.consumeScript.datum!)
         const plutusWitness = this.R.PlutusWitness.new(
           this.R.PlutusScript.from_hex(i.consumeScript.validator),
           plutusData,
           this.R.Redeemer.new(
             this.R.RedeemerTag.new_spend(),
-            this.R.BigNum.zero(),
+            this.R.BigNum.one(),
             plutusData,
             this.R.ExUnits.new(
-              this.R.BigNum.from_str('18221176'),
-              this.R.BigNum.from_str('61300'),
+              this.R.BigNum.from_str("18221176"),
+              this.R.BigNum.from_str("61300")
             )
           )
-        );
-        txb.add_plutus_script_input(plutusWitness, txIn, valueIn);
+        )
+        txb.add_plutus_script_input(plutusWitness, txIn, valueIn)
       } else {
         const pkh = addr.payment_cred().to_keyhash()!
         txb.add_key_input(pkh, txIn, valueIn)
@@ -69,7 +74,7 @@ class DefaultTxAsm implements TxAsm {
       const out = this.R.TransactionOutput.new(addr, value)
       if (o.data) {
         const pd = this.R.PlutusData.from_bytes(decodeHex(o.data))
-        out.set_plutus_data(pd);
+        out.set_plutus_data(pd)
       }
       txb.add_output(out)
     }
