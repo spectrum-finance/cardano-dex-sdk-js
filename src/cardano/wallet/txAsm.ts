@@ -92,6 +92,7 @@ class DefaultTxAsm implements TxAsm {
     if (candidate.ttl) txb.set_ttl(candidate.ttl)
 
     const txbody = txb.build()
+    console.log(txb.get_plutus_input_scripts());
     const unsignedTx = this.R.Transaction.new(txbody, this.R.TransactionWitnessSet.new())
     return encodeHex(unsignedTx.to_bytes())
   }

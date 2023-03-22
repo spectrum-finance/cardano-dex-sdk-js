@@ -46,7 +46,7 @@ export class AmmOrderRefunds implements Refunds {
       const refundOut: TxOutCandidate = {
         addr:  params.recipientAddress,
         value: outputToRefund.value.map(item => item.policyId === AdaPolicyId && item.name === AdaAssetName ?
-          ({ ...item, quantity: item.quantity - 1292460n  }) : item
+          ({ ...item, quantity: item.quantity - (1292460 as any)  }) : item
         )
       }
 
