@@ -18,7 +18,7 @@ export type TxCandidate = {
   valueMint: Value
   changeAddr: Addr
   validityRange?: ValidityRange
-  collateral?: TxIn[]
+  collateral?: FullTxIn[]
   ttl?: number
 }
 

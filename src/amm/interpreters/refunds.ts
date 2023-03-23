@@ -46,7 +46,7 @@ export class AmmOrderRefunds implements Refunds {
       const refundOut: TxOutCandidate = {
         addr:  params.recipientAddress,
         value: outputToRefund.value.map(item => item.policyId === AdaPolicyId && item.name === AdaAssetName ?
-          ({ ...item, quantity: item.quantity - (1292460 as any)  }) : item
+          ({ ...item, quantity: item.quantity - (2000000 as any)  }) : item
         )
       }
 
@@ -55,7 +55,8 @@ export class AmmOrderRefunds implements Refunds {
         dataInputs: [],
         outputs:    [refundOut],
         valueMint:  emptyValue,
-        changeAddr: params.recipientAddress
+        changeAddr: params.recipientAddress,
+        collateral: params.collateral,
       })
     } else {
       return Promise.reject(`No AMM orders found in the given Tx{id=${params.txId}`)

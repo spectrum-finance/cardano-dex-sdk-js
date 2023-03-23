@@ -50,6 +50,22 @@ class DefaultTxAsm implements TxAsm {
     const txb = this.R.TransactionBuilder.new(conf)
     const userAddr = this.toBaseOrEnterpriseAddress(candidate.changeAddr)
     txb.add_required_signer(userAddr.payment_cred().to_keyhash()!)
+
+    if (candidate.collateral) {
+      const collateralTxInputsBuilder = this.R.TxInputsBuilder.new();
+
+      for (const i of candidate.collateral) {
+        const txInId = this.R.TransactionHash.from_bytes(decodeHex(i.txOut.txHash));
+        const txIn = this.R.TransactionInput.new(txInId, i.txOut.index);
+        const valueIn = toWasmValue(i.txOut.value, this.R);
+        const addr = this.toBaseOrEnterpriseAddress(i.txOut.addr);
+        const pkh = addr.payment_cred().to_keyhash()!
+
+        collateralTxInputsBuilder.add_key_input(pkh, txIn, valueIn);
+      }
+      txb.set_collateral(collateralTxInputsBuilder)
+    }
+
     for (const i of candidate.inputs) {
       const txInId = this.R.TransactionHash.from_bytes(decodeHex(i.txOut.txHash))
       const txIn = this.R.TransactionInput.new(txInId, i.txOut.index)
@@ -63,7 +79,7 @@ class DefaultTxAsm implements TxAsm {
           plutusData,
           this.R.Redeemer.new(
             this.R.RedeemerTag.new_spend(),
-            this.R.BigNum.one(),
+            this.R.BigNum.zero(),
             plutusData,
             this.R.ExUnits.new(
               this.R.BigNum.from_str("18221176"),
@@ -94,31 +110,31 @@ class DefaultTxAsm implements TxAsm {
     const txbody = txb.build()
     const txWitness = this.R.TransactionWitnessSet.new()
 
-    const plutusInputScripts = txb.get_plutus_input_scripts()
-
-    if (plutusInputScripts && plutusInputScripts.len()) {
-      const plutusList = this.R.PlutusList.new();
-      const redeemers = this.R.Redeemers.new();
-      const plutusScripts = this.R.PlutusScripts.new();
-
-      for (let i = 0; i < plutusInputScripts.len(); i++) {
-        const plutusWitness = plutusInputScripts.get(i);
-        const plutusData = plutusWitness.datum();
-        const redeemer = plutusWitness.redeemer();
-        const plutusScript = plutusWitness.script();
-
-        if (plutusData) {
-          plutusList.add(plutusData);
-        }
-        if (plutusScript) {
-          plutusScripts.add(plutusScript)
-        }
-        redeemers.add(redeemer);
-      }
-      txWitness.set_plutus_data(plutusList);
-      txWitness.set_redeemers(redeemers);
-      txWitness.set_plutus_scripts(plutusScripts);
-    }
+    // const plutusInputScripts = txb.get_plutus_input_scripts()
+    //
+    // if (plutusInputScripts && plutusInputScripts.len()) {
+    //   const plutusList = this.R.PlutusList.new();
+    //   const redeemers = this.R.Redeemers.new();
+    //   const plutusScripts = this.R.PlutusScripts.new();
+    //
+    //   for (let i = 0; i < plutusInputScripts.len(); i++) {
+    //     const plutusWitness = plutusInputScripts.get(i);
+    //     const plutusData = plutusWitness.datum();
+    //     const redeemer = plutusWitness.redeemer();
+    //     const plutusScript = plutusWitness.script();
+    //
+    //     if (plutusData) {
+    //       plutusList.add(plutusData);
+    //     }
+    //     if (plutusScript) {
+    //       plutusScripts.add(plutusScript)
+    //     }
+    //     redeemers.add(redeemer);
+    //   }
+    //   txWitness.set_plutus_data(plutusList);
+    //   txWitness.set_redeemers(redeemers);
+    //   txWitness.set_plutus_scripts(plutusScripts);
+    // }
     const unsignedTx = this.R.Transaction.new(txbody, txWitness)
     return encodeHex(unsignedTx.to_bytes())
   }
