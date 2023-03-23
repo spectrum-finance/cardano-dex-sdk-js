@@ -51,7 +51,7 @@ export class AmmOrderRefunds implements Refunds {
       }
 
       return Promise.resolve({
-        inputs:     [inputs],
+        inputs:     params.inputs.concat(inputs),
         dataInputs: [],
         outputs:    [refundOut],
         valueMint:  emptyValue,
