@@ -31,6 +31,9 @@ class DefaultTxCompletionPipeline implements TxCompletionPipeline {
     const unsignedTx = this.R.Transaction.from_bytes(decodeHex(unsignedTxRaw))
     const witsRaw = await this.prover.sign(unsignedTxRaw)
     const wits = this.R.TransactionWitnessSet.from_bytes(decodeHex(witsRaw))
+    const mergedWits = unsignedTx.witness_set();
+    mergedWits.set_vkeys(wits.vkeys()!)
+
     const tx = this.R.Transaction.new(unsignedTx.body(), wits)
     return encodeHex(tx.to_bytes())
   }

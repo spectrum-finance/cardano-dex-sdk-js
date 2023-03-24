@@ -1,11 +1,11 @@
 import {BaseAddress, EnterpriseAddress} from "@emurgo/cardano-serialization-lib-nodejs"
 import {toWasmValue} from "../../interop/serlib"
 import {decodeHex, encodeHex} from "../../utils/hex"
+import {decimalToFractional} from "../../utils/math"
 import {CardanoWasm} from "../../utils/rustLoader"
 import {Addr} from "../entities/address"
 import {NetworkParams} from "../entities/env"
 import {RawUnsignedTx, TxCandidate} from "../entities/tx"
-import {decimalToFractional} from "../../utils/math"
 
 export interface TxAsm {
   finalize(candidate: TxCandidate): RawUnsignedTx
@@ -48,8 +48,6 @@ class DefaultTxAsm implements TxAsm {
       .prefer_pure_change(true)
       .build()
     const txb = this.R.TransactionBuilder.new(conf)
-    const userAddr = this.toBaseOrEnterpriseAddress(candidate.changeAddr)
-    txb.add_required_signer(userAddr.payment_cred().to_keyhash()!)
 
     if (candidate.collateral) {
       const collateralTxInputsBuilder = this.R.TxInputsBuilder.new();
@@ -82,8 +80,8 @@ class DefaultTxAsm implements TxAsm {
             this.R.BigNum.zero(),
             plutusData,
             this.R.ExUnits.new(
-              this.R.BigNum.from_str("18221176"),
-              this.R.BigNum.from_str("61300")
+              this.R.BigNum.from_str("10000000"),
+              this.R.BigNum.from_str("9000000000")
             )
           )
         )
@@ -110,31 +108,32 @@ class DefaultTxAsm implements TxAsm {
     const txbody = txb.build()
     const txWitness = this.R.TransactionWitnessSet.new()
 
-    // const plutusInputScripts = txb.get_plutus_input_scripts()
-    //
-    // if (plutusInputScripts && plutusInputScripts.len()) {
-    //   const plutusList = this.R.PlutusList.new();
-    //   const redeemers = this.R.Redeemers.new();
-    //   const plutusScripts = this.R.PlutusScripts.new();
-    //
-    //   for (let i = 0; i < plutusInputScripts.len(); i++) {
-    //     const plutusWitness = plutusInputScripts.get(i);
-    //     const plutusData = plutusWitness.datum();
-    //     const redeemer = plutusWitness.redeemer();
-    //     const plutusScript = plutusWitness.script();
-    //
-    //     if (plutusData) {
-    //       plutusList.add(plutusData);
-    //     }
-    //     if (plutusScript) {
-    //       plutusScripts.add(plutusScript)
-    //     }
-    //     redeemers.add(redeemer);
-    //   }
-    //   txWitness.set_plutus_data(plutusList);
-    //   txWitness.set_redeemers(redeemers);
-    //   txWitness.set_plutus_scripts(plutusScripts);
-    // }
+    const plutusInputScripts = txb.get_plutus_input_scripts()
+
+    if (plutusInputScripts && plutusInputScripts.len()) {
+      const plutusList = this.R.PlutusList.new();
+      const redeemers = this.R.Redeemers.new();
+      const plutusScripts = this.R.PlutusScripts.new();
+
+      for (let i = 0; i < plutusInputScripts.len(); i++) {
+        const plutusWitness = plutusInputScripts.get(i);
+        const plutusData = plutusWitness.datum();
+        const redeemer = plutusWitness.redeemer();
+        const plutusScript = plutusWitness.script();
+
+        if (plutusData) {
+          plutusList.add(plutusData);
+        }
+        if (plutusScript) {
+          plutusScripts.add(plutusScript)
+        }
+        redeemers.add(redeemer);
+      }
+      txWitness.set_plutus_data(plutusList);
+      txWitness.set_redeemers(redeemers);
+      txWitness.set_plutus_scripts(plutusScripts);
+    }
+
     const unsignedTx = this.R.Transaction.new(txbody, txWitness)
     return encodeHex(unsignedTx.to_bytes())
   }
