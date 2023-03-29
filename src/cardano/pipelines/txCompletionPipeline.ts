@@ -34,7 +34,7 @@ class DefaultTxCompletionPipeline implements TxCompletionPipeline {
     const mergedWits = unsignedTx.witness_set();
     mergedWits.set_vkeys(wits.vkeys()!)
 
-    const tx = this.R.Transaction.new(unsignedTx.body(), wits)
+    const tx = this.R.Transaction.new(unsignedTx.body(), mergedWits)
     return encodeHex(tx.to_bytes())
   }
 }
