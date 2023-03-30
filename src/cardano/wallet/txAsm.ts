@@ -49,6 +49,9 @@ class DefaultTxAsm implements TxAsm {
       .build()
     const txb = this.R.TransactionBuilder.new(conf)
 
+    const userAddr = this.toBaseOrEnterpriseAddress(candidate.changeAddr);
+    txb.add_required_signer(userAddr.payment_cred().to_keyhash()!);
+
     if (candidate.collateral) {
       const collateralTxInputsBuilder = this.R.TxInputsBuilder.new();
 
@@ -74,10 +77,9 @@ class DefaultTxAsm implements TxAsm {
       const addr = this.toBaseOrEnterpriseAddress(i.txOut.addr)
 
       if (i.consumeScript) {
-        const plutusData = this.R.PlutusData.from_hex(i.consumeScript.datum!)
         const plutusWitness = this.R.PlutusWitness.new_with_ref(
           this.R.PlutusScriptSource.new(this.R.PlutusScript.from_hex(i.consumeScript.validator)),
-          this.R.DatumSource.new(plutusData),
+          this.R.DatumSource.new_ref_input(txIn),
           this.R.Redeemer.new(
             this.R.RedeemerTag.new_spend(),
             this.R.BigNum.zero(),
@@ -119,6 +121,8 @@ class DefaultTxAsm implements TxAsm {
       const plutusScripts = this.R.PlutusScripts.new();
 
       for (let i = 0; i < plutusInputScripts.len(); i++) {
+
+
         const plutusWitness = plutusInputScripts.get(i);
         const plutusData = plutusWitness.datum();
         const redeemer = plutusWitness.redeemer();
