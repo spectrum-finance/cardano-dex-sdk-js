@@ -53,6 +53,9 @@ class DefaultTxAsm implements TxAsm {
       const collateralTxInputsBuilder = this.R.TxInputsBuilder.new();
 
       for (const i of candidate.collateral) {
+        if (i.txOut.value.length > 1) {
+          continue;
+        }
         const txInId = this.R.TransactionHash.from_bytes(decodeHex(i.txOut.txHash));
         const txIn = this.R.TransactionInput.new(txInId, i.txOut.index);
         const valueIn = toWasmValue(i.txOut.value, this.R);
@@ -72,9 +75,9 @@ class DefaultTxAsm implements TxAsm {
 
       if (i.consumeScript) {
         const plutusData = this.R.PlutusData.from_hex(i.consumeScript.datum!)
-        const plutusWitness = this.R.PlutusWitness.new(
-          this.R.PlutusScript.from_hex(i.consumeScript.validator),
-          plutusData,
+        const plutusWitness = this.R.PlutusWitness.new_with_ref(
+          this.R.PlutusScriptSource.new(this.R.PlutusScript.from_hex(i.consumeScript.validator)),
+          this.R.DatumSource.new(plutusData),
           this.R.Redeemer.new(
             this.R.RedeemerTag.new_spend(),
             this.R.BigNum.zero(),
