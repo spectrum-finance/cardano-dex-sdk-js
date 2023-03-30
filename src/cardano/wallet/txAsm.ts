@@ -78,11 +78,14 @@ class DefaultTxAsm implements TxAsm {
 
       if (i.consumeScript) {
         const plutusWitness = this.R.PlutusWitness.new_with_ref(
-          this.R.PlutusScriptSource.new(this.R.PlutusScript.from_hex(i.consumeScript.validator)),
+          this.R.PlutusScriptSource.new_ref_input(
+            this.R.ScriptHash.from_hex(i.consumeScript.validator!),
+            txIn
+          ),
           this.R.DatumSource.new_ref_input(txIn),
           this.R.Redeemer.new(
             this.R.RedeemerTag.new_spend(),
-            this.R.BigNum.zero(),
+            this.R.BigNum.one(),
             this.R.PlutusData.from_hex(i.consumeScript.redeemer),
             this.R.ExUnits.new(
               this.R.BigNum.from_str("10000000"),
