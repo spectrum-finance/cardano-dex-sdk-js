@@ -81,9 +81,10 @@ class DefaultTxAsm implements TxAsm {
         const refTxIn = this.R.TransactionInput.new(refTxInId, 2);
 
         const plutusWitness = this.R.PlutusWitness.new_with_ref(
-          this.R.PlutusScriptSource.new_ref_input(
+          this.R.PlutusScriptSource.new_ref_input_with_lang_ver(
             this.R.ScriptHash.from_hex(i.consumeScript.validator!),
-            refTxIn
+            refTxIn,
+            this.R.Language.new_plutus_v2()
           ),
           this.R.DatumSource.new_ref_input(txIn),
           this.R.Redeemer.new(
