@@ -77,10 +77,13 @@ class DefaultTxAsm implements TxAsm {
       const addr = this.toBaseOrEnterpriseAddress(i.txOut.addr)
 
       if (i.consumeScript) {
+        const refTxInId = this.R.TransactionHash.from_bytes(decodeHex('b2f79375bf73234bb988cfdb911c78ac4e9b5470197e828d507babfdcca08d16'));
+        const refTxIn = this.R.TransactionInput.new(refTxInId, 2);
+
         const plutusWitness = this.R.PlutusWitness.new_with_ref(
           this.R.PlutusScriptSource.new_ref_input(
             this.R.ScriptHash.from_hex(i.consumeScript.validator!),
-            txIn
+            refTxIn
           ),
           this.R.DatumSource.new_ref_input(txIn),
           this.R.Redeemer.new(
@@ -112,8 +115,10 @@ class DefaultTxAsm implements TxAsm {
     const changeAddr = this.R.Address.from_bech32(candidate.changeAddr)
     txb.add_change_if_needed(changeAddr)
     if (candidate.ttl) txb.set_ttl(candidate.ttl)
+    txb.calc_script_data_hash(
+      this.R.TxBuilderConstants.plutus_vasil_cost_models()
+    );
 
-    const txbody = txb.build()
     const txWitness = this.R.TransactionWitnessSet.new()
 
     const plutusInputScripts = txb.get_plutus_input_scripts()
@@ -142,8 +147,18 @@ class DefaultTxAsm implements TxAsm {
       txWitness.set_plutus_data(plutusList);
       txWitness.set_redeemers(redeemers);
       txWitness.set_plutus_scripts(plutusScripts);
+
+      const costModels = this.R.Costmdls.from_json(JSON.stringify({
+        PlutusV1: JSON.stringify((pparams as any).PlutusScriptV1),
+        PlutusV2: JSON.stringify((pparams as any).PlutusScriptV2)
+      }));
+      console.log(
+        this.R.hash_script_data(redeemers, costModels, plutusList)
+      )
+      txb.calc_script_data_hash(costModels);
     }
 
+    const txbody = txb.build()
     const unsignedTx = this.R.Transaction.new(txbody, txWitness)
     return encodeHex(unsignedTx.to_bytes())
   }
