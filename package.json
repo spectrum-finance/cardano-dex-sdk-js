@@ -1,6 +1,6 @@
 {
   "name": "@ergolabs/cardano-dex-sdk",
-  "version": "0.0.94",
+  "version": "0.0.95",
   "description": "ErgoDEX SDK for Cardano",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
@@ -40,7 +40,7 @@
     "node": ">=10"
   },
   "dependencies": {
-    "@emurgo/cardano-serialization-lib-browser": "^11.3.1",
+    "@emurgo/cardano-serialization-lib-browser": "^11.1.0",
     "axios": "^0.21.1",
     "blakejs": "^1.1.0",
     "bs58": "^4.0.1",
@@ -56,7 +56,7 @@
     "@babel/plugin-proposal-optional-chaining": "^7.14.5",
     "@babel/polyfill": "^7.12.1",
     "@babel/preset-env": "^7.15.6",
-    "@emurgo/cardano-serialization-lib-nodejs": "^11.3.1",
+    "@emurgo/cardano-serialization-lib-nodejs": "^11.1.0",
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
     "@types/bs58": "^4.0.1",
     "@types/crypto-js": "^4.0.1",
