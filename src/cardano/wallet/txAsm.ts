@@ -1,11 +1,17 @@
-import {BaseAddress, EnterpriseAddress} from "@emurgo/cardano-serialization-lib-nodejs"
+import {
+  BaseAddress, Ed25519KeyHash,
+  EnterpriseAddress, PlutusWitness,
+  TransactionBuilderConfig, TransactionInput, TransactionOutput, TxInputsBuilder, Value
+} from "@emurgo/cardano-serialization-lib-nodejs"
 import {toWasmValue} from "../../interop/serlib"
 import {decodeHex, encodeHex} from "../../utils/hex"
 import {decimalToFractional} from "../../utils/math"
 import {CardanoWasm} from "../../utils/rustLoader"
 import {Addr} from "../entities/address"
-import {NetworkParams} from "../entities/env"
+import {NetworkParams, ProtocolParams} from "../entities/env"
 import {RawUnsignedTx, TxCandidate} from "../entities/tx"
+import {FullTxIn} from "../entities/txIn"
+import {TxOutCandidate} from "../entities/txOut"
 
 export interface TxAsm {
   finalize(candidate: TxCandidate): RawUnsignedTx
@@ -20,10 +26,93 @@ class DefaultTxAsm implements TxAsm {
   }
 
   finalize(candidate: TxCandidate): RawUnsignedTx {
-    const pparams = this.env.pparams
-    const [mem_price_num, mem_price_denom] = decimalToFractional(pparams.executionUnitPrices.priceMemory)
-    const [step_price_num, step_price_denom] = decimalToFractional(pparams.executionUnitPrices.priceSteps)
-    const conf = this.R.TransactionBuilderConfigBuilder.new()
+    const txBuilder = this.R.TransactionBuilder.new(this.getTxBuilderConfig(this.env.pparams))
+
+    const userAddressKeyHash = this.toKeyHash(candidate.changeAddr)
+    if (userAddressKeyHash) {
+      txBuilder.add_required_signer(userAddressKeyHash)
+    }
+    if (candidate.collateral) {
+      txBuilder.set_collateral(this.getCollateralBuilder(candidate.collateral))
+    }
+
+    for (const i of candidate.inputs) {
+      if (i.consumeScript) {
+        txBuilder.add_plutus_script_input(...this.toPlutusScriptInputData(i))
+      } else {
+        txBuilder.add_key_input(...this.toKeyInputData(i))
+      }
+    }
+
+    for (const o of candidate.outputs) {
+      txBuilder.add_output(this.toTransactionOutput(o))
+    }
+
+    const changeAddr = this.R.Address.from_bech32(candidate.changeAddr)
+    txBuilder.add_change_if_needed(changeAddr)
+
+    if (candidate.ttl) txBuilder.set_ttl(candidate.ttl)
+
+    txBuilder.calc_script_data_hash(this.R.TxBuilderConstants.plutus_vasil_cost_models())
+
+    return encodeHex(txBuilder.build_tx().to_bytes())
+  }
+
+  private toTransactionOutput(o: TxOutCandidate): TransactionOutput {
+    const addr = this.R.Address.from_bech32(o.addr)
+    const value = toWasmValue(o.value, this.R)
+    const out = this.R.TransactionOutput.new(addr, value)
+    if (o.data) {
+      const pd = this.R.PlutusData.from_bytes(decodeHex(o.data))
+      out.set_plutus_data(pd)
+    }
+    return out
+  }
+
+  private toKeyInputData(i: FullTxIn): [Ed25519KeyHash, TransactionInput, Value] {
+    const txInId = this.R.TransactionHash.from_bytes(decodeHex(i.txOut.txHash))
+    const txIn = this.R.TransactionInput.new(txInId, i.txOut.index)
+    const valueIn = toWasmValue(i.txOut.value, this.R)
+    const pkh = this.toKeyHash(i.txOut.addr)!
+
+    return [pkh, txIn, valueIn]
+  }
+
+  private toPlutusScriptInputData(i: FullTxIn): [PlutusWitness, TransactionInput, Value] {
+    const txInId = this.R.TransactionHash.from_bytes(decodeHex(i.txOut.txHash))
+    const txIn = this.R.TransactionInput.new(txInId, i.txOut.index)
+    const valueIn = toWasmValue(i.txOut.value, this.R)
+    const consumeScript = i.consumeScript!
+
+    const refTxInId = this.R.TransactionHash.from_bytes(decodeHex(consumeScript.opInRef.opInRefHash))
+    const refTxIn = this.R.TransactionInput.new(refTxInId, consumeScript.opInRef.opInRefIndex)
+
+    const plutusWitness = this.R.PlutusWitness.new_with_ref(
+      this.R.PlutusScriptSource.new_ref_input_with_lang_ver(
+        this.R.ScriptHash.from_hex(consumeScript.validator),
+        refTxIn,
+        this.R.Language.new_plutus_v2()
+      ),
+      this.R.DatumSource.new_ref_input(txIn),
+      this.R.Redeemer.new(
+        this.R.RedeemerTag.new_spend(),
+        this.R.BigNum.one(),
+        this.R.PlutusData.from_hex(consumeScript.redeemer),
+        this.R.ExUnits.new(
+          this.R.BigNum.from_str("10000000"),
+          this.R.BigNum.from_str("9000000000")
+        )
+      )
+    )
+
+    return [plutusWitness, txIn, valueIn]
+  }
+
+  private getTxBuilderConfig(pparams: ProtocolParams): TransactionBuilderConfig {
+    const [mem_price_num, mem_price_denom] = decimalToFractional(pparams.executionUnitPrices.priceMemory);
+    const [step_price_num, step_price_denom] = decimalToFractional(pparams.executionUnitPrices.priceSteps);
+    
+    return this.R.TransactionBuilderConfigBuilder.new()
       .fee_algo(
         this.R.LinearFee.new(
           this.R.BigNum.from_str(pparams.txFeePerByte.toString()),
@@ -47,126 +136,32 @@ class DefaultTxAsm implements TxAsm {
       .max_tx_size(pparams.maxTxSize)
       .prefer_pure_change(true)
       .build()
-    const txb = this.R.TransactionBuilder.new(conf)
-
-    const userAddr = this.toBaseOrEnterpriseAddress(candidate.changeAddr);
-    txb.add_required_signer(userAddr.payment_cred().to_keyhash()!);
-
-    if (candidate.collateral) {
-      const collateralTxInputsBuilder = this.R.TxInputsBuilder.new();
-
-      for (const i of candidate.collateral) {
-        if (i.txOut.value.length > 1) {
-          continue;
-        }
-        const txInId = this.R.TransactionHash.from_bytes(decodeHex(i.txOut.txHash));
-        const txIn = this.R.TransactionInput.new(txInId, i.txOut.index);
-        const valueIn = toWasmValue(i.txOut.value, this.R);
-        const addr = this.toBaseOrEnterpriseAddress(i.txOut.addr);
-        const pkh = addr.payment_cred().to_keyhash()!
-
-        collateralTxInputsBuilder.add_key_input(pkh, txIn, valueIn);
-      }
-      txb.set_collateral(collateralTxInputsBuilder)
-    }
-
-    for (const i of candidate.inputs) {
-      const txInId = this.R.TransactionHash.from_bytes(decodeHex(i.txOut.txHash))
-      const txIn = this.R.TransactionInput.new(txInId, i.txOut.index)
-      const valueIn = toWasmValue(i.txOut.value, this.R)
-      const addr = this.toBaseOrEnterpriseAddress(i.txOut.addr)
-
-      if (i.consumeScript) {
-        const refTxInId = this.R.TransactionHash.from_bytes(decodeHex('b2f79375bf73234bb988cfdb911c78ac4e9b5470197e828d507babfdcca08d16'));
-        const refTxIn = this.R.TransactionInput.new(refTxInId, 2);
-
-        const plutusWitness = this.R.PlutusWitness.new_with_ref(
-          this.R.PlutusScriptSource.new_ref_input_with_lang_ver(
-            this.R.ScriptHash.from_hex(i.consumeScript.validator!),
-            refTxIn,
-            this.R.Language.new_plutus_v2()
-          ),
-          this.R.DatumSource.new_ref_input(txIn),
-          this.R.Redeemer.new(
-            this.R.RedeemerTag.new_spend(),
-            this.R.BigNum.one(),
-            this.R.PlutusData.from_hex(i.consumeScript.redeemer),
-            this.R.ExUnits.new(
-              this.R.BigNum.from_str("10000000"),
-              this.R.BigNum.from_str("9000000000")
-            )
-          )
-        )
-        txb.add_plutus_script_input(plutusWitness, txIn, valueIn)
-      } else {
-        const pkh = addr.payment_cred().to_keyhash()!
-        txb.add_key_input(pkh, txIn, valueIn)
-      }
-    }
-    for (const o of candidate.outputs) {
-      const addr = this.R.Address.from_bech32(o.addr)
-      const value = toWasmValue(o.value, this.R)
-      const out = this.R.TransactionOutput.new(addr, value)
-      if (o.data) {
-        const pd = this.R.PlutusData.from_bytes(decodeHex(o.data))
-        out.set_plutus_data(pd)
-      }
-      txb.add_output(out)
-    }
-    const changeAddr = this.R.Address.from_bech32(candidate.changeAddr)
-    txb.add_change_if_needed(changeAddr)
-    if (candidate.ttl) txb.set_ttl(candidate.ttl)
-    txb.calc_script_data_hash(
-      this.R.TxBuilderConstants.plutus_vasil_cost_models()
-    );
-
-    const txWitness = this.R.TransactionWitnessSet.new()
-
-    const plutusInputScripts = txb.get_plutus_input_scripts()
-
-    if (plutusInputScripts && plutusInputScripts.len()) {
-      const plutusList = this.R.PlutusList.new();
-      const redeemers = this.R.Redeemers.new();
-      const plutusScripts = this.R.PlutusScripts.new();
-
-      for (let i = 0; i < plutusInputScripts.len(); i++) {
-
-
-        const plutusWitness = plutusInputScripts.get(i);
-        const plutusData = plutusWitness.datum();
-        const redeemer = plutusWitness.redeemer();
-        const plutusScript = plutusWitness.script();
-
-        if (plutusData) {
-          plutusList.add(plutusData);
-        }
-        if (plutusScript) {
-          plutusScripts.add(plutusScript)
-        }
-        redeemers.add(redeemer);
-      }
-      txWitness.set_plutus_data(plutusList);
-      txWitness.set_redeemers(redeemers);
-      txWitness.set_plutus_scripts(plutusScripts);
-
-      const costModels = this.R.Costmdls.from_json(JSON.stringify({
-        PlutusV1: JSON.stringify((pparams as any).PlutusScriptV1),
-        PlutusV2: JSON.stringify((pparams as any).PlutusScriptV2)
-      }));
-      console.log(
-        this.R.hash_script_data(redeemers, costModels, plutusList)
-      )
-      txb.calc_script_data_hash(costModels);
-    }
-
-    const txbody = txb.build()
-    const unsignedTx = this.R.Transaction.new(txbody, txWitness)
-    return encodeHex(unsignedTx.to_bytes())
   }
 
   private toBaseOrEnterpriseAddress(addr: Addr): BaseAddress | EnterpriseAddress {
     const address = this.R.Address.from_bech32(addr)
 
     return this.R.BaseAddress.from_address(address) ?? this.R.EnterpriseAddress.from_address(address)!
+  }
+
+  private toKeyHash(addr: Addr): Ed25519KeyHash | undefined {
+    return this.toBaseOrEnterpriseAddress(addr).payment_cred().to_keyhash()
+  }
+
+  private getCollateralBuilder(collateral: FullTxIn[]): TxInputsBuilder {
+    const collateralTxInputsBuilder = this.R.TxInputsBuilder.new()
+
+    for (const i of collateral) {
+      const txInId = this.R.TransactionHash.from_bytes(decodeHex(i.txOut.txHash))
+      const txIn = this.R.TransactionInput.new(txInId, i.txOut.index)
+      const valueIn = toWasmValue(i.txOut.value, this.R)
+      const pkh = this.toKeyHash(i.txOut.addr)
+
+      if (pkh) {
+        collateralTxInputsBuilder.add_key_input(pkh, txIn, valueIn)
+      }
+    }
+
+    return collateralTxInputsBuilder
   }
 }
