@@ -63,9 +63,43 @@ class NetworkHistory implements History {
     if (!orderInOutputs) {
       return undefined;
     }
-    console.log(creds, txOrNothing, orderInOutputs);
+    const timestamp = txOrNothing.timestamp * 1_000
+    const [summary, output] = orderInOutputs;
 
-    return undefined;
+    if (!creds.includes(output.paymentCred)) {
+      return undefined;
+    }
+
+    if (output.spentByTxHash) {
+      return {
+        type:   "order",
+        height: txOrNothing.blockIndex,
+        txHash: txOrNothing.hash,
+        outRef: mkTxOutRef(output.txHash, output.index),
+        status: "executed",
+        timestamp,
+        order:  summary
+      }
+    } else if (Date.now() - timestamp < MAX_PENDING_INTERVAL) {
+      return {
+        type:   "order",
+        height: txOrNothing.blockIndex,
+        txHash: txOrNothing.hash,
+        outRef: mkTxOutRef(output.txHash, output.index),
+        status: "pending",
+        timestamp,
+        order:  summary
+      }
+    }
+    return {
+      type:   "order",
+      height: txOrNothing.blockIndex,
+      txHash: txOrNothing.hash,
+      outRef: mkTxOutRef(output.txHash, output.index),
+      status: "locked",
+      timestamp,
+      order:  summary
+    }
   }
 
   private parseOp(tx: QuickblueTx): AmmDexOperation | undefined {

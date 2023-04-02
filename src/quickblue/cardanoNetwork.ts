@@ -1,7 +1,6 @@
 import axios, {AxiosInstance} from "axios"
 import {AssetInfo} from "../cardano/entities/assetInfo"
 import {NetworkParams} from "../cardano/entities/env"
-import {Tx} from "../cardano/entities/tx"
 import {FullTxOut} from "../cardano/entities/txOut"
 import {AssetRef, Datum, PaymentCred, TxHash, TxOutRef} from "../cardano/types"
 import {JSONBI, JSONBI_ALWAYS} from "../utils/json"
@@ -12,7 +11,6 @@ import {
   QuickblueTx,
   QuickblueTxOut,
   quickblueTxOutJsonTransformer,
-  toCardanoTx,
   toCardanoTxOut,
   UtxoSearch
 } from "./models"
@@ -21,7 +19,7 @@ import {Ordering, Paging} from "./types"
 export interface CardanoNetwork {
   /** Get transaction by hash.
    */
-  getTx(hash: TxHash): Promise<Tx | undefined>
+  getTx(hash: TxHash): Promise<QuickblueTx | undefined>
 
   /** Get output by output reference.
    */
@@ -94,13 +92,13 @@ export class Quickblue implements CardanoNetwork {
       .then(res => toCardanoTxOut(res.data))
   }
 
-  getTx(hash: TxHash): Promise<Tx | undefined> {
+  getTx(hash: TxHash): Promise<QuickblueTx | undefined> {
     return this.backend
       .request<QuickblueTx>({
         url: `/transactions/${hash}`,
         transformResponse: data => JSONBI.parse(data)
       })
-      .then(res => toCardanoTx(res.data))
+      .then(res => res.data)
   }
 
   getTxsByPaymentCred(pcred: PaymentCred, paging: Paging): Promise<QuickblueTx[]> {
