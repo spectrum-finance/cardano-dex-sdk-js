@@ -80,7 +80,7 @@ class NetworkHistory implements History {
           timestamp,
           order: summary
         }
-      } else if (Date.now() - timestamp >= MAX_PENDING_INTERVAL) {
+      } else if (Date.now() - timestamp < MAX_PENDING_INTERVAL) {
         return {
           type: "order",
           height: tx.blockIndex,
