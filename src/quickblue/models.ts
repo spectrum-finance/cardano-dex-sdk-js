@@ -17,6 +17,7 @@ export type QuickblueTxOut = {
   index: number
   value: Value
   addr: Addr
+  paymentCred: HexString;
   dataHash?: Hash32
   spentByTxHash?: HexString
   dataBin?: HexString
