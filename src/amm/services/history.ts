@@ -65,9 +65,9 @@ class NetworkHistory implements History {
     }
     const timestamp = txOrNothing.timestamp * 1_000
     const [summary, output] = orderInOutputs;
-    const isUserInputs = !txOrNothing.inputs.every(i => creds.includes(i.out.paymentCred));
+    const isInputsIncorrect = !txOrNothing.inputs.every(i => creds.includes(i.out.paymentCred));
 
-    if (!isUserInputs) {
+    if (isInputsIncorrect) {
       return undefined;
     }
 
