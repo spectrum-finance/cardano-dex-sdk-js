@@ -1,4 +1,3 @@
-import {extractPaymentCred} from "../../cardano/entities/address"
 import {mkTxOutRef, PaymentCred} from "../../cardano/types"
 import {CardanoNetwork} from "../../quickblue/cardanoNetwork"
 import {QuickblueTx, QuickblueTxIn, QuickblueTxOut} from "../../quickblue/models"
@@ -7,6 +6,8 @@ import {parseOrderRedeemer} from "../contractData"
 import {AmmDexOperation} from "../models/operations"
 import {AmmOrderInfo} from "../models/orderInfo"
 import {OrdersParser} from "../parsers/ordersParser"
+
+const MAX_PENDING_INTERVAL = 10 * 60_000;
 
 export interface History {
   getAllByPCreds(creds: PaymentCred[], displayLatest: number): Promise<AmmDexOperation[]>
@@ -30,7 +31,7 @@ class NetworkHistory implements History {
       while (ops.length < displayLatest) {
         const txs = await this.network.getTxsByPaymentCred(cred, {offset, limit})
         for (const tx of txs) {
-          const op = this.parseOp(tx, creds)
+          const op = this.parseOp(tx);
           if (op) ops.push(op)
         }
         if (txs.length > 0) offset += limit
@@ -40,7 +41,7 @@ class NetworkHistory implements History {
     return ops
   }
 
-  private parseOp(tx: QuickblueTx, creds: PaymentCred[]): AmmDexOperation | undefined {
+  private parseOp(tx: QuickblueTx): AmmDexOperation | undefined {
     const orderInInputs = tx.inputs.reduceRight((acc, i) => {
       if (!acc) {
         const op = this.parser.parseOrder(i.out)
@@ -62,27 +63,41 @@ class NetworkHistory implements History {
       const redeemerData = input.redeemer?.dataBin
       const action = redeemerData ? parseOrderRedeemer(redeemerData, this.R) : undefined
       if (action === "refund") {
-        return {type: "refund", height: tx.blockIndex, txHash: tx.hash, status: "confirmed", order: summary}
-      } else {
-        const value = tx.outputs.find(o => creds.includes(extractPaymentCred(o.addr, this.R)))?.value
+        return {type: "refund", height: tx.blockIndex, txHash: tx.hash, status: "confirmed", order: summary, timestamp: tx.timestamp * 1_000}
+      }
+      return undefined;
+    } else if (orderInOutputs) {
+      const [summary, output] = orderInOutputs
+      const timestamp = tx.timestamp * 1_000;
+
+      if (output.spentByTxHash) {
         return {
           type: "order",
           height: tx.blockIndex,
           txHash: tx.hash,
-          outRef: mkTxOutRef(input.out.txHash, input.out.index),
+          outRef: mkTxOutRef(output.txHash, output.index),
           status: "executed",
-          order: summary,
-          output: value
+          timestamp,
+          order: summary
+        }
+      } else if (Date.now() - timestamp >= MAX_PENDING_INTERVAL) {
+        return {
+          type: "order",
+          height: tx.blockIndex,
+          txHash: tx.hash,
+          outRef: mkTxOutRef(output.txHash, output.index),
+          status: "pending",
+          timestamp,
+          order: summary
         }
       }
-    } else if (orderInOutputs) {
-      const [summary, output] = orderInOutputs
       return {
         type: "order",
         height: tx.blockIndex,
         txHash: tx.hash,
         outRef: mkTxOutRef(output.txHash, output.index),
-        status: "executed",
+        status: "locked",
+        timestamp,
         order: summary
       }
     } else {

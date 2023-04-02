@@ -111,7 +111,7 @@ class DefaultTxAsm implements TxAsm {
   private getTxBuilderConfig(pparams: ProtocolParams): TransactionBuilderConfig {
     const [mem_price_num, mem_price_denom] = decimalToFractional(pparams.executionUnitPrices.priceMemory);
     const [step_price_num, step_price_denom] = decimalToFractional(pparams.executionUnitPrices.priceSteps);
-    
+
     return this.R.TransactionBuilderConfigBuilder.new()
       .fee_algo(
         this.R.LinearFee.new(

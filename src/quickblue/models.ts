@@ -18,6 +18,7 @@ export type QuickblueTxOut = {
   value: Value
   addr: Addr
   dataHash?: Hash32
+  spentByTxHash?: HexString
   dataBin?: HexString
 }
 
@@ -71,6 +72,7 @@ export type QuickblueTx = {
   outputs: [QuickblueTxOut]
   invalidBefore: bigint
   invalidHereafter: bigint
+  timestamp: number;
   metadata?: QuickblueMetadata
 }
 
