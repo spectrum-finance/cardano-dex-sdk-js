@@ -4,7 +4,7 @@ import {AssetAmount} from "../../domain/assetAmount"
 import {AmmOrderInfo} from "./orderInfo"
 import {AmmPoolInfo} from "./poolInfo"
 
-export type AmmOrderStatus = "pending" | "submitted" | "executed" | "settled"
+export type AmmOrderStatus = "pending" | "submitted" | "executed" | "settled" | 'locked'
 
 export type AmmOrderType = "swap" | "deposit" | "redeem"
 
@@ -18,6 +18,7 @@ export type AmmOrder = {
   status: AmmOrderStatus
   order: AmmOrderInfo
   output?: AssetEntry[]
+  timestamp: number;
 }
 
 export type TxStatus = "confirmed" | "unconfirmed"
@@ -29,6 +30,7 @@ export type PoolSetup = {
   status: TxStatus
   pool: AmmPoolInfo
   reward: AssetAmount
+  timestamp: number;
 }
 
 export type RefundOperation = {
@@ -37,6 +39,7 @@ export type RefundOperation = {
   txHash: TxHash
   status: TxStatus
   order: AmmOrderInfo
+  timestamp: number;
 }
 
 export type AmmDexOperation = AmmOrder | RefundOperation | PoolSetup

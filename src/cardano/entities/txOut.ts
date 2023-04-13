@@ -1,4 +1,4 @@
-import {Datum, Hash32, TxHash} from "../types"
+import {Datum, Hash32, HexString, TxHash} from "../types"
 import {Addr} from "./address"
 import {Value} from "./value"
 
@@ -8,6 +8,7 @@ export type TxOut = {
   value: Value
   addr: Addr
   dataHash?: Hash32
+  dataBin?: HexString
 }
 
 export type FullTxOut = TxOut & {

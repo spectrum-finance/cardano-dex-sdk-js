@@ -13,13 +13,13 @@ export type Tx = {
 }
 
 export type TxCandidate = {
-  inputs: FullTxIn[]
-  outputs: TxOutCandidate[]
-  valueMint: Value
-  changeAddr: Addr
-  validityRange?: ValidityRange
-  collateral?: TxIn[]
-  ttl?: number
+  inputs: FullTxIn[];
+  outputs: TxOutCandidate[];
+  valueMint: Value;
+  changeAddr: Addr;
+  validityRange?: ValidityRange;
+  collateral?: FullTxIn[];
+  ttl?: number;
 }
 
 export type RawUnsignedTx = HexString
