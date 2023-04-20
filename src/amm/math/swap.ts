@@ -58,6 +58,37 @@ export function swapVars(
 export type SwapBudget = Value
 export type SwapValue = Value
 
+/** Estimate min Value required for Swap operation.
+ *  Note: SwapBudget includes SwapValue
+ *  @return [SwapBudget, SwapValue, FeePerToken, SwapExtremums]
+ */
+export function minBudgetForSwap(
+  input: AssetAmount,
+  minOutput: AssetAmount,
+  nitro: number,
+  fees: AmmTxFeeMapping,
+  minExecutorReward: Lovelace,
+  uiFee: Lovelace,
+  txMath: TxMath
+): [SwapBudget, SwapValue, FeePerToken, SwapExtremums] | undefined {
+  const vars = swapVars(fees, minExecutorReward, nitro, minOutput)
+  if (vars) {
+    const [fpt, extremums] = vars
+    const swapValue = minSwapValue(
+      input,
+      extremums.maxExFee,
+      extremums.minOutput,
+      extremums.maxOutput,
+      txMath
+    )
+    const orderTxFee = fees.swapOrder
+    const swapBudget = add(add(swapValue, AdaEntry(orderTxFee)), AdaEntry(uiFee))
+    return [swapBudget, swapValue, fpt, extremums]
+  } else {
+    return undefined
+  }
+}
+
 /** Calculate min Value for Swap order output.
  */
 export function minSwapValue(
