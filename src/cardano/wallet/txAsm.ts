@@ -1,20 +1,20 @@
 import {
   BaseAddress, Ed25519KeyHash,
-  EnterpriseAddress, PlutusWitness,
+  EnterpriseAddress, PlutusWitness, Transaction,
   TransactionBuilderConfig, TransactionInput, TransactionOutput, TxInputsBuilder, Value
 } from "@emurgo/cardano-serialization-lib-nodejs"
 import {toWasmValue} from "../../interop/serlib"
-import {decodeHex, encodeHex} from "../../utils/hex"
+import {decodeHex} from "../../utils/hex"
 import {decimalToFractional} from "../../utils/math"
 import {CardanoWasm} from "../../utils/rustLoader"
 import {Addr} from "../entities/address"
 import {NetworkParams, ProtocolParams} from "../entities/env"
-import {RawUnsignedTx, TxCandidate} from "../entities/tx"
+import {TxCandidate} from "../entities/tx"
 import {FullTxIn} from "../entities/txIn"
 import {TxOutCandidate} from "../entities/txOut"
 
 export interface TxAsm {
-  finalize(candidate: TxCandidate): RawUnsignedTx
+  finalize(candidate: TxCandidate): Transaction
 }
 
 export function mkTxAsm(env: NetworkParams, R: CardanoWasm): TxAsm {
@@ -25,7 +25,7 @@ class DefaultTxAsm implements TxAsm {
   constructor(public readonly env: NetworkParams, public readonly R: CardanoWasm) {
   }
 
-  finalize(candidate: TxCandidate): RawUnsignedTx {
+  finalize(candidate: TxCandidate): Transaction {
     const txBuilder = this.R.TransactionBuilder.new(this.getTxBuilderConfig(this.env.pparams))
 
     const userAddressKeyHash = this.toKeyHash(candidate.changeAddr)
@@ -55,7 +55,7 @@ class DefaultTxAsm implements TxAsm {
 
     txBuilder.calc_script_data_hash(this.R.TxBuilderConstants.plutus_vasil_cost_models())
 
-    return encodeHex(txBuilder.build_tx().to_bytes())
+    return txBuilder.build_tx()
   }
 
   private toTransactionOutput(o: TxOutCandidate): TransactionOutput {
@@ -109,8 +109,8 @@ class DefaultTxAsm implements TxAsm {
   }
 
   private getTxBuilderConfig(pparams: ProtocolParams): TransactionBuilderConfig {
-    const [mem_price_num, mem_price_denom] = decimalToFractional(pparams.executionUnitPrices.priceMemory);
-    const [step_price_num, step_price_denom] = decimalToFractional(pparams.executionUnitPrices.priceSteps);
+    const [mem_price_num, mem_price_denom] = decimalToFractional(pparams.executionUnitPrices.priceMemory)
+    const [step_price_num, step_price_denom] = decimalToFractional(pparams.executionUnitPrices.priceSteps)
 
     return this.R.TransactionBuilderConfigBuilder.new()
       .fee_algo(

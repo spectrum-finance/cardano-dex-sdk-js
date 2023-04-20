@@ -18,7 +18,8 @@ export type ProtocolParams = {
   poolPledgeInfluence: number
   monetaryExpansion: number
   treasuryCut: number
-  utxoCostPerWord: bigint
+  utxoCostPerWord: bigint;
+  utxoCostPerByte: bigint;
   executionUnitPrices: {
     priceSteps: number
     priceMemory: number

@@ -23,3 +23,17 @@ export function minExFeeForOrder(
     )(kind) + minExecutorReward
   )
 }
+
+export function maxExFeeForOrder(
+  kind: OrderKind,
+  fees: AmmTxFeeMapping,
+  minExecutorReward: Lovelace,
+): Lovelace {
+  return (
+    foldOrderKind(
+      () => fees.depositExecution,
+      () => fees.redeemExecution,
+      () => fees.swapExecution
+    )(kind) + minExecutorReward
+  )
+}
