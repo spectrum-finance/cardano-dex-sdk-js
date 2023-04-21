@@ -19,7 +19,7 @@ export type ProtocolParams = {
   monetaryExpansion: number
   treasuryCut: number
   utxoCostPerWord: bigint;
-  utxoCostPerByte: bigint;
+  coinsPerUtxoByte: bigint;
   executionUnitPrices: {
     priceSteps: number
     priceMemory: number

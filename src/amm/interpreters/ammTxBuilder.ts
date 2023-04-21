@@ -199,7 +199,7 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
     const [swapTxCandidate] = await this.swapAmmTxBuilder.build(swapParams)
     const transaction = this.txAsm.finalize(swapTxCandidate)
 
-    const txFee = BigInt(transaction.body().fee().to_str())
+    const txFee = BigInt(Number(transaction.body().fee().to_str()) * 1.1);
 
     const [normalizedSwapTxCandidate, normalizedSwapTxInfo] = await this
       .swapAmmTxBuilder

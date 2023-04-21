@@ -27,9 +27,9 @@ class CardanoTransactionMath implements TxMath {
 
   minAdaRequiredforOutput(outCandidate: TxOutCandidate): bigint {
     const out = this.toTransactionOutput(outCandidate);
-    const dataCost = this.R.DataCost.new_coins_per_byte(this.R.BigNum.from_str(this.params.utxoCostPerByte.toString()));
+    const dataCost = this.R.DataCost.new_coins_per_byte(this.R.BigNum.from_str(this.params.coinsPerUtxoByte.toString()));
 
-    return BigInt(this.R.min_ada_for_output(out, dataCost));
+    return BigInt(this.R.min_ada_for_output(out, dataCost).to_str());
   }
 
   private toTransactionOutput(o: TxOutCandidate): TransactionOutput {
