@@ -66,19 +66,19 @@ class SwapAmmTxBuilder {
     }
     const [exFeePerToken, extremums] = vars
 
-    const [orderValue, refundableValuePart] = this.getSwapOrderValue(
+    const [rawOrderValue, refundableValuePart] = this.getSwapOrderValue(
       base,
       extremums.maxExFee,
       extremums.maxOutput,
       changeAddress
     )
-    const [orderBudget, refundableBugdetPart] = this.getSwapOrderBudget(
-      orderValue,
+    const [orderValue, refundableBugdetPart] = this.getSwapOrderBudget(
+      rawOrderValue,
       params,
       exFeePerToken,
       extremums
     );
-    const totalOrderBudget = add(orderBudget, AdaEntry(userTxFee || txFees.swapOrder));
+    const totalOrderBudget = add(orderValue, AdaEntry(userTxFee || txFees.swapOrder));
     const txInfo: TxInfo = {
       minExFee:          extremums.minExFee,
       maxExFee:          extremums.maxExFee,
