@@ -66,14 +66,12 @@ class SwapAmmTxBuilder {
     }
     const [exFeePerToken, extremums] = vars
 
-    const data = this.getSwapOrderValue(
+    const [orderValue, refundableValuePart] = this.getSwapOrderValue(
       base,
       extremums.maxExFee,
       extremums.maxOutput,
       changeAddress
     )
-    const orderValue = add(data[0], AdaEntry(userTxFee || txFees.swapOrder))
-
     const [orderBudget, refundableBugdetPart] = this.getSwapOrderBudget(
       orderValue,
       params,
@@ -86,8 +84,8 @@ class SwapAmmTxBuilder {
       minOutput:         extremums.minOutput,
       maxOutput:         extremums.maxOutput,
       orderValue:        orderValue,
-      orderBudget:       orderBudget,
-      refundableDeposit: data[1] + refundableBugdetPart,
+      orderBudget:       add(orderBudget, AdaEntry(userTxFee || txFees.swapOrder)),
+      refundableDeposit: refundableValuePart + refundableBugdetPart,
       txFee:             userTxFee || txFees.swapOrder
     }
 
@@ -199,7 +197,7 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
     const [swapTxCandidate] = await this.swapAmmTxBuilder.build(swapParams)
     const transaction = this.txAsm.finalize(swapTxCandidate)
 
-    const txFee = BigInt(Number(transaction.body().fee().to_str()) * 1.1);
+    const txFee = BigInt(Number(transaction.body().fee().to_str()) * 1.1)
 
     const [normalizedSwapTxCandidate, normalizedSwapTxInfo] = await this
       .swapAmmTxBuilder
