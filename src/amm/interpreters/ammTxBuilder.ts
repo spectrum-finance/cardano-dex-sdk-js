@@ -77,20 +77,21 @@ class SwapAmmTxBuilder {
       params,
       exFeePerToken,
       extremums
-    )
+    );
+    const totalOrderBudget = add(orderBudget, AdaEntry(userTxFee || txFees.swapOrder));
     const txInfo: TxInfo = {
       minExFee:          extremums.minExFee,
       maxExFee:          extremums.maxExFee,
       minOutput:         extremums.minOutput,
       maxOutput:         extremums.maxOutput,
       orderValue:        orderValue,
-      orderBudget:       add(orderBudget, AdaEntry(userTxFee || txFees.swapOrder)),
+      orderBudget:       totalOrderBudget,
       refundableDeposit: refundableValuePart + refundableBugdetPart,
       txFee:             userTxFee || txFees.swapOrder
     }
 
 
-    const inputs = await this.inputSelector.select(orderBudget)
+    const inputs = await this.inputSelector.select(totalOrderBudget)
 
     if (inputs instanceof Error) {
       throw new Error("insufficient funds")
