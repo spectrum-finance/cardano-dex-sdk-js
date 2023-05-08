@@ -64,7 +64,9 @@ export {CardanoNetwork, Quickblue} from "./quickblue/cardanoNetwork"
 
 export {PoolId} from "./amm/domain/types"
 export {AmmPool} from "./amm/domain/ammPool"
-export {AmmTxBuilder} from "./amm/interpreters/ammTxBuilder";
+export {AmmTxBuilder} from "./amm/interpreters/ammTxBuilder/ammTxBuilder";
+export {SwapParams, SwapAmmTxBuilder} from "./amm/interpreters/ammTxBuilder/swapAmmTxBuilder";
+export {TxInfo} from "./amm/interpreters/ammTxBuilder/txInfo";
 export {FeePerToken} from "./amm/domain/models"
 export {AmmActions, mkAmmActions} from "./amm/interpreters/ammActions"
 export {AmmOutputs, mkAmmOutputs} from "./amm/interpreters/ammOutputs"
