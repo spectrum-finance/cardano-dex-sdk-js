@@ -194,17 +194,15 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
     this.swapAmmTxBuilder = new SwapAmmTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, R)
   }
 
-  async swap(swapParams: SwapParams): Promise<[Transaction, TxCandidate, TxInfo]> {
-    const [swapTxCandidate] = await this.swapAmmTxBuilder.build(swapParams)
-    const transaction = this.txAsm.finalize(swapTxCandidate)
+  async swap(swapParams: SwapParams, prevTxFee?: bigint): Promise<[Transaction, TxCandidate, TxInfo]> {
+    const [swapTxCandidate, swapTxInfo] = await this.swapAmmTxBuilder.build(swapParams, prevTxFee);
+    const transaction = this.txAsm.finalize(swapTxCandidate);
+    const txFee = BigInt(transaction.body().fee().to_str());
 
-    const txFee = BigInt(transaction.body().fee().to_str())
-
-    const [normalizedSwapTxCandidate, normalizedSwapTxInfo] = await this
-      .swapAmmTxBuilder
-      .build(swapParams, txFee)
-    const normalizedTransaction = this.txAsm.finalize(normalizedSwapTxCandidate)
-
-    return [normalizedTransaction, normalizedSwapTxCandidate, normalizedSwapTxInfo]
+    if (prevTxFee === txFee) {
+      return [transaction, swapTxCandidate, swapTxInfo];
+    } else {
+      return this.swap(swapParams, txFee);
+    }
   }
 }
