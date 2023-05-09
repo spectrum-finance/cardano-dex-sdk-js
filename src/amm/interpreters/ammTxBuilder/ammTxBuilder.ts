@@ -41,7 +41,7 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
       }
     } catch (e) {
       console.log(e);
-      return [null, swapTxCandidate, swapTxInfo];
+      return [null, swapTxCandidate, { ...swapTxInfo, txFee: undefined }];
     }
   }
 }
