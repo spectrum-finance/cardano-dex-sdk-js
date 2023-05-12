@@ -79,6 +79,8 @@ export class SwapAmmTxBuilder {
       throw new Error("insufficient funds")
     }
 
+    console.log(inputs, totalOrderBudget);
+
     return [
       this.ammActions.createOrder(
         {
@@ -125,7 +127,6 @@ export class SwapAmmTxBuilder {
     })
     const requiredAdaForOutput = this.txMath.minAdaRequiredforOutput(estimatedOutput)
     const lovelace = getLovelace(orderValue)
-    console.log(requiredAdaForOutput, lovelace.amount);
 
     return lovelace.amount >= requiredAdaForOutput
       ? [orderValue, 0n]
@@ -146,7 +147,6 @@ export class SwapAmmTxBuilder {
       addr
     }
     const requiredAdaForOutput = this.txMath.minAdaRequiredforOutput(estimatedExecutorOutTxCandidate)
-    console.log(requiredAdaForOutput, maxOutput);
 
     if (!maxOutput.isAda) {
       return [add(add(Value(requiredAdaForOutput), input.toEntry), AdaEntry(maxExFee)), requiredAdaForOutput]
