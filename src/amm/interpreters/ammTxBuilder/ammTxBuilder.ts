@@ -6,15 +6,18 @@ import {TxMath} from "../../../cardano/wallet/txMath"
 import {CardanoWasm} from "../../../utils/rustLoader"
 import {AmmActions} from "../ammActions"
 import {AmmOutputs} from "../ammOutputs"
-import {SwapAmmTxBuilder, SwapParams} from "./swapAmmTxBuilder"
-import {TxInfo} from "./txInfo"
+import {RedeemAmmTxBuilder, RedeemParams, RedeemTxInfo} from "./redeemAmmTxBuilder"
+import {SwapAmmTxBuilder, SwapParams, SwapTxInfo} from "./swapAmmTxBuilder"
 
 export interface AmmTxBuilder {
-  swap(params: SwapParams): Promise<[Transaction | null, TxCandidate, TxInfo]>
+  swap(params: SwapParams): Promise<[Transaction | null, TxCandidate, SwapTxInfo]>;
+  redeem(params: RedeemParams): Promise<[Transaction | null, TxCandidate, RedeemTxInfo]>;
 }
 
 export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
   private swapAmmTxBuilder: SwapAmmTxBuilder
+
+  private redeemAmmTxBuilder: RedeemAmmTxBuilder
 
   constructor(
     txMath: TxMath,
@@ -24,10 +27,11 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
     R: CardanoWasm,
     private txAsm: TxAsm
   ) {
-    this.swapAmmTxBuilder = new SwapAmmTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, R)
+    this.swapAmmTxBuilder = new SwapAmmTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, R);
+    this.redeemAmmTxBuilder = new RedeemAmmTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, R)
   }
 
-  async swap(swapParams: SwapParams, prevTxFee?: bigint): Promise<[Transaction | null, TxCandidate, TxInfo]> {
+  async swap(swapParams: SwapParams, prevTxFee?: bigint): Promise<[Transaction | null, TxCandidate, SwapTxInfo]> {
     const [swapTxCandidate, swapTxInfo] = await this.swapAmmTxBuilder.build(swapParams, prevTxFee)
 
     try {
@@ -42,6 +46,24 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
     } catch (e) {
       console.log(e);
       return [null, swapTxCandidate, { ...swapTxInfo, txFee: undefined }];
+    }
+  }
+
+  async redeem(redeemParams: RedeemParams, prevTxFee?: bigint): Promise<[Transaction | null, TxCandidate, RedeemTxInfo]> {
+    const [redeemTxCandidate, redeemTxInfo] = await this.redeemAmmTxBuilder.build(redeemParams, prevTxFee)
+
+    try {
+      const transaction = this.txAsm.finalize(redeemTxCandidate)
+      const txFee = BigInt(transaction.body().fee().to_str())
+
+      if (prevTxFee === txFee) {
+        return [transaction, redeemTxCandidate, redeemTxInfo]
+      } else {
+        return this.redeem(redeemParams, txFee)
+      }
+    } catch (e) {
+      console.log(e);
+      return [null, redeemTxCandidate, { ...redeemTxInfo, txFee: undefined }];
     }
   }
 }

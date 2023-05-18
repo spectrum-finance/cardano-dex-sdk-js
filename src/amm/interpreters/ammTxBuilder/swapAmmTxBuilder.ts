@@ -17,7 +17,6 @@ import {SwapExtremums, swapVars} from "../../math/swap"
 import {OrderKind} from "../../models/opRequests"
 import {AmmActions} from "../ammActions"
 import {AmmOutputs} from "../ammOutputs"
-import {TxInfo} from "./txInfo"
 
 export interface SwapParams {
   readonly base: AssetAmount
@@ -31,6 +30,17 @@ export interface SwapParams {
   readonly pk: PubKeyHash
 }
 
+export interface SwapTxInfo {
+  readonly txFee: bigint | undefined;
+  readonly minExFee: bigint
+  readonly maxExFee: bigint
+  readonly refundableDeposit: bigint
+  readonly minOutput: AssetAmount
+  readonly maxOutput: AssetAmount
+  readonly orderBudget: Value
+  readonly orderValue: Value
+}
+
 export class SwapAmmTxBuilder {
   constructor(
     private txMath: TxMath,
@@ -40,7 +50,7 @@ export class SwapAmmTxBuilder {
     private R: CardanoWasm
   ) {}
 
-  async build(params: SwapParams, userTxFee?: bigint): Promise<[TxCandidate, TxInfo]> {
+  async build(params: SwapParams, userTxFee?: bigint): Promise<[TxCandidate, SwapTxInfo]> {
     const {txFees, minExecutorReward, nitro, quote, base, changeAddress} = params
     const vars = swapVars(txFees, minExecutorReward, nitro, quote)
 
@@ -62,7 +72,7 @@ export class SwapAmmTxBuilder {
       extremums
     )
     const totalOrderBudget = add(orderValue, AdaEntry(userTxFee || txFees.swapOrder))
-    const txInfo: TxInfo = {
+    const txInfo: SwapTxInfo = {
       minExFee: extremums.minExFee,
       maxExFee: extremums.maxExFee,
       minOutput: extremums.minOutput,
