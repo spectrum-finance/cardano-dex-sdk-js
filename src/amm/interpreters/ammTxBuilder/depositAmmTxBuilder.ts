@@ -16,8 +16,9 @@ import {OrderKind} from "../../models/opRequests"
 import {AmmActions} from "../ammActions"
 import {AmmOutputs} from "../ammOutputs"
 
-export interface RedeemParams {
-  readonly lq: AssetAmount;
+export interface DepositParams {
+  readonly x: AssetAmount;
+  readonly y: AssetAmount;
   readonly pool: AmmPool;
   readonly slippage: number;
   readonly txFees: AmmTxFeeMapping;
@@ -26,17 +27,18 @@ export interface RedeemParams {
   readonly pk: PubKeyHash;
 }
 
-export interface RedeemTxInfo {
+export interface DepositTxInfo {
   readonly txFee: bigint | undefined;
   readonly exFee: bigint;
   readonly refundableDeposit: bigint;
-  readonly xOutput: AssetAmount;
-  readonly yOutput: AssetAmount;
+  readonly x: AssetAmount;
+  readonly y: AssetAmount;
+  readonly lq: AssetAmount;
   readonly orderBudget: Value;
   readonly orderValue: Value;
 }
 
-export class RedeemAmmTxBuilder {
+export class DepositAmmTxBuilder {
   constructor(
     private txMath: TxMath,
     private ammOutputs: AmmOutputs,
@@ -45,28 +47,31 @@ export class RedeemAmmTxBuilder {
     private R: CardanoWasm
   ) {}
 
-  async build(params: RedeemParams, userTxFee?: bigint): Promise<[TxCandidate, RedeemTxInfo]> {
-    const {txFees, minExecutorReward, lq, changeAddress, pool} = params
-    const [x, y] = pool.shares(lq);
-    const exFee = minExecutorReward + txFees.redeemOrder;
+  async build(params: DepositParams, userTxFee?: bigint): Promise<[TxCandidate, DepositTxInfo]> {
+    const {txFees, minExecutorReward, x, y, changeAddress, pool} = params
+    const lp = pool.rewardLP(x, y);
+    const exFee = minExecutorReward + txFees.depositOrder;
 
-    const [rawOrderValue, refundableValuePart] = this.getRedeemOrderValue(
-      lq,
-      exFee,
+    const [rawOrderValue, refundableValuePart] = this.getDepositOrderValue(
       x,
       y,
+      lp,
+      exFee,
       changeAddress
     );
-    const [orderValue, refundableBugdetPart] = this.getRedeemOrderBudget(
+    const [orderValue, refundableBugdetPart] = this.getDepositOrderBudget(
       rawOrderValue,
+      lp,
+      refundableValuePart,
       exFee,
       params,
     )
-    const totalOrderBudget = add(orderValue, AdaEntry(userTxFee || txFees.redeemOrder))
-    const txInfo: RedeemTxInfo = {
+    const totalOrderBudget = add(orderValue, AdaEntry(userTxFee || txFees.depositOrder))
+    const txInfo: DepositTxInfo = {
       exFee: exFee,
-      xOutput: x,
-      yOutput: y,
+      x,
+      y,
+      lq: lp,
       orderValue: orderValue,
       orderBudget: totalOrderBudget,
       refundableDeposit: refundableValuePart + refundableBugdetPart,
@@ -82,16 +87,17 @@ export class RedeemAmmTxBuilder {
     return [
       this.ammActions.createOrder(
         {
-          kind: OrderKind.Redeem,
-          poolId: params.pool.id,
-          x: params.pool.x.asset,
-          y: params.pool.y.asset,
-          lq: params.lq,
-          rewardPkh: params.pk,
-          stakePkh: stakeKeyHashFromAddr(params.changeAddress, this.R),
-          exFee: exFee,
-          uiFee: 0n,
-          orderValue: orderValue,
+          kind:          OrderKind.Deposit,
+          poolId:        params.pool.id,
+          x:             params.x,
+          y:             params.y,
+          lq:            lp.asset,
+          rewardPkh:     params.pk,
+          stakePkh:      stakeKeyHashFromAddr(params.changeAddress, this.R),
+          exFee:         exFee,
+          uiFee:         0n,
+          orderValue:    orderValue,
+          collateralAda: refundableValuePart,
         },
         {
           changeAddr: params.changeAddress,
@@ -103,22 +109,25 @@ export class RedeemAmmTxBuilder {
     ]
   }
 
-  private getRedeemOrderBudget(
+  private getDepositOrderBudget(
     orderValue: Value,
+    lq: AssetAmount,
+    depositCollateral: bigint,
     exFee: bigint,
-    params: RedeemParams,
+    params: DepositParams,
   ): [Value, bigint] {
-    const estimatedOutput = this.ammOutputs.redeem({
-      kind: OrderKind.Redeem,
+    const estimatedOutput = this.ammOutputs.deposit({
+      kind: OrderKind.Deposit,
       poolId: params.pool.id,
-      x: params.pool.x.asset,
-      y: params.pool.y.asset,
-      lq: params.lq,
+      x: params.x,
+      y: params.y,
+      lq: lq.asset,
       rewardPkh: params.pk,
       stakePkh: stakeKeyHashFromAddr(params.changeAddress, this.R),
       exFee: exFee,
       uiFee: 0n,
       orderValue: orderValue,
+      collateralAda: depositCollateral,
     })
     const requiredAdaForOutput = this.txMath.minAdaRequiredforOutput(estimatedOutput)
     const lovelace = getLovelace(orderValue)
@@ -131,35 +140,19 @@ export class RedeemAmmTxBuilder {
         ]
   }
 
-  private getRedeemOrderValue(
-    input: AssetAmount,
+  private getDepositOrderValue(
+    inputX: AssetAmount,
+    inputY: AssetAmount,
+    output: AssetAmount,
     exFee: Lovelace,
-    x: AssetAmount,
-    y: AssetAmount,
     addr: Addr
   ): [Value, bigint] {
-    const output = add(Value(0n, x), y.toEntry);
     const estimatedExecutorOutTxCandidate: TxOutCandidate = {
-      value: output,
+      value: Value(0n, output),
       addr
     }
     const requiredAdaForOutput = this.txMath.minAdaRequiredforOutput(estimatedExecutorOutTxCandidate)
 
-    if (!x.isAda && !y.isAda) {
-      return [add(add(Value(requiredAdaForOutput), input.toEntry), AdaEntry(exFee)), requiredAdaForOutput]
-    }
-    if (x.isAda && x.amount >= requiredAdaForOutput || y.isAda && y.amount >= requiredAdaForOutput) {
-      return [add(Value(exFee), input.toEntry), 0n]
-    }
-    if (x.isAda) {
-      return [
-        add(add(Value(requiredAdaForOutput - x.amount), input.toEntry), AdaEntry(exFee)),
-        requiredAdaForOutput - x.amount
-      ]
-    }
-    return [
-      add(add(Value(requiredAdaForOutput - y.amount), input.toEntry), AdaEntry(exFee)),
-      requiredAdaForOutput - y.amount
-    ]
+    return [add(add(add(Value(requiredAdaForOutput), inputX.toEntry), inputY.toEntry), AdaEntry(exFee)), requiredAdaForOutput];
   }
 }

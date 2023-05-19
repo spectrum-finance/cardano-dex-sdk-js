@@ -6,6 +6,7 @@ import {TxMath} from "../../../cardano/wallet/txMath"
 import {CardanoWasm} from "../../../utils/rustLoader"
 import {AmmActions} from "../ammActions"
 import {AmmOutputs} from "../ammOutputs"
+import {DepositAmmTxBuilder, DepositParams, DepositTxInfo} from "./depositAmmTxBuilder"
 import {RedeemAmmTxBuilder, RedeemParams, RedeemTxInfo} from "./redeemAmmTxBuilder"
 import {SwapAmmTxBuilder, SwapParams, SwapTxInfo} from "./swapAmmTxBuilder"
 
@@ -19,6 +20,8 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
 
   private redeemAmmTxBuilder: RedeemAmmTxBuilder
 
+  private depositAmmTxBuilder: DepositAmmTxBuilder
+
   constructor(
     txMath: TxMath,
     ammOuptuts: AmmOutputs,
@@ -28,7 +31,8 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
     private txAsm: TxAsm
   ) {
     this.swapAmmTxBuilder = new SwapAmmTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, R);
-    this.redeemAmmTxBuilder = new RedeemAmmTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, R)
+    this.redeemAmmTxBuilder = new RedeemAmmTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, R);
+    this.depositAmmTxBuilder = new DepositAmmTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, R);
   }
 
   async swap(swapParams: SwapParams, prevTxFee?: bigint): Promise<[Transaction | null, TxCandidate, SwapTxInfo]> {
@@ -60,6 +64,24 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
         return [transaction, redeemTxCandidate, redeemTxInfo]
       } else {
         return this.redeem(redeemParams, txFee)
+      }
+    } catch (e) {
+      console.log(e);
+      return [null, redeemTxCandidate, { ...redeemTxInfo, txFee: undefined }];
+    }
+  }
+
+  async deposit(depositParams: DepositParams, prevTxFee?: bigint): Promise<[Transaction | null, TxCandidate, DepositTxInfo]> {
+    const [redeemTxCandidate, redeemTxInfo] = await this.depositAmmTxBuilder.build(depositParams, prevTxFee)
+
+    try {
+      const transaction = this.txAsm.finalize(redeemTxCandidate)
+      const txFee = BigInt(transaction.body().fee().to_str())
+
+      if (prevTxFee === txFee) {
+        return [transaction, redeemTxCandidate, redeemTxInfo]
+      } else {
+        return this.deposit(depositParams, txFee)
       }
     } catch (e) {
       console.log(e);
