@@ -19,7 +19,7 @@ export function parsePoolConfig(raw: Datum, R: CardanoWasm): PoolConfig | undefi
     const feeNum = datum.get(4).as_integer()
     return nft && x && y && lq && feeNum ? {nft, x, y, lq, feeNum: Number(feeNum.to_str())} : undefined
   } catch {
-    return undefined;
+    return undefined
   }
 }
 
@@ -207,5 +207,8 @@ export function parseAssetClass(pd: PlutusData): AssetClass | undefined {
 }
 
 function parseInteger(pd: PlutusData): bigint | undefined {
-  return BigInt(pd.as_integer()?.to_str())
+  if (!!pd.as_integer()) {
+    return BigInt(pd.as_integer()!.to_str())
+  }
+  return undefined
 }
