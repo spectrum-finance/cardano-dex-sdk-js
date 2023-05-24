@@ -890,7 +890,14 @@
     "@babel/types" "^7.4.4"
     esutils "^2.0.2"
 
-"@babel/runtime@^7.14.6", "@babel/runtime@^7.8.4":
+"@babel/runtime@^7.21.0":
+  version "7.21.5"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.21.5.tgz#8492dddda9644ae3bda3b45eabe87382caee7200"
+  integrity sha512-8jI69toZqqcsnqGGqwGS4Qb1VwLOEp4hz+CXPywcvjs60u3B4Pom/U/7rm4W8tMOYEB+E9wgD0mW1l3r8qlI9Q==
+  dependencies:
+    regenerator-runtime "^0.13.11"
+
+"@babel/runtime@^7.8.4":
   version "7.15.3"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.15.3.tgz#2e1c2880ca118e5b2f9988322bd8a7656a32502b"
   integrity sha512-OvwMLqNXkCXSz1kSm58sEsNuhqOx/fKpnUnKnFB5v8uDda5bLNEHNgKPvhDN6IU0LDcnHQ90LlJ0Q6jnyBSIBA==
@@ -1728,6 +1735,13 @@
   version "0.0.29"
   resolved "https://registry.yarnpkg.com/@types/json5/-/json5-0.0.29.tgz#ee28707ae94e11d2b827bcbe5270bcea7f3e71ee"
   integrity sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==
+
+"@types/mathjs@^9.4.2":
+  version "9.4.2"
+  resolved "https://registry.yarnpkg.com/@types/mathjs/-/mathjs-9.4.2.tgz#beec20340d768171fed8331b08fb321d218ec6e1"
+  integrity sha512-GF5g1vJmvKdWIWsE53XX7EDAyCaZ9p6gaYm1xhlXn5JjrY/NJrOfJN3fBxS3wyZpVh3QqKoMkS2WjFwxWMHOTw==
+  dependencies:
+    mathjs "*"
 
 "@types/minimist@^1.2.0":
   version "1.2.2"
@@ -2868,10 +2882,10 @@ compare-func@^2.0.0:
     array-ify "^1.0.0"
     dot-prop "^5.1.0"
 
-complex.js@^2.0.15:
-  version "2.0.15"
-  resolved "https://registry.yarnpkg.com/complex.js/-/complex.js-2.0.15.tgz#7add6848b4c1d12aa9262f7df925ebe7a51a7406"
-  integrity sha512-gDBvQU8IG139ZBQTSo2qvDFP+lANMGluM779csXOr6ny1NUtA3wkUnCFjlDNH/moAVfXtvClYt6G0zarFbtz5w==
+complex.js@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/complex.js/-/complex.js-2.1.1.tgz#0675dac8e464ec431fb2ab7d30f41d889fb25c31"
+  integrity sha512-8njCHOTtFFLtegk6zQo0kkVX1rngygb/KQI6z1qZxlFI3scluC+LVTCFbrkWjBv4vvLlbQ9t88IPMC6k95VTTg==
 
 concat-map@0.0.1:
   version "0.0.1"
@@ -3368,10 +3382,10 @@ decamelize@^1.1.0, decamelize@^1.2.0:
   resolved "https://registry.yarnpkg.com/decamelize/-/decamelize-1.2.0.tgz#f6534d15148269b20352e7bee26f501f9a191290"
   integrity sha512-z2S+W9X73hAUUki+N+9Za2lBlun89zigOyGrsax+KUQ6wKW4ZoWpEYBkGhQjwAjjDCkWxhY0VKEhk8wzY7F5cA==
 
-decimal.js@^10.3.1:
-  version "10.3.1"
-  resolved "https://registry.yarnpkg.com/decimal.js/-/decimal.js-10.3.1.tgz#d8c3a444a9c6774ba60ca6ad7261c3a94fd5e783"
-  integrity sha512-V0pfhfr8suzyPGOx3nmq4aHqabehUZn6Ch9kyFpV79TGDTWFmHqUqXdabR7QHqxzrYolF4+tVmJhUG4OURg5dQ==
+decimal.js@^10.4.3:
+  version "10.4.3"
+  resolved "https://registry.yarnpkg.com/decimal.js/-/decimal.js-10.4.3.tgz#1044092884d245d1b7f65725fa4ad4c6f781cc23"
+  integrity sha512-VBBaLc1MgL5XpzgIP7ny5Z6Nx3UrRkIViUkPUdtl9aya5amy3De1gsUUSB1g3+3sExYNjCAsAznmukyxCb1GRA==
 
 decompress-response@^3.3.0:
   version "3.3.0"
@@ -3713,12 +3727,10 @@ escape-string-regexp@^4.0.0:
   resolved "https://registry.yarnpkg.com/escape-string-regexp/-/escape-string-regexp-4.0.0.tgz#14ba83a5d373e3d311e5afca29cf5bfad965bf34"
   integrity sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA==
 
-eslint-config-prettier@^6.11.0:
-  version "6.15.0"
-  resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-6.15.0.tgz#7f93f6cb7d45a92f1537a70ecc06366e1ac6fed9"
-  integrity sha512-a1+kOYLR8wMGustcgAjdydMsQ2A/2ipRPwRKUmfYaSxc9ZPcrku080Ctl6zrZzZNs/U82MjSv+qKREkoq3bJaw==
-  dependencies:
-    get-stdin "^6.0.0"
+eslint-config-prettier@^8.8.0:
+  version "8.8.0"
+  resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-8.8.0.tgz#bfda738d412adc917fd7b038857110efe98c9348"
+  integrity sha512-wLbQiFre3tdGgpDv67NQKnJuTlcUVYHas3k+DZCc2U2BadthoEY4B7hLPvAxaqdyOGCzuLfii2fqGph10va7oA==
 
 eslint-import-resolver-node@^0.3.6:
   version "0.3.6"
@@ -3775,6 +3787,13 @@ eslint-plugin-import@^2.22.0:
     read-pkg-up "^3.0.0"
     resolve "^1.20.0"
     tsconfig-paths "^3.11.0"
+
+eslint-plugin-prettier@^4.2.1:
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-prettier/-/eslint-plugin-prettier-4.2.1.tgz#651cbb88b1dab98bfd42f017a12fa6b2d993f94b"
+  integrity sha512-f/0rXLXUt0oFYs8ra4w49wYZBG5GKZpAYsJSm6rnYL5uVDjd+zowwMwVZHnAjf4edNrKpCDYfXDgmRE/Ak7QyQ==
+  dependencies:
+    prettier-linter-helpers "^1.0.0"
 
 eslint-scope@^5.1.1:
   version "5.1.1"
@@ -3984,6 +4003,11 @@ fast-deep-equal@^3.1.1, fast-deep-equal@^3.1.3:
   version "3.1.3"
   resolved "https://registry.yarnpkg.com/fast-deep-equal/-/fast-deep-equal-3.1.3.tgz#3a7d56b559d6cbc3eb512325244e619a65c6c525"
   integrity sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==
+
+fast-diff@^1.1.2:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/fast-diff/-/fast-diff-1.3.0.tgz#ece407fa550a64d638536cd727e129c61616e0f0"
+  integrity sha512-VxPP4NqbUjj6MaAOafWeUn2cXWLcCtljklUtZf0Ind4XQ+QPtmA0b18zZy0jIQx+ExRVCR/ZQpBmik5lXshNsw==
 
 fast-diff@^1.2.0:
   version "1.2.0"
@@ -4201,10 +4225,10 @@ foreground-child@^3.1.0:
     cross-spawn "^7.0.0"
     signal-exit "^4.0.1"
 
-fraction.js@^4.1.1:
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/fraction.js/-/fraction.js-4.1.1.tgz#ac4e520473dae67012d618aab91eda09bcb400ff"
-  integrity sha512-MHOhvvxHTfRFpF1geTK9czMIZ6xclsEor2wkIGYYq+PxcQqT7vStJqjhe6S1TenZrMZzo+wlqOufBDVepUEgPg==
+fraction.js@^4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/fraction.js/-/fraction.js-4.2.0.tgz#448e5109a313a3527f5a3ab2119ec4cf0e0e2950"
+  integrity sha512-MhLuK+2gUcnZe8ZHlaaINnQLl0xRIGRfcGk2yl8xoQAfHrSsL3rYu6FCmBdkdbhc9EPlwyGHewaRsvwRMJtAlA==
 
 from2@^2.3.0:
   version "2.3.0"
@@ -4354,11 +4378,6 @@ get-pkg-repo@^4.0.0:
     hosted-git-info "^4.0.0"
     meow "^7.0.0"
     through2 "^2.0.0"
-
-get-stdin@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/get-stdin/-/get-stdin-6.0.0.tgz#9e09bf712b360ab9225e812048f71fde9c89657b"
-  integrity sha512-jp4tHawyV7+fkkSKyvjuLZswblUtz+SQKzSWnBbii16BuZksJlU1wuBYXY75r+duh/llF1ur6oNwi+2ZzjKZ7g==
 
 get-stdin@^7.0.0:
   version "7.0.0"
@@ -5882,20 +5901,20 @@ matcher@^3.0.0:
   dependencies:
     escape-string-regexp "^4.0.0"
 
-mathjs@^9.4.4:
-  version "9.4.4"
-  resolved "https://registry.yarnpkg.com/mathjs/-/mathjs-9.4.4.tgz#29acd67563c1e720910213062824c3faf61bc858"
-  integrity sha512-5EEJXnWOzLDgMHSFyw623nH+MTBZxquWwXtrzTsingOouJJ6UZG2VNO1lwH31IMt9aMno1axO6TYleIP4YSDaQ==
+mathjs@*, mathjs@^11.8.0:
+  version "11.8.0"
+  resolved "https://registry.yarnpkg.com/mathjs/-/mathjs-11.8.0.tgz#b02e66461ec068fadf1e90c221121704dc14d8f5"
+  integrity sha512-I7r8HCoqUGyEiHQdeOCF2m2k9N+tcOHO3cZQ3tyJkMMBQMFqMR7dMQEboBMJAiFW2Um3PEItGPwcOc4P6KRqwg==
   dependencies:
-    "@babel/runtime" "^7.14.6"
-    complex.js "^2.0.15"
-    decimal.js "^10.3.1"
+    "@babel/runtime" "^7.21.0"
+    complex.js "^2.1.1"
+    decimal.js "^10.4.3"
     escape-latex "^1.2.0"
-    fraction.js "^4.1.1"
+    fraction.js "^4.2.0"
     javascript-natural-sort "^0.7.1"
     seedrandom "^3.0.5"
     tiny-emitter "^2.1.0"
-    typed-function "^2.0.0"
+    typed-function "^4.1.0"
 
 md5-hex@^3.0.1:
   version "3.0.1"
@@ -7058,10 +7077,17 @@ prepend-http@^2.0.0:
   resolved "https://registry.yarnpkg.com/prepend-http/-/prepend-http-2.0.0.tgz#e92434bfa5ea8c19f41cdfd401d741a3c819d897"
   integrity sha512-ravE6m9Atw9Z/jjttRUZ+clIXogdghyZAuWJ3qEzjT+jI/dL1ifAqhZeC5VHzQp1MSt1+jxKkFNemj/iO7tVUA==
 
-prettier@^2.1.1:
-  version "2.3.2"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.3.2.tgz#ef280a05ec253712e486233db5c6f23441e7342d"
-  integrity sha512-lnJzDfJ66zkMy58OL5/NY5zp70S7Nz6KqcKkXYzn2tMVrNxvbqaBpg7H3qHaLxCJ5lNMsGuM8+ohS7cZrthdLQ==
+prettier-linter-helpers@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/prettier-linter-helpers/-/prettier-linter-helpers-1.0.0.tgz#d23d41fe1375646de2d0104d3454a3008802cf7b"
+  integrity sha512-GbK2cP9nraSSUF9N2XwUwqfzlAFlMNYYl+ShE/V+H8a9uNl/oUqB1w2EL54Jh0OlyRSd8RfWYJ3coVS4TROP2w==
+  dependencies:
+    fast-diff "^1.1.2"
+
+prettier@^2.8.8:
+  version "2.8.8"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.8.8.tgz#e8c5d7e98a4305ffe3de2e1fc4aca1a71c28b1da"
+  integrity sha512-tdN8qQGvNjw4CHbY+XXk0JgCXn9QiF21a55rBe5LJAU+kDyC4WQn4+awm2Xfk2lQMk5fKup9XgzTZtGkjBdP9Q==
 
 pretty-ms@^7.0.1:
   version "7.0.1"
@@ -7373,6 +7399,11 @@ regenerate@^1.4.2:
   version "1.4.2"
   resolved "https://registry.yarnpkg.com/regenerate/-/regenerate-1.4.2.tgz#b9346d8827e8f5a32f7ba29637d398b69014848a"
   integrity sha512-zrceR/XhGYU/d/opr2EKO7aRHUeiBI8qjtfHqADTwZd6Szfy16la6kqD0MIUs5z5hx6AaKa+PixpPrR289+I0A==
+
+regenerator-runtime@^0.13.11:
+  version "0.13.11"
+  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.13.11.tgz#f6dca3e7ceec20590d07ada785636a90cdca17f9"
+  integrity sha512-kY1AZVr2Ra+t+piVaJ4gxaFaReZVH40AKNo7UCX6W+dEwBo/2oZJzqfuN1qLq1oL45o56cPaTXELwrTh8Fpggg==
 
 regenerator-runtime@^0.13.4:
   version "0.13.9"
@@ -8413,10 +8444,10 @@ type-fest@^3.0.0, type-fest@^3.8.0:
   resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-3.11.0.tgz#e78ea6b50d6a6b1e4609035fb9ea8f1e3c328194"
   integrity sha512-JaPw5U9ixP0XcpUbQoVSbxSDcK/K4nww20C3kjm9yE6cDRRhptU28AH60VWf9ltXmCrIfIbtt9J+2OUk2Uqiaw==
 
-typed-function@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/typed-function/-/typed-function-2.0.0.tgz#15ab3825845138a8b1113bd89e60cd6a435739e8"
-  integrity sha512-Hhy1Iwo/e4AtLZNK10ewVVcP2UEs408DS35ubP825w/YgSBK1KVLwALvvIG4yX75QJrxjCpcWkzkVRB0BwwYlA==
+typed-function@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/typed-function/-/typed-function-4.1.0.tgz#da4bdd8a6d19a89e22732f75e4a410860aaf9712"
+  integrity sha512-DGwUl6cioBW5gw2L+6SMupGwH/kZOqivy17E4nsh1JI9fKF87orMmlQx3KISQPmg3sfnOUGlwVkroosvgddrlg==
 
 typedarray-to-buffer@^3.1.5:
   version "3.1.5"
