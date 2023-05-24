@@ -1,9 +1,9 @@
-import {Addr} from "../../cardano/entities/address"
-import {TxCandidate} from "../../cardano/entities/tx"
-import {emptyValue, Value} from "../../cardano/entities/value"
-import {TxContext} from "../../cardano/wallet/entities/txContext"
-import {OrderKind, OrderRequest} from "../models/opRequests"
-import {AmmOutputs} from "./ammOutputs"
+import {Addr} from "../../cardano/entities/address.ts"
+import {TxCandidate} from "../../cardano/entities/tx.ts"
+import {emptyValue, Value} from "../../cardano/entities/value.ts"
+import {TxContext} from "../../cardano/wallet/entities/txContext.ts"
+import {OrderKind, OrderRequest} from "../models/opRequests.ts"
+import {AmmOutputs} from "./ammOutputs.ts"
 
 export interface AmmActions {
   createOrder(req: OrderRequest, ctx: TxContext): TxCandidate

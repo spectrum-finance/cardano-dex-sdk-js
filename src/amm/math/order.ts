@@ -1,5 +1,5 @@
-import {Lovelace} from "../../cardano/types"
-import {foldOrderKind, OrderKind} from "../models/opRequests"
+import {Lovelace} from "../../cardano/types.ts"
+import {foldOrderKind, OrderKind} from "../models/opRequests.ts"
 
 export type AmmTxFeeMapping = {
   swapOrder: Lovelace

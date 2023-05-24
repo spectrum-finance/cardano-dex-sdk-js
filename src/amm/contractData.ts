@@ -1,13 +1,13 @@
 import {PlutusData} from "@emurgo/cardano-serialization-lib-browser"
 import {PlutusList} from "@emurgo/cardano-serialization-lib-nodejs"
-import {AssetClass} from "../cardano/entities/assetClass"
-import {Datum, HexString} from "../cardano/types"
-import {decodeHex, encodeHex} from "../utils/hex"
-import {CardanoWasm} from "../utils/rustLoader"
-import {DepositRequest, RedeemRequest, SwapRequest} from "./models/opRequests"
-import {OrderAction} from "./models/orderAction"
-import {DepositConfig, RedeemConfig, SwapConfig} from "./models/orderConfig"
-import {PoolConfig} from "./models/poolConfig"
+import {AssetClass} from "../cardano/entities/assetClass.ts"
+import {Datum, HexString} from "../cardano/types.ts"
+import {decodeHex, encodeHex} from "../utils/hex.ts"
+import {CardanoWasm} from "../utils/rustLoader.ts"
+import {DepositRequest, RedeemRequest, SwapRequest} from "./models/opRequests.ts"
+import {OrderAction} from "./models/orderAction.ts"
+import {DepositConfig, RedeemConfig, SwapConfig} from "./models/orderConfig.ts"
+import {PoolConfig} from "./models/poolConfig.ts"
 
 export function parsePoolConfig(raw: Datum, R: CardanoWasm): PoolConfig | undefined {
   try {

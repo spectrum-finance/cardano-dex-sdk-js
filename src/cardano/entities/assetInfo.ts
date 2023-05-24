@@ -1,4 +1,4 @@
-import {AssetName, PolicyId} from "../types"
+import {AssetName, PolicyId} from "../types.ts"
 
 export type AssetInfo = {
   name: AssetName

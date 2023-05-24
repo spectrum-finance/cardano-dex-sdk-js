@@ -1,10 +1,10 @@
-import {AssetEntry} from "../../cardano/entities/assetEntry"
-import {TxHash, TxOutRef} from "../../cardano/types"
-import {AssetAmount} from "../../domain/assetAmount"
-import {AmmOrderInfo} from "./orderInfo"
-import {AmmPoolInfo} from "./poolInfo"
+import {AssetEntry} from "../../cardano/entities/assetEntry.ts"
+import {TxHash, TxOutRef} from "../../cardano/types.ts"
+import {AssetAmount} from "../../domain/assetAmount.ts"
+import {AmmOrderInfo} from "./orderInfo.ts"
+import {AmmPoolInfo} from "./poolInfo.ts"
 
-export type AmmOrderStatus = "pending" | "submitted" | "executed" | "settled" | 'locked'
+export type AmmOrderStatus = "pending" | "submitted" | "executed" | "settled" | "locked"
 
 export type AmmOrderType = "swap" | "deposit" | "redeem"
 
@@ -18,7 +18,7 @@ export type AmmOrder = {
   status: AmmOrderStatus
   order: AmmOrderInfo
   output?: AssetEntry[]
-  timestamp: number;
+  timestamp: number
 }
 
 export type TxStatus = "confirmed" | "unconfirmed"
@@ -30,7 +30,7 @@ export type PoolSetup = {
   status: TxStatus
   pool: AmmPoolInfo
   reward: AssetAmount
-  timestamp: number;
+  timestamp: number
 }
 
 export type RefundOperation = {
@@ -39,7 +39,7 @@ export type RefundOperation = {
   txHash: TxHash
   status: TxStatus
   order: AmmOrderInfo
-  timestamp: number;
+  timestamp: number
 }
 
 export type AmmDexOperation = AmmOrder | RefundOperation | PoolSetup

@@ -1,6 +1,6 @@
-import {decodeHex, encodeHex} from "../../utils/hex"
-import {CardanoWasm} from "../../utils/rustLoader"
-import {Bech32String, HexString, PaymentCred} from "../types"
+import {decodeHex, encodeHex} from "../../utils/hex.ts"
+import {CardanoWasm} from "../../utils/rustLoader.ts"
+import {Bech32String, HexString, PaymentCred} from "../types.ts"
 
 export type Addr = Bech32String
 
@@ -19,8 +19,8 @@ export function extractPaymentCred(addr: Addr, R: CardanoWasm): PaymentCred {
   const wasmAddr = R.Address.from_bech32(addr)
   const wasmPaymentCred =
     R.BaseAddress.from_address(wasmAddr)?.payment_cred() ??
-    R.EnterpriseAddress.from_address(wasmAddr)?.payment_cred()!;
-  const wasmCredHash = wasmPaymentCred.to_keyhash() ?? wasmPaymentCred.to_scripthash()!;
+    R.EnterpriseAddress.from_address(wasmAddr)?.payment_cred()
+  const wasmCredHash = wasmPaymentCred.to_keyhash() ?? wasmPaymentCred.to_scripthash()!
 
-  return encodeHex(wasmCredHash.to_bytes());
+  return encodeHex(wasmCredHash.to_bytes())
 }

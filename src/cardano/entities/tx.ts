@@ -1,8 +1,8 @@
-import {HexString, TxHash, ValidityRange} from "../types"
-import {Addr} from "./address"
-import {FullTxIn, TxIn} from "./txIn"
-import {TxOut, TxOutCandidate} from "./txOut"
-import {Value} from "./value"
+import {HexString, TxHash, ValidityRange} from "../types.ts"
+import {Addr} from "./address.ts"
+import {FullTxIn, TxIn} from "./txIn.ts"
+import {TxOut, TxOutCandidate} from "./txOut.ts"
+import {Value} from "./value.ts"
 
 export type Tx = {
   hash: TxHash
@@ -13,13 +13,13 @@ export type Tx = {
 }
 
 export type TxCandidate = {
-  inputs: FullTxIn[];
-  outputs: TxOutCandidate[];
-  valueMint: Value;
-  changeAddr: Addr;
-  validityRange?: ValidityRange;
-  collateral?: FullTxIn[];
-  ttl?: number;
+  inputs: FullTxIn[]
+  outputs: TxOutCandidate[]
+  valueMint: Value
+  changeAddr: Addr
+  validityRange?: ValidityRange
+  collateral?: FullTxIn[]
+  ttl?: number
 }
 
 export type RawUnsignedTx = HexString

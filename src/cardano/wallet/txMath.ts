@@ -1,7 +1,7 @@
-import {toWasmValue} from "../../interop/serlib"
-import {CardanoWasm} from "../../utils/rustLoader"
-import {ProtocolParams} from "../entities/env"
-import {Value} from "../entities/value"
+import {toWasmValue} from "../../interop/serlib.ts"
+import {CardanoWasm} from "../../utils/rustLoader.ts"
+import {ProtocolParams} from "../entities/env.ts"
+import {Value} from "../entities/value.ts"
 
 export interface TxMath {
   minUtxoValue(preValue: Value, hasDatum: boolean): bigint

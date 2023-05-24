@@ -1,7 +1,7 @@
-import {decodeHex, encodeHex} from "../../utils/hex"
-import {CardanoWasm} from "../../utils/rustLoader"
-import {Hash28, HexString} from "../types"
-import {Addr, RawAddr} from "./address"
+import {decodeHex, encodeHex} from "../../utils/hex.ts"
+import {CardanoWasm} from "../../utils/rustLoader.ts"
+import {Hash28, HexString} from "../types.ts"
+import {Addr, RawAddr} from "./address.ts"
 
 export type SPubKey = HexString
 

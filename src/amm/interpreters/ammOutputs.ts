@@ -1,10 +1,10 @@
-import {TxOutCandidate} from "../../cardano/entities/txOut"
-import {TxMath} from "../../cardano/wallet/txMath"
-import {encodeHex} from "../../utils/hex"
-import {CardanoWasm} from "../../utils/rustLoader"
-import {mkDepositDatum, mkRedeemDatum, mkSwapDatum} from "../contractData"
-import {DepositRequest, RedeemRequest, SwapRequest} from "../models/opRequests"
-import {OrderAddrs} from "../scripts"
+import {TxOutCandidate} from "../../cardano/entities/txOut.ts"
+import {TxMath} from "../../cardano/wallet/txMath.ts"
+import {encodeHex} from "../../utils/hex.ts"
+import {CardanoWasm} from "../../utils/rustLoader.ts"
+import {mkDepositDatum, mkRedeemDatum, mkSwapDatum} from "../contractData.ts"
+import {DepositRequest, RedeemRequest, SwapRequest} from "../models/opRequests.ts"
+import {OrderAddrs} from "../scripts.ts"
 
 export interface AmmOutputs {
   deposit(req: DepositRequest): TxOutCandidate

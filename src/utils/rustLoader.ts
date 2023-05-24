@@ -1,3 +1,4 @@
+// @ts-ignore
 export type CardanoWasm = typeof import("@emurgo/cardano-serialization-lib-browser/cardano_serialization_lib")
 
 class Module {
@@ -6,10 +7,10 @@ class Module {
   async load(node = false): Promise<CardanoWasm> {
     if (this._wasm === undefined) {
       this._wasm = await (node
-        // @ts-ignore
-        ? import("@emurgo/cardano-serialization-lib-nodejs/cardano_serialization_lib")
-        // @ts-ignore
-        : import("@emurgo/cardano-serialization-lib-browser/cardano_serialization_lib"))
+        ? // @ts-ignore
+          import("@emurgo/cardano-serialization-lib-nodejs/cardano_serialization_lib")
+        : // @ts-ignore
+          import("@emurgo/cardano-serialization-lib-browser/cardano_serialization_lib"))
     }
     return this._wasm!
   }

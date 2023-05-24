@@ -1,8 +1,8 @@
-import {FullTxOut} from "../../cardano/entities/txOut"
-import {assetAmountOf} from "../../cardano/entities/value"
-import {CardanoWasm} from "../../utils/rustLoader"
-import {parsePoolConfig} from "../contractData"
-import {AmmPool} from "../domain/ammPool"
+import {FullTxOut} from "../../cardano/entities/txOut.ts"
+import {assetAmountOf} from "../../cardano/entities/value.ts"
+import {CardanoWasm} from "../../utils/rustLoader.ts"
+import {parsePoolConfig} from "../contractData.ts"
+import {AmmPool} from "../domain/ammPool.ts"
 
 export interface PoolsParser {
   parse(box: FullTxOut): AmmPool | undefined
@@ -32,7 +32,7 @@ class DefaultPoolsParser implements PoolsParser {
   }
 
   parseBatch(boxes: FullTxOut[]): AmmPool[] {
-    const pools = []
+    const pools: AmmPool[] = []
     for (const box of boxes) {
       const pool = this.parse(box)
       if (pool) pools.push(pool)

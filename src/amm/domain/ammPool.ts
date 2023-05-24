@@ -1,8 +1,8 @@
-import {isAssetClassEquals} from "../../cardano/entities/assetClass"
-import {AssetAmount} from "../../domain/assetAmount"
-import {Price} from "../../domain/price"
-import {EmissionLP} from "../constants"
-import {PoolId} from "./types"
+import {isAssetClassEquals} from "../../cardano/entities/assetClass.ts"
+import {AssetAmount} from "../../domain/assetAmount.ts"
+import {Price} from "../../domain/price.ts"
+import {EmissionLP} from "../constants.ts"
+import {PoolId} from "./types.ts"
 
 export class AmmPool {
   constructor(

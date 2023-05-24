@@ -1,8 +1,8 @@
 import * as wasm from "@emurgo/cardano-serialization-lib-browser"
-import {encodeHex} from "../../utils/hex"
-import {RustModule} from "../../utils/rustLoader"
-import {stringToBytea} from "../../utils/utf8"
-import {Hash32} from "../types"
+import {encodeHex} from "../../utils/hex.ts"
+import {RustModule} from "../../utils/rustLoader.ts"
+import {stringToBytea} from "../../utils/utf8.ts"
+import {Hash32} from "../types.ts"
 
 export enum PlutusDataKind {
   Map,

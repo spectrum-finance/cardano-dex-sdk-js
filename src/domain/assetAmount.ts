@@ -1,6 +1,6 @@
-import {AdaPolicyId} from "../cardano/constants"
-import {AssetClass} from "../cardano/entities/assetClass"
-import {AssetEntry} from "../cardano/entities/assetEntry"
+import {AdaPolicyId} from "../cardano/constants.ts"
+import {AssetClass} from "../cardano/entities/assetClass.ts"
+import {AssetEntry} from "../cardano/entities/assetEntry.ts"
 
 /** ADA in Lovelace units or any other asset.
  */

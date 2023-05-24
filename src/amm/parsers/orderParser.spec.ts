@@ -1,9 +1,9 @@
 import test from "ava"
-import {RustModule} from "../../utils/rustLoader"
-import {mkOrdersParser} from "./ordersParser"
-import {ScriptCredsV1} from "../scripts"
-import {QuickblueTx} from "../../quickblue/models"
-import {JSONBI} from "../../utils/json"
+import {RustModule} from "../../utils/rustLoader.ts"
+import {mkOrdersParser} from "./ordersParser.ts"
+import {ScriptCredsV1} from "../scripts.ts"
+import {QuickblueTx} from "../../quickblue/models.ts"
+import {JSONBI} from "../../utils/json.ts"
 
 test.before(async () => {
   await RustModule.load(true)
@@ -18,8 +18,7 @@ const sampleResponse = `
 const txs: QuickblueTx[] = JSONBI.parse(sampleResponse)
 test("parse order", async t => {
   const parser = mkOrdersParser(ScriptCredsV1, RustModule.CardanoWasm)
-  const orders = txs.flatMap((tx) => tx.outputs.map(out => parser.parseOrder(out))).filter(Boolean)
-  t.assert(orders.length !== 0, "Orders are not parsed");
-  t.log(orders);
+  const orders = txs.flatMap(tx => tx.outputs.map(out => parser.parseOrder(out))).filter(Boolean)
+  t.assert(orders.length !== 0, "Orders are not parsed")
+  t.log(orders)
 })
-

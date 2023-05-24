@@ -1,7 +1,7 @@
 import test from "ava"
-import {RustModule} from "../../utils/rustLoader"
-import {decodeAddr} from "./address"
-import {pubKeyHashFromAddr, pubKeyHashFromRawAddr} from "./publicKey"
+import {RustModule} from "../../utils/rustLoader.ts"
+import {decodeAddr} from "./address.ts"
+import {pubKeyHashFromAddr, pubKeyHashFromRawAddr} from "./publicKey.ts"
 
 test.before(async () => {
   await RustModule.load(true)

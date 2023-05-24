@@ -1,5 +1,5 @@
-import {Datum, Redeemer, Script, TxHash} from "../types"
-import {TxOut} from "./txOut"
+import {Datum, Redeemer, Script, TxHash} from "../types.ts"
+import {TxOut} from "./txOut.ts"
 
 export type TxIn = {
   outTxHash: TxHash
@@ -7,15 +7,15 @@ export type TxIn = {
 }
 
 export type OperationInRef = {
-  opInRefHash: TxHash;
-  opInRefIndex: number;
+  opInRefHash: TxHash
+  opInRefIndex: number
 }
 
 export type ConsumeScriptInput = {
-  validator: Script;
-  redeemer: Redeemer;
+  validator: Script
+  redeemer: Redeemer
   datum?: Datum
-  opInRef: OperationInRef;
+  opInRef: OperationInRef
 }
 
 export type FullTxIn = {

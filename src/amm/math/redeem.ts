@@ -1,10 +1,10 @@
-import {AdaEntry} from "../../cardano/entities/assetEntry"
-import {add, Value} from "../../cardano/entities/value"
-import {Lovelace} from "../../cardano/types"
-import {TxMath} from "../../cardano/wallet/txMath"
-import {AssetAmount} from "../../domain/assetAmount"
-import {OrderKind} from "../models/opRequests"
-import {AmmTxFeeMapping, minExFeeForOrder} from "./order"
+import {AdaEntry} from "../../cardano/entities/assetEntry.ts"
+import {add, Value} from "../../cardano/entities/value.ts"
+import {Lovelace} from "../../cardano/types.ts"
+import {TxMath} from "../../cardano/wallet/txMath.ts"
+import {AssetAmount} from "../../domain/assetAmount.ts"
+import {OrderKind} from "../models/opRequests.ts"
+import {AmmTxFeeMapping, minExFeeForOrder} from "./order.ts"
 
 export type RedeemBudget = Value
 export type RedeemValue = Value

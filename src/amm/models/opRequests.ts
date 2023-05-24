@@ -1,10 +1,10 @@
-import {AssetClass} from "../../cardano/entities/assetClass"
-import {PubKeyHash} from "../../cardano/entities/publicKey"
-import {Value} from "../../cardano/entities/value"
-import {Lovelace} from "../../cardano/types"
-import {AssetAmount} from "../../domain/assetAmount"
-import {FeePerToken} from "../domain/models"
-import {PoolId} from "../domain/types"
+import {AssetClass} from "../../cardano/entities/assetClass.ts"
+import {PubKeyHash} from "../../cardano/entities/publicKey.ts"
+import {Value} from "../../cardano/entities/value.ts"
+import {Lovelace} from "../../cardano/types.ts"
+import {AssetAmount} from "../../domain/assetAmount.ts"
+import {FeePerToken} from "../domain/models.ts"
+import {PoolId} from "../domain/types.ts"
 
 export type CreateRequest = {
   readonly x: AssetAmount

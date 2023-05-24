@@ -1,12 +1,12 @@
 import * as WASM from "@emurgo/cardano-serialization-lib-browser"
 import * as F from "ramda"
-import {AdaPolicyId} from "../cardano/constants"
-import {AdaEntry, AssetEntry} from "../cardano/entities/assetEntry"
-import {TxOut} from "../cardano/entities/txOut"
-import {getLovelace, Value} from "../cardano/entities/value"
-import {HexString, PolicyId} from "../cardano/types"
-import {decodeHex, encodeHex} from "../utils/hex"
-import {CardanoWasm} from "../utils/rustLoader"
+import {AdaPolicyId} from "../cardano/constants.ts"
+import {AdaEntry, AssetEntry} from "../cardano/entities/assetEntry.ts"
+import {TxOut} from "../cardano/entities/txOut.ts"
+import {getLovelace, Value} from "../cardano/entities/value.ts"
+import {HexString, PolicyId} from "../cardano/types.ts"
+import {decodeHex, encodeHex} from "../utils/hex.ts"
+import {CardanoWasm} from "../utils/rustLoader.ts"
 
 export function fromWasmValue(value: WASM.Value): Value {
   const adaEntry = AdaEntry(BigInt(value.coin().to_str()))

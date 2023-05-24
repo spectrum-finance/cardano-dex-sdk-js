@@ -1,9 +1,9 @@
 import test from "ava"
-import {Quickblue} from "../../quickblue/cardanoNetwork"
-import {RustModule} from "../../utils/rustLoader"
-import {mkPoolsParser} from "../parsers/poolsParser"
-import {ScriptCredsV1} from "../scripts"
-import {mkNetworkPoolsV1} from "./pools"
+import {Quickblue} from "../../quickblue/cardanoNetwork.ts"
+import {RustModule} from "../../utils/rustLoader.ts"
+import {mkPoolsParser} from "../parsers/poolsParser.ts"
+import {ScriptCredsV1} from "../scripts.ts"
+import {mkNetworkPoolsV1} from "./pools.ts"
 
 test.before(async () => {
   await RustModule.load(true)

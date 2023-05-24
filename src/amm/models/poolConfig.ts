@@ -1,4 +1,4 @@
-import {AssetClass} from "../../cardano/entities/assetClass"
+import {AssetClass} from "../../cardano/entities/assetClass.ts"
 
 export type PoolConfig = {
   nft: AssetClass

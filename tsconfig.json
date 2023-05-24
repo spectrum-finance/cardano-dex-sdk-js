@@ -9,11 +9,11 @@
     "declaration": true,
     "declarationMap": true,
     "allowSyntheticDefaultImports": true,
+    "allowImportingTsExtensions": true,
+    "emitDeclarationOnly": true,
+    "noImplicitAny": false,
 
-    "lib": [
-      "ES2022",
-      "DOM"
-    ],
+    "lib": ["ES2022", "DOM"],
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "NodeNext",

@@ -1,17 +1,23 @@
 import {
-  BaseAddress, Ed25519KeyHash,
-  EnterpriseAddress, PlutusWitness,
-  TransactionBuilderConfig, TransactionInput, TransactionOutput, TxInputsBuilder, Value
+  BaseAddress,
+  Ed25519KeyHash,
+  EnterpriseAddress,
+  PlutusWitness,
+  TransactionBuilderConfig,
+  TransactionInput,
+  TransactionOutput,
+  TxInputsBuilder,
+  Value
 } from "@emurgo/cardano-serialization-lib-nodejs"
-import {toWasmValue} from "../../interop/serlib"
-import {decodeHex, encodeHex} from "../../utils/hex"
-import {decimalToFractional} from "../../utils/math"
-import {CardanoWasm} from "../../utils/rustLoader"
-import {Addr} from "../entities/address"
-import {NetworkParams, ProtocolParams} from "../entities/env"
-import {RawUnsignedTx, TxCandidate} from "../entities/tx"
-import {FullTxIn} from "../entities/txIn"
-import {TxOutCandidate} from "../entities/txOut"
+import {toWasmValue} from "../../interop/serlib.ts"
+import {decodeHex, encodeHex} from "../../utils/hex.ts"
+import {decimalToFractional} from "../../utils/math.ts"
+import {CardanoWasm} from "../../utils/rustLoader.ts"
+import {Addr} from "../entities/address.ts"
+import {NetworkParams, ProtocolParams} from "../entities/env.ts"
+import {RawUnsignedTx, TxCandidate} from "../entities/tx.ts"
+import {FullTxIn} from "../entities/txIn.ts"
+import {TxOutCandidate} from "../entities/txOut.ts"
 
 export interface TxAsm {
   finalize(candidate: TxCandidate): RawUnsignedTx
@@ -22,8 +28,7 @@ export function mkTxAsm(env: NetworkParams, R: CardanoWasm): TxAsm {
 }
 
 class DefaultTxAsm implements TxAsm {
-  constructor(public readonly env: NetworkParams, public readonly R: CardanoWasm) {
-  }
+  constructor(public readonly env: NetworkParams, public readonly R: CardanoWasm) {}
 
   finalize(candidate: TxCandidate): RawUnsignedTx {
     const txBuilder = this.R.TransactionBuilder.new(this.getTxBuilderConfig(this.env.pparams))
@@ -98,10 +103,7 @@ class DefaultTxAsm implements TxAsm {
         this.R.RedeemerTag.new_spend(),
         this.R.BigNum.one(),
         this.R.PlutusData.from_hex(consumeScript.redeemer),
-        this.R.ExUnits.new(
-          this.R.BigNum.from_str("10000000"),
-          this.R.BigNum.from_str("9000000000")
-        )
+        this.R.ExUnits.new(this.R.BigNum.from_str("10000000"), this.R.BigNum.from_str("9000000000"))
       )
     )
 
@@ -109,8 +111,8 @@ class DefaultTxAsm implements TxAsm {
   }
 
   private getTxBuilderConfig(pparams: ProtocolParams): TransactionBuilderConfig {
-    const [mem_price_num, mem_price_denom] = decimalToFractional(pparams.executionUnitPrices.priceMemory);
-    const [step_price_num, step_price_denom] = decimalToFractional(pparams.executionUnitPrices.priceSteps);
+    const [mem_price_num, mem_price_denom] = decimalToFractional(pparams.executionUnitPrices.priceMemory)
+    const [step_price_num, step_price_denom] = decimalToFractional(pparams.executionUnitPrices.priceSteps)
 
     return this.R.TransactionBuilderConfigBuilder.new()
       .fee_algo(
@@ -119,16 +121,18 @@ class DefaultTxAsm implements TxAsm {
           this.R.BigNum.from_str(pparams.txFeeFixed.toString())
         )
       )
-      .ex_unit_prices(this.R.ExUnitPrices.new(
-        this.R.UnitInterval.new(
-          this.R.BigNum.from_str(mem_price_num.toString()),
-          this.R.BigNum.from_str(mem_price_denom.toString())
-        ),
-        this.R.UnitInterval.new(
-          this.R.BigNum.from_str(step_price_num.toString()),
-          this.R.BigNum.from_str(step_price_denom.toString())
+      .ex_unit_prices(
+        this.R.ExUnitPrices.new(
+          this.R.UnitInterval.new(
+            this.R.BigNum.from_str(mem_price_num.toString()),
+            this.R.BigNum.from_str(mem_price_denom.toString())
+          ),
+          this.R.UnitInterval.new(
+            this.R.BigNum.from_str(step_price_num.toString()),
+            this.R.BigNum.from_str(step_price_denom.toString())
+          )
         )
-      ))
+      )
       .coins_per_utxo_word(this.R.BigNum.from_str(pparams.utxoCostPerWord.toString()))
       .pool_deposit(this.R.BigNum.from_str(pparams.stakePoolDeposit.toString()))
       .key_deposit(this.R.BigNum.from_str(pparams.stakeAddressDeposit.toString()))

@@ -1,11 +1,11 @@
 import test from "ava"
-import {emptyValue} from "../../cardano/entities/value"
-import {AssetAmount} from "../../domain/assetAmount"
-import {encodeHex} from "../../utils/hex"
-import {RustModule} from "../../utils/rustLoader"
-import {mkDepositDatum, mkRedeemDatum, mkSwapDatum, parsePoolConfig} from "../contractData"
-import {DepositRequest, OrderKind, RedeemRequest, SwapRequest} from "../models/opRequests"
-import {PoolConfig} from "../models/poolConfig"
+import {emptyValue} from "../../cardano/entities/value.ts"
+import {AssetAmount} from "../../domain/assetAmount.ts"
+import {encodeHex} from "../../utils/hex.ts"
+import {RustModule} from "../../utils/rustLoader.ts"
+import {mkDepositDatum, mkRedeemDatum, mkSwapDatum, parsePoolConfig} from "../contractData.ts"
+import {DepositRequest, OrderKind, RedeemRequest, SwapRequest} from "../models/opRequests.ts"
+import {PoolConfig} from "../models/poolConfig.ts"
 
 test.before(async () => {
   await RustModule.load(true)

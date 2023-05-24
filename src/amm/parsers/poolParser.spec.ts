@@ -1,8 +1,8 @@
 import test from "ava"
-import {QuickblueTxOut, toCardanoTxOut} from "../../quickblue/models"
-import {JSONBI} from "../../utils/json"
-import {RustModule} from "../../utils/rustLoader"
-import {mkPoolsParser} from "./poolsParser"
+import {QuickblueTxOut, toCardanoTxOut} from "../../quickblue/models.ts"
+import {JSONBI} from "../../utils/json.ts"
+import {RustModule} from "../../utils/rustLoader.ts"
+import {mkPoolsParser} from "./poolsParser.ts"
 
 test.before(async () => {
   await RustModule.load(true)

@@ -1,11 +1,20 @@
-import {Addr} from "../cardano/entities/address"
-import {NetworkParams} from "../cardano/entities/env"
-import {Tx} from "../cardano/entities/tx"
-import {TxIn} from "../cardano/entities/txIn"
-import {FullTxOut} from "../cardano/entities/txOut"
-import {Value} from "../cardano/entities/value"
-import {AssetRef, BlockHash, Hash28, Hash32, HexString, Lovelace, PaymentCred, TxHash} from "../cardano/types"
-import {mkJsonTransformer} from "../utils/jsonTransformer"
+import {Addr} from "../cardano/entities/address.ts"
+import {NetworkParams} from "../cardano/entities/env.ts"
+import {Tx} from "../cardano/entities/tx.ts"
+import {TxIn} from "../cardano/entities/txIn.ts"
+import {FullTxOut} from "../cardano/entities/txOut.ts"
+import {Value} from "../cardano/entities/value.ts"
+import {
+  AssetRef,
+  BlockHash,
+  Hash28,
+  Hash32,
+  HexString,
+  Lovelace,
+  PaymentCred,
+  TxHash
+} from "../cardano/types.ts"
+import {mkJsonTransformer} from "../utils/jsonTransformer.ts"
 
 export type Items<T> = {
   items: T[]
@@ -17,7 +26,7 @@ export type QuickblueTxOut = {
   index: number
   value: Value
   addr: Addr
-  paymentCred: HexString;
+  paymentCred: HexString
   dataHash?: Hash32
   spentByTxHash?: HexString
   dataBin?: HexString
@@ -73,7 +82,7 @@ export type QuickblueTx = {
   outputs: [QuickblueTxOut]
   invalidBefore: bigint
   invalidHereafter: bigint
-  timestamp: number;
+  timestamp: number
   metadata?: QuickblueMetadata
 }
 

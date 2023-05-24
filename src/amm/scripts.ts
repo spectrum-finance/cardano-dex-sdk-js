@@ -1,4 +1,4 @@
-import {HexString, TxHash} from "../cardano/types"
+import {HexString, TxHash} from "../cardano/types.ts"
 
 export type OrderAddrs = {
   ammDeposit: HexString
@@ -27,27 +27,27 @@ export const ScriptCredsV1: ScriptCreds = {
 }
 
 export type OpInRef = {
-  readonly opInRefHash: TxHash;
-  readonly opInRefIndex: number;
+  readonly opInRefHash: TxHash
+  readonly opInRefIndex: number
 }
 
 export type OpInRefs = {
-  ammSwap: OpInRef;
-  ammDeposit: OpInRef;
-  ammRedeem: OpInRef;
+  ammSwap: OpInRef
+  ammDeposit: OpInRef
+  ammRedeem: OpInRef
 }
 
 export const OpInRefsV1: OpInRefs = {
   ammSwap: {
-    opInRefHash: 'b2f79375bf73234bb988cfdb911c78ac4e9b5470197e828d507babfdcca08d16',
+    opInRefHash: "b2f79375bf73234bb988cfdb911c78ac4e9b5470197e828d507babfdcca08d16",
     opInRefIndex: 2
   },
   ammDeposit: {
-    opInRefHash: 'b2f79375bf73234bb988cfdb911c78ac4e9b5470197e828d507babfdcca08d16',
+    opInRefHash: "b2f79375bf73234bb988cfdb911c78ac4e9b5470197e828d507babfdcca08d16",
     opInRefIndex: 3
   },
   ammRedeem: {
-    opInRefHash: 'b2f79375bf73234bb988cfdb911c78ac4e9b5470197e828d507babfdcca08d16',
+    opInRefHash: "b2f79375bf73234bb988cfdb911c78ac4e9b5470197e828d507babfdcca08d16",
     opInRefIndex: 1
   }
 }

@@ -1,4 +1,4 @@
-import {AssetClass} from "./entities/assetClass"
+import {AssetClass} from "./entities/assetClass.ts"
 
 export type HexString = string
 export type Bech32String = string

@@ -1,10 +1,10 @@
-import {FullTxOut} from "../../cardano/entities/txOut"
-import {AssetAmount} from "../../domain/assetAmount"
-import {CardanoWasm} from "../../utils/rustLoader"
-import {parseDepositConfig, parseRedeemConfig, parseSwapConfig} from "../contractData"
-import {AmmOrderInfo} from "../models/orderInfo"
-import {ScriptCreds} from "../scripts"
-import {extractPaymentCred} from "../../cardano/entities/address"
+import {FullTxOut} from "../../cardano/entities/txOut.ts"
+import {AssetAmount} from "../../domain/assetAmount.ts"
+import {CardanoWasm} from "../../utils/rustLoader.ts"
+import {parseDepositConfig, parseRedeemConfig, parseSwapConfig} from "../contractData.ts"
+import {AmmOrderInfo} from "../models/orderInfo.ts"
+import {ScriptCreds} from "../scripts.ts"
+import {extractPaymentCred} from "../../cardano/entities/address.ts"
 
 export interface OrdersParser {
   parseOrder(out: FullTxOut): AmmOrderInfo | undefined
@@ -15,12 +15,11 @@ export function mkOrdersParser(creds: ScriptCreds, R: CardanoWasm): OrdersParser
 }
 
 class DefaultOrdersParser implements OrdersParser {
-  constructor(public readonly creds: ScriptCreds, public readonly R: CardanoWasm) {
-  }
+  constructor(public readonly creds: ScriptCreds, public readonly R: CardanoWasm) {}
 
   parseOrder(out: FullTxOut): AmmOrderInfo | undefined {
     if (extractPaymentCred(out.addr, this.R) === this.creds.ammSwap && out.dataBin) {
-      const swap = parseSwapConfig(out.dataBin, this.R);
+      const swap = parseSwapConfig(out.dataBin, this.R)
       if (swap) {
         const from = new AssetAmount(swap.base, swap.baseAmount)
         return {type: "swap", poolId: swap.poolId, from, to: swap.quote, toMinAmount: swap.minQuoteAmount}
