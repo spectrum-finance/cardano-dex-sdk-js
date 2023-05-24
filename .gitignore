@@ -1,5 +1,6 @@
 .idea/*
 .nyc_output
+lib
 build
 node_modules
 test
