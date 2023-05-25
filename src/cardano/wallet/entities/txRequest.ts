@@ -1,6 +1,6 @@
-import {Addr} from "../../entities/address.ts"
-import {TxIn} from "../../entities/txIn.ts"
-import {TxOut} from "../../entities/txOut.ts"
+import {Addr} from "../../entities/address.js"
+import {TxIn} from "../../entities/txIn.js"
+import {TxOut} from "../../entities/txOut.js"
 
 export type TxRequest = {
   inputs: TxIn[]

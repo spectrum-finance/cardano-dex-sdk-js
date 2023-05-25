@@ -1,4 +1,4 @@
-import {HexString} from "../cardano/types.ts"
+import {HexString} from "../cardano/types.js"
 
 export function decodeHex(s: HexString): Uint8Array {
   return Uint8Array.from(Buffer.from(s, "hex"))

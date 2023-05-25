@@ -1,8 +1,8 @@
-import {AssetAmount} from "../../domain/assetAmount.ts"
-import {AdaAssetClass} from "../constants.ts"
-import {Lovelace} from "../types.ts"
-import {AssetClass} from "./assetClass.ts"
-import {AdaEntry, AssetEntry, assetEntryToClass} from "./assetEntry.ts"
+import {AssetAmount} from "../../domain/assetAmount.js"
+import {AdaAssetClass} from "../constants.js"
+import {Lovelace} from "../types.js"
+import {AssetClass} from "./assetClass.js"
+import {AdaEntry, AssetEntry, assetEntryToClass} from "./assetEntry.js"
 
 export type Value = AssetEntry[]
 

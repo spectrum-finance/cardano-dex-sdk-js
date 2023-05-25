@@ -1,10 +1,10 @@
-import {FullTxOut} from "../../cardano/entities/txOut.ts"
-import {AssetAmount} from "../../domain/assetAmount.ts"
-import {CardanoWasm} from "../../utils/rustLoader.ts"
-import {parseDepositConfig, parseRedeemConfig, parseSwapConfig} from "../contractData.ts"
-import {AmmOrderInfo} from "../models/orderInfo.ts"
-import {ScriptCreds} from "../scripts.ts"
-import {extractPaymentCred} from "../../cardano/entities/address.ts"
+import {FullTxOut} from "../../cardano/entities/txOut.js"
+import {AssetAmount} from "../../domain/assetAmount.js"
+import {CardanoWasm} from "../../utils/rustLoader.js"
+import {parseDepositConfig, parseRedeemConfig, parseSwapConfig} from "../contractData.js"
+import {AmmOrderInfo} from "../models/orderInfo.js"
+import {ScriptCreds} from "../scripts.js"
+import {extractPaymentCred} from "../../cardano/entities/address.js"
 
 export interface OrdersParser {
   parseOrder(out: FullTxOut): AmmOrderInfo | undefined

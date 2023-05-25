@@ -1,11 +1,11 @@
 import test from "ava"
-import {QuickblueTxOut, toCardanoTxOut} from "../../quickblue/models.ts"
-import {JSONBI} from "../../utils/json.ts"
-import {RustModule} from "../../utils/rustLoader.ts"
-import {mkPoolsParser} from "./poolsParser.ts"
+import {QuickblueTxOut, toCardanoTxOut} from "../../quickblue/models.js"
+import {JSONBI} from "../../utils/json.js"
+import {RustModule} from "../../utils/rustLoader.js"
+import {mkPoolsParser} from "./poolsParser.js"
 
 test.before(async () => {
-  await RustModule.load(true)
+  await RustModule.load({env: "nodejs"})
 })
 
 test("Parse Pools in batch", async t => {

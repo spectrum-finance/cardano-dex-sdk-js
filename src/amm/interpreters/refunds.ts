@@ -1,11 +1,11 @@
-import {AdaAssetName, AdaPolicyId} from "../../cardano/constants.ts"
-import {TxCandidate} from "../../cardano/entities/tx.ts"
-import {FullTxIn} from "../../cardano/entities/txIn.ts"
-import {TxOutCandidate} from "../../cardano/entities/txOut.ts"
-import {emptyValue} from "../../cardano/entities/value.ts"
-import {CardanoNetwork} from "../../quickblue/cardanoNetwork.ts"
-import {RefundParams} from "../models/refundParams.ts"
-import {OpInRefsV1, OrderAddrsV1Testnet, ScriptCredsV1} from "../scripts.ts"
+import {AdaAssetName, AdaPolicyId} from "../../cardano/constants.js"
+import {TxCandidate} from "../../cardano/entities/tx.js"
+import {FullTxIn} from "../../cardano/entities/txIn.js"
+import {TxOutCandidate} from "../../cardano/entities/txOut.js"
+import {emptyValue} from "../../cardano/entities/value.js"
+import {CardanoNetwork} from "../../quickblue/cardanoNetwork.js"
+import {RefundParams} from "../models/refundParams.js"
+import {OpInRefsV1, OrderAddrsV1Testnet, ScriptCredsV1} from "../scripts.js"
 
 export interface Refunds {
   /** Redeem assets from a proxy order box.

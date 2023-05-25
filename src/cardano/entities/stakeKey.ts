@@ -1,7 +1,7 @@
-import {decodeHex, encodeHex} from "../../utils/hex.ts"
-import {CardanoWasm} from "../../utils/rustLoader.ts"
-import {Hash28} from "../types.ts"
-import {Addr, RawAddr} from "./address.ts"
+import {decodeHex, encodeHex} from "../../utils/hex.js"
+import {CardanoWasm} from "../../utils/rustLoader.js"
+import {Hash28} from "../types.js"
+import {Addr, RawAddr} from "./address.js"
 
 export type StakeKeyHash = Hash28
 

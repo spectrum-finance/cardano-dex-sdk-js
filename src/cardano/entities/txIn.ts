@@ -1,5 +1,5 @@
-import {Datum, Redeemer, Script, TxHash} from "../types.ts"
-import {TxOut} from "./txOut.ts"
+import {Datum, Redeemer, Script, TxHash} from "../types.js"
+import {TxOut} from "./txOut.js"
 
 export type TxIn = {
   outTxHash: TxHash

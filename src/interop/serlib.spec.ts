@@ -1,10 +1,10 @@
 import test from "ava"
-import {AdaAssetName, AdaPolicyId} from "../cardano/constants.ts"
-import {RustModule} from "../utils/rustLoader.ts"
-import {decodeWasmUtxo, decodeWasmValue, encodeWasmValue} from "./serlib.ts"
+import {AdaAssetName, AdaPolicyId} from "../cardano/constants.js"
+import {RustModule} from "../utils/rustLoader.js"
+import {decodeWasmUtxo, decodeWasmValue, encodeWasmValue} from "./serlib.js"
 
 test.before(async () => {
-  await RustModule.load(true)
+  await RustModule.load({env: "nodejs"})
 })
 
 test("Encode/decode Value", async t => {

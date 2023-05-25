@@ -1,9 +1,9 @@
 import axios, {AxiosInstance} from "axios"
-import {AssetInfo} from "../cardano/entities/assetInfo.ts"
-import {NetworkParams} from "../cardano/entities/env.ts"
-import {FullTxOut} from "../cardano/entities/txOut.ts"
-import {AssetRef, Datum, PaymentCred, TxHash, TxOutRef} from "../cardano/types.ts"
-import {JSONBI, JSONBI_ALWAYS} from "../utils/json.ts"
+import {AssetInfo} from "../cardano/entities/assetInfo.js"
+import {NetworkParams} from "../cardano/entities/env.js"
+import {FullTxOut} from "../cardano/entities/txOut.js"
+import {AssetRef, Datum, PaymentCred, TxHash, TxOutRef} from "../cardano/types.js"
+import {JSONBI, JSONBI_ALWAYS} from "../utils/json.js"
 import {
   Items,
   NetworkContext,
@@ -13,8 +13,8 @@ import {
   quickblueTxOutJsonTransformer,
   toCardanoTxOut,
   UtxoSearch
-} from "./models.ts"
-import {Ordering, Paging} from "./types.ts"
+} from "./models.js"
+import {Ordering, Paging} from "./types.js"
 
 export interface CardanoNetwork {
   /** Get transaction by hash.

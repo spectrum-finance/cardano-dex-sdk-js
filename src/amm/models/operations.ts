@@ -1,8 +1,8 @@
-import {AssetEntry} from "../../cardano/entities/assetEntry.ts"
-import {TxHash, TxOutRef} from "../../cardano/types.ts"
-import {AssetAmount} from "../../domain/assetAmount.ts"
-import {AmmOrderInfo} from "./orderInfo.ts"
-import {AmmPoolInfo} from "./poolInfo.ts"
+import {AssetEntry} from "../../cardano/entities/assetEntry.js"
+import {TxHash, TxOutRef} from "../../cardano/types.js"
+import {AssetAmount} from "../../domain/assetAmount.js"
+import {AmmOrderInfo} from "./orderInfo.js"
+import {AmmPoolInfo} from "./poolInfo.js"
 
 export type AmmOrderStatus = "pending" | "submitted" | "executed" | "settled" | "locked"
 

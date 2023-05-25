@@ -1,9 +1,9 @@
-import {CardanoNetwork} from "../../quickblue/cardanoNetwork.ts"
-import {decodeHex, encodeHex} from "../../utils/hex.ts"
-import {CardanoWasm} from "../../utils/rustLoader.ts"
-import {RawTx, TxCandidate} from "../entities/tx.ts"
-import {Prover} from "../wallet/prover.ts"
-import {TxAsm} from "../wallet/txAsm.ts"
+import {CardanoNetwork} from "../../quickblue/cardanoNetwork.js"
+import {decodeHex, encodeHex} from "../../utils/hex.js"
+import {CardanoWasm} from "../../utils/rustLoader.js"
+import {RawTx, TxCandidate} from "../entities/tx.js"
+import {Prover} from "../wallet/prover.js"
+import {TxAsm} from "../wallet/txAsm.js"
 
 export interface TxCompletionPipeline {
   complete(txc: TxCandidate): Promise<RawTx>

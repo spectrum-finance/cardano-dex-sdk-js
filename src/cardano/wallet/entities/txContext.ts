@@ -1,6 +1,6 @@
-import {Addr} from "../../entities/address.ts"
-import {FullTxIn} from "../../entities/txIn.ts"
-import {TxOut} from "../../entities/txOut.ts"
+import {Addr} from "../../entities/address.js"
+import {FullTxIn} from "../../entities/txIn.js"
+import {TxOut} from "../../entities/txOut.js"
 
 export type TxContext = {
   inputs: FullTxIn[]

@@ -1,8 +1,8 @@
-import {HexString, TxHash, ValidityRange} from "../types.ts"
-import {Addr} from "./address.ts"
-import {FullTxIn, TxIn} from "./txIn.ts"
-import {TxOut, TxOutCandidate} from "./txOut.ts"
-import {Value} from "./value.ts"
+import {HexString, TxHash, ValidityRange} from "../types.js"
+import {Addr} from "./address.js"
+import {FullTxIn, TxIn} from "./txIn.js"
+import {TxOut, TxOutCandidate} from "./txOut.js"
+import {Value} from "./value.js"
 
 export type Tx = {
   hash: TxHash

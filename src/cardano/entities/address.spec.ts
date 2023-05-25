@@ -1,10 +1,10 @@
 import test from "ava"
-import {OrderAddrsV1Testnet} from "../../amm/scripts.ts"
-import {RustModule} from "../../utils/rustLoader.ts"
-import {Addr, extractPaymentCred} from "./address.ts"
+import {OrderAddrsV1Testnet} from "../../amm/scripts.js"
+import {RustModule} from "../../utils/rustLoader.js"
+import {Addr, extractPaymentCred} from "./address.js"
 
 test.before(async () => {
-  await RustModule.load(true)
+  await RustModule.load({env: "nodejs"})
 })
 
 test("Refine Testnet Addrs", async t => {

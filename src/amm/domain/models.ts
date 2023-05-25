@@ -1,4 +1,4 @@
-import {decimalToFractional} from "../../utils/math.ts"
+import {decimalToFractional} from "../../utils/math.js"
 
 export type FeePerToken = {
   numerator: bigint

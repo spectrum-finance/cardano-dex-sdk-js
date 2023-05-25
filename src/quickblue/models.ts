@@ -1,9 +1,9 @@
-import {Addr} from "../cardano/entities/address.ts"
-import {NetworkParams} from "../cardano/entities/env.ts"
-import {Tx} from "../cardano/entities/tx.ts"
-import {TxIn} from "../cardano/entities/txIn.ts"
-import {FullTxOut} from "../cardano/entities/txOut.ts"
-import {Value} from "../cardano/entities/value.ts"
+import {Addr} from "../cardano/entities/address.js"
+import {NetworkParams} from "../cardano/entities/env.js"
+import {Tx} from "../cardano/entities/tx.js"
+import {TxIn} from "../cardano/entities/txIn.js"
+import {FullTxOut} from "../cardano/entities/txOut.js"
+import {Value} from "../cardano/entities/value.js"
 import {
   AssetRef,
   BlockHash,
@@ -13,8 +13,8 @@ import {
   Lovelace,
   PaymentCred,
   TxHash
-} from "../cardano/types.ts"
-import {mkJsonTransformer} from "../utils/jsonTransformer.ts"
+} from "../cardano/types.js"
+import {mkJsonTransformer} from "../utils/jsonTransformer.js"
 
 export type Items<T> = {
   items: T[]

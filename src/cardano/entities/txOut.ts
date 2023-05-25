@@ -1,6 +1,6 @@
-import {Datum, Hash32, HexString, TxHash} from "../types.ts"
-import {Addr} from "./address.ts"
-import {Value} from "./value.ts"
+import {Datum, Hash32, HexString, TxHash} from "../types.js"
+import {Addr} from "./address.js"
+import {Value} from "./value.js"
 
 export type TxOut = {
   txHash: TxHash

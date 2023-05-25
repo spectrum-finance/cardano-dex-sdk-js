@@ -1,6 +1,6 @@
-import {TxOut} from "../entities/txOut.ts"
-import {Value} from "../entities/value.ts"
-import {Prover} from "./prover.ts"
+import {TxOut} from "../entities/txOut.js"
+import {Value} from "../entities/value.js"
+import {Prover} from "./prover.js"
 
 export type Paging = {
   offset: number

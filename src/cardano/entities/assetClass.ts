@@ -1,5 +1,5 @@
-import {encodeHex} from "../../utils/hex.ts"
-import {AssetName, PolicyId, Subject} from "../types.ts"
+import {encodeHex} from "../../utils/hex.js"
+import {AssetName, PolicyId, Subject} from "../types.js"
 
 export type AssetClass = {
   policyId: PolicyId

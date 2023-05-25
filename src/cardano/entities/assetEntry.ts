@@ -1,6 +1,6 @@
-import {AdaAssetName, AdaPolicyId} from "../constants.ts"
-import {AssetName, Lovelace, PolicyId} from "../types.ts"
-import {AssetClass} from "./assetClass.ts"
+import {AdaAssetName, AdaPolicyId} from "../constants.js"
+import {AssetName, Lovelace, PolicyId} from "../types.js"
+import {AssetClass} from "./assetClass.js"
 
 export type AssetEntry = {
   name: AssetName

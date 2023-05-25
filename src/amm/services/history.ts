@@ -1,11 +1,11 @@
-import {HexString, mkTxOutRef, PaymentCred} from "../../cardano/types.ts"
-import {CardanoNetwork} from "../../quickblue/cardanoNetwork.ts"
-import {QuickblueTx, QuickblueTxIn, QuickblueTxOut} from "../../quickblue/models.ts"
-import {CardanoWasm} from "../../utils/rustLoader.ts"
-import {parseOrderRedeemer} from "../contractData.ts"
-import {AmmDexOperation} from "../models/operations.ts"
-import {AmmOrderInfo} from "../models/orderInfo.ts"
-import {OrdersParser} from "../parsers/ordersParser.ts"
+import {HexString, mkTxOutRef, PaymentCred} from "../../cardano/types.js"
+import {CardanoNetwork} from "../../quickblue/cardanoNetwork.js"
+import {QuickblueTx, QuickblueTxIn, QuickblueTxOut} from "../../quickblue/models.js"
+import {CardanoWasm} from "../../utils/rustLoader.js"
+import {parseOrderRedeemer} from "../contractData.js"
+import {AmmDexOperation} from "../models/operations.js"
+import {AmmOrderInfo} from "../models/orderInfo.js"
+import {OrdersParser} from "../parsers/ordersParser.js"
 
 const MAX_PENDING_INTERVAL = 10 * 60_000
 

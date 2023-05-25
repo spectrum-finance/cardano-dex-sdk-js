@@ -1,11 +1,11 @@
-import {AssetRef, mkAssetRef} from "../../cardano/types.ts"
-import {CardanoNetwork} from "../../quickblue/cardanoNetwork.ts"
-import {UtxoSearch} from "../../quickblue/models.ts"
-import {Paging} from "../../quickblue/types.ts"
-import {AmmPool} from "../domain/ammPool.ts"
-import {PoolId} from "../domain/types.ts"
-import {PoolsParser} from "../parsers/poolsParser.ts"
-import {ScriptCreds} from "../scripts.ts"
+import {AssetRef, mkAssetRef} from "../../cardano/types.js"
+import {CardanoNetwork} from "../../quickblue/cardanoNetwork.js"
+import {UtxoSearch} from "../../quickblue/models.js"
+import {Paging} from "../../quickblue/types.js"
+import {AmmPool} from "../domain/ammPool.js"
+import {PoolId} from "../domain/types.js"
+import {PoolsParser} from "../parsers/poolsParser.js"
+import {ScriptCreds} from "../scripts.js"
 
 export interface Pools {
   /** Get a pool by the given pool `id`.

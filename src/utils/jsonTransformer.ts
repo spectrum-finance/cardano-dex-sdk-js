@@ -1,4 +1,4 @@
-import {JSONBI} from "./json.ts"
+import {JSONBI} from "./json.js"
 
 type Unpacked<T> = T extends (infer U)[]
   ? U

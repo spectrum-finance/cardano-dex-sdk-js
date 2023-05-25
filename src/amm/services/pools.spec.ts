@@ -1,12 +1,12 @@
 import test from "ava"
-import {Quickblue} from "../../quickblue/cardanoNetwork.ts"
-import {RustModule} from "../../utils/rustLoader.ts"
-import {mkPoolsParser} from "../parsers/poolsParser.ts"
-import {ScriptCredsV1} from "../scripts.ts"
-import {mkNetworkPoolsV1} from "./pools.ts"
+import {Quickblue} from "../../quickblue/cardanoNetwork.js"
+import {RustModule} from "../../utils/rustLoader.js"
+import {mkPoolsParser} from "../parsers/poolsParser.js"
+import {ScriptCredsV1} from "../scripts.js"
+import {mkNetworkPoolsV1} from "./pools.js"
 
 test.before(async () => {
-  await RustModule.load(true)
+  await RustModule.load({env: "nodejs"})
 })
 
 test("Parse Pools in batch", async t => {

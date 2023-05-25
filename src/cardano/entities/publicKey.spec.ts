@@ -1,10 +1,10 @@
 import test from "ava"
-import {RustModule} from "../../utils/rustLoader.ts"
-import {decodeAddr} from "./address.ts"
-import {pubKeyHashFromAddr, pubKeyHashFromRawAddr} from "./publicKey.ts"
+import {RustModule} from "../../utils/rustLoader.js"
+import {decodeAddr} from "./address.js"
+import {pubKeyHashFromAddr, pubKeyHashFromRawAddr} from "./publicKey.js"
 
 test.before(async () => {
-  await RustModule.load(true)
+  await RustModule.load({env: "nodejs"})
 })
 
 const keyHash = "f62ccc5df2270b4450e55e39bb60cc0b19ef6498ac280ce854a3daa4"

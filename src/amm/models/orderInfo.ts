@@ -1,6 +1,6 @@
-import {AssetClass} from "../../cardano/entities/assetClass.ts"
-import {AssetAmount} from "../../domain/assetAmount.ts"
-import {PoolId} from "../domain/types.ts"
+import {AssetClass} from "../../cardano/entities/assetClass.js"
+import {AssetAmount} from "../../domain/assetAmount.js"
+import {PoolId} from "../domain/types.js"
 
 export type AmmOrderInfo = {poolId: PoolId} & (Swap | Deposit | Redeem)
 

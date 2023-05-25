@@ -1,4 +1,4 @@
-import {FullTxIn} from "../../cardano/entities/txIn.ts"
+import {FullTxIn} from "../../cardano/entities/txIn.js"
 
 export type RefundParams = {
   readonly txId: string

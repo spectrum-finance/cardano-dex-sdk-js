@@ -1,6 +1,6 @@
-import {decodeHex, encodeHex} from "../../utils/hex.ts"
-import {CardanoWasm} from "../../utils/rustLoader.ts"
-import {Bech32String, HexString, PaymentCred} from "../types.ts"
+import {decodeHex, encodeHex} from "../../utils/hex.js"
+import {CardanoWasm} from "../../utils/rustLoader.js"
+import {Bech32String, HexString, PaymentCred} from "../types.js"
 
 export type Addr = Bech32String
 
@@ -20,6 +20,11 @@ export function extractPaymentCred(addr: Addr, R: CardanoWasm): PaymentCred {
   const wasmPaymentCred =
     R.BaseAddress.from_address(wasmAddr)?.payment_cred() ??
     R.EnterpriseAddress.from_address(wasmAddr)?.payment_cred()
+
+  if (!wasmPaymentCred) {
+    throw new Error("Payment credential not found.")
+  }
+
   const wasmCredHash = wasmPaymentCred.to_keyhash() ?? wasmPaymentCred.to_scripthash()!
 
   return encodeHex(wasmCredHash.to_bytes())

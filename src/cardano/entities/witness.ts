@@ -1,3 +1,3 @@
-import {HexString} from "../types.ts"
+import {HexString} from "../types.js"
 
 export type RawTxWitnessSet = HexString

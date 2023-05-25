@@ -9,15 +9,15 @@ import {
   TxInputsBuilder,
   Value
 } from "@emurgo/cardano-serialization-lib-nodejs"
-import {toWasmValue} from "../../interop/serlib.ts"
-import {decodeHex, encodeHex} from "../../utils/hex.ts"
-import {decimalToFractional} from "../../utils/math.ts"
-import {CardanoWasm} from "../../utils/rustLoader.ts"
-import {Addr} from "../entities/address.ts"
-import {NetworkParams, ProtocolParams} from "../entities/env.ts"
-import {RawUnsignedTx, TxCandidate} from "../entities/tx.ts"
-import {FullTxIn} from "../entities/txIn.ts"
-import {TxOutCandidate} from "../entities/txOut.ts"
+import {toWasmValue} from "../../interop/serlib.js"
+import {decodeHex, encodeHex} from "../../utils/hex.js"
+import {decimalToFractional} from "../../utils/math.js"
+import {CardanoWasm} from "../../utils/rustLoader.js"
+import {Addr} from "../entities/address.js"
+import {NetworkParams, ProtocolParams} from "../entities/env.js"
+import {RawUnsignedTx, TxCandidate} from "../entities/tx.js"
+import {FullTxIn} from "../entities/txIn.js"
+import {TxOutCandidate} from "../entities/txOut.js"
 
 export interface TxAsm {
   finalize(candidate: TxCandidate): RawUnsignedTx

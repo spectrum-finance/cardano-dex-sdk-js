@@ -1,4 +1,4 @@
-import {HexString, TxHash} from "../cardano/types.ts"
+import {HexString, TxHash} from "../cardano/types.js"
 
 export type OrderAddrs = {
   ammDeposit: HexString

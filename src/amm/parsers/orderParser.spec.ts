@@ -1,12 +1,12 @@
 import test from "ava"
-import {RustModule} from "../../utils/rustLoader.ts"
-import {mkOrdersParser} from "./ordersParser.ts"
-import {ScriptCredsV1} from "../scripts.ts"
-import {QuickblueTx} from "../../quickblue/models.ts"
-import {JSONBI} from "../../utils/json.ts"
+import {RustModule} from "../../utils/rustLoader.js"
+import {mkOrdersParser} from "./ordersParser.js"
+import {ScriptCredsV1} from "../scripts.js"
+import {QuickblueTx} from "../../quickblue/models.js"
+import {JSONBI} from "../../utils/json.js"
 
 test.before(async () => {
-  await RustModule.load(true)
+  await RustModule.load({env: "nodejs"})
 })
 
 const sampleResponse = `

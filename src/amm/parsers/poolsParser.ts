@@ -1,8 +1,8 @@
-import {FullTxOut} from "../../cardano/entities/txOut.ts"
-import {assetAmountOf} from "../../cardano/entities/value.ts"
-import {CardanoWasm} from "../../utils/rustLoader.ts"
-import {parsePoolConfig} from "../contractData.ts"
-import {AmmPool} from "../domain/ammPool.ts"
+import {FullTxOut} from "../../cardano/entities/txOut.js"
+import {assetAmountOf} from "../../cardano/entities/value.js"
+import {CardanoWasm} from "../../utils/rustLoader.js"
+import {parsePoolConfig} from "../contractData.js"
+import {AmmPool} from "../domain/ammPool.js"
 
 export interface PoolsParser {
   parse(box: FullTxOut): AmmPool | undefined

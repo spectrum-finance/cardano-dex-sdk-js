@@ -1,3 +1,3 @@
-import {AssetClass} from "../../cardano/entities/assetClass.ts"
+import {AssetClass} from "../../cardano/entities/assetClass.js"
 
 export type PoolId = AssetClass

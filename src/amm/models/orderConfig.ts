@@ -1,7 +1,7 @@
-import {AssetClass} from "../../cardano/entities/assetClass.ts"
-import {PubKeyHash} from "../../cardano/entities/publicKey.ts"
-import {FeePerToken} from "../domain/models.ts"
-import {PoolId} from "../domain/types.ts"
+import {AssetClass} from "../../cardano/entities/assetClass.js"
+import {PubKeyHash} from "../../cardano/entities/publicKey.js"
+import {FeePerToken} from "../domain/models.js"
+import {PoolId} from "../domain/types.js"
 
 export type SwapConfig = {
   base: AssetClass
