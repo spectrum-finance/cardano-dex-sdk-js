@@ -1,9 +1,9 @@
 import test from "ava"
-import {RustModule} from "../../utils/rustLoader"
-import {mkOrdersParser} from "./ordersParser"
-import {ScriptCredsV1} from "../scripts"
 import {QuickblueTx} from "../../quickblue/models"
 import {JSONBI} from "../../utils/json"
+import {RustModule} from "../../utils/rustLoader"
+import {ScriptCredsV1} from "../scripts"
+import {mkOrdersParser} from "./ordersParser"
 
 test.before(async () => {
   await RustModule.load(true)

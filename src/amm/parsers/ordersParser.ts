@@ -1,10 +1,10 @@
+import {extractPaymentCred} from "../../cardano/entities/address"
 import {FullTxOut} from "../../cardano/entities/txOut"
 import {AssetAmount} from "../../domain/assetAmount"
 import {CardanoWasm} from "../../utils/rustLoader"
 import {parseDepositConfig, parseRedeemConfig, parseSwapConfig} from "../contractData"
 import {AmmOrderInfo} from "../models/orderInfo"
 import {ScriptCreds} from "../scripts"
-import {extractPaymentCred} from "../../cardano/entities/address"
 
 export interface OrdersParser {
   parseOrder(out: FullTxOut): AmmOrderInfo | undefined
