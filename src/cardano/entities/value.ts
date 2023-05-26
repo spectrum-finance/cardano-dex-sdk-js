@@ -21,7 +21,7 @@ export function Value(coins: Lovelace, other: AssetAmount | AssetAmount[] | unde
       .filter(am => am.isAda)
       .map(am => am.amount)
       .reduce((acc, rhs) => acc + rhs, 0n)
-    return [AdaEntry(coins + ada), ...other.map(am => am.toEntry)]
+    return [AdaEntry(coins + ada), ...other.filter(am => !am.isAda).map(am => am.toEntry)]
   } else {
     return [AdaEntry(coins)]
   }

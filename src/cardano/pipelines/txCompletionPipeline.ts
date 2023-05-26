@@ -27,11 +27,10 @@ class DefaultTxCompletionPipeline implements TxCompletionPipeline {
   ) {}
 
   async complete(txc: TxCandidate): Promise<RawTx> {
-    const unsignedTxRaw = this.asm.finalize(txc);
-    const unsignedTx = this.R.Transaction.from_bytes(decodeHex(unsignedTxRaw));
+    const unsignedTx = this.asm.finalize(txc);
     const txHasScriptInputs = txc.inputs.some(i => i.consumeScript);
 
-    const witsWithSignRaw = await this.prover.sign(unsignedTxRaw, txHasScriptInputs);
+    const witsWithSignRaw = await this.prover.sign(encodeHex(unsignedTx.to_bytes()), txHasScriptInputs);
     const witsWithSign = this.R.TransactionWitnessSet.from_bytes(decodeHex(witsWithSignRaw));
 
 

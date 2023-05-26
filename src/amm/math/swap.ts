@@ -17,17 +17,21 @@ export type SwapExtremums = {
 
 const I64Max = 9223372036854775807n
 
-/** @param minExFee - minimal Execution fee
+/**
+ *  @param txFees - fees for second tx
+ *  @param minExecutorReward - minimal executor reward
  *  @param nitro - minimal dex fee multiplier
  *  @param minOutput - minimal output expected
  *  @return DEX fee per token, swap extremums
  */
 export function swapVars(
-  minExFee: bigint,
+  txFees: AmmTxFeeMapping,
+  minExecutorReward: Lovelace,
   nitro: number,
   minOutput: AssetAmount
 ): [FeePerToken, SwapExtremums] | undefined {
   if (minOutput.amount > 0) {
+    const minExFee = minExFeeForOrder(OrderKind.Swap, txFees, minExecutorReward);
     let exFeePerToken = Number(minExFee) / Number(minOutput.amount)
     while (true) {
       const [n, d] = decimalToFractional(exFeePerToken)
@@ -40,7 +44,7 @@ export function swapVars(
       }
     }
     const adjustedMinExFee = Math.floor(exFeePerToken * Number(minOutput.amount))
-    const maxExFee = Math.floor(Number(minExFee) * nitro)
+    const maxExFee = Math.floor(Number(minExecutorReward) * nitro) + Number(txFees.swapOrder);
     const maxOutput = minOutput.withAmount(BigInt(Math.floor(maxExFee / exFeePerToken)))
     return [
       feePerTokenFromDecimal(exFeePerToken),
@@ -67,8 +71,7 @@ export function minBudgetForSwap(
   uiFee: Lovelace,
   txMath: TxMath
 ): [SwapBudget, SwapValue, FeePerToken, SwapExtremums] | undefined {
-  const minExFee = minExFeeForOrder(OrderKind.Swap, fees, minExecutorReward)
-  const vars = swapVars(minExFee, nitro, minOutput)
+  const vars = swapVars(fees, minExecutorReward, nitro, minOutput)
   if (vars) {
     const [fpt, extremums] = vars
     const swapValue = minSwapValue(

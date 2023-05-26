@@ -3,7 +3,7 @@ export type CardanoWasm = typeof import("@emurgo/cardano-serialization-lib-brows
 class Module {
   _wasm?: CardanoWasm
 
-  async load(node: boolean = false): Promise<CardanoWasm> {
+  async load(node = false): Promise<CardanoWasm> {
     if (this._wasm === undefined) {
       this._wasm = await (node
         ? import("@emurgo/cardano-serialization-lib-nodejs/cardano_serialization_lib")
