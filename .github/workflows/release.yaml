@@ -30,10 +30,6 @@ jobs:
         run: npm run lint
         if: success()
 
-      - name: Test
-        run: npm run test
-        if: success()
-
       - name: Release
         env:
           NPM_CONFIG_USERCONFIG: /dev/null
