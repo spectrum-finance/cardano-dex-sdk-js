@@ -39,7 +39,7 @@
     "prepare-release": "run-s reset-hard test cov:check doc:html version doc:publish"
   },
   "engines": {
-    "node": ">=10"
+    "node": "^19"
   },
   "dependencies": {
     "@emurgo/cardano-serialization-lib-browser": "^11.3.1",
