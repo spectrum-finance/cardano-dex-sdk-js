@@ -4,7 +4,7 @@ import {PubKeyHash} from "../../../cardano/entities/publicKey"
 import {stakeKeyHashFromAddr} from "../../../cardano/entities/stakeKey"
 import {TxCandidate} from "../../../cardano/entities/tx"
 import {TxOutCandidate} from "../../../cardano/entities/txOut"
-import {add, getLovelace, Value} from "../../../cardano/entities/value"
+import {add, getLovelace, remove, sum, Value} from "../../../cardano/entities/value"
 import {Lovelace} from "../../../cardano/types"
 import {InputSelector} from "../../../cardano/wallet/inputSelector"
 import {TxMath} from "../../../cardano/wallet/txMath"
@@ -89,7 +89,12 @@ export class SwapAmmTxBuilder {
       throw new Error("insufficient funds")
     }
 
-    console.log(inputs, totalOrderBudget);
+    const estimatedChange = remove(
+      sum(inputs.map(input => input.txOut.value)),
+      orderValue
+    )
+
+    console.log(estimatedChange);
 
     return [
       this.ammActions.createOrder(
