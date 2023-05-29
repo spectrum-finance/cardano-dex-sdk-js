@@ -1,6 +1,6 @@
 {
   "name": "@spectrumlabs/cardano-dex-sdk",
-  "version": "0.1.19",
+  "version": "0.1.20",
   "description": "ErgoDEX SDK for Cardano",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
@@ -39,7 +39,7 @@
     "prepare-release": "run-s reset-hard test cov:check doc:html version doc:publish"
   },
   "engines": {
-    "node": "^19"
+    "node": "^18"
   },
   "dependencies": {
     "@emurgo/cardano-serialization-lib-browser": "^11.3.1",
