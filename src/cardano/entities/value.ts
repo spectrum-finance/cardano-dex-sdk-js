@@ -38,10 +38,6 @@ export function add(value: Value, x: AssetEntry): Value {
 }
 
 export function remove(value: Value, toRemove: Value): Value {
-  if (value.some(item => !toRemove.find(tri => byIdNameAndPolicy(item, tri)))) {
-    throw new Error("Insufficient funds")
-  }
-
   return value.map(item => {
     const itemToRemove = toRemove.find(tri => byIdNameAndPolicy(item, tri))
 
