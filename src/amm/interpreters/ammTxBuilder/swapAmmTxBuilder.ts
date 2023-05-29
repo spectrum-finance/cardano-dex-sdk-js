@@ -89,12 +89,17 @@ export class SwapAmmTxBuilder {
       throw new Error("insufficient funds")
     }
 
-    const estimatedChange = remove(
-      sum(inputs.map(input => input.txOut.value)),
-      orderValue
-    )
 
-    console.log(estimatedChange);
+    try {
+      console.log(sum(inputs.map(input => input.txOut.value)), inputs, orderValue);
+      const estimatedChange = remove(
+        sum(inputs.map(input => input.txOut.value)),
+        orderValue
+      )
+      console.log(estimatedChange);
+    } catch (e) {
+      console.log(e);
+    }
 
     return [
       this.ammActions.createOrder(

@@ -72,20 +72,20 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
   }
 
   async deposit(depositParams: DepositParams, prevTxFee?: bigint): Promise<[Transaction | null, TxCandidate, DepositTxInfo]> {
-    const [redeemTxCandidate, redeemTxInfo] = await this.depositAmmTxBuilder.build(depositParams, prevTxFee)
+    const [depositTxCandidate, depositTxInfo] = await this.depositAmmTxBuilder.build(depositParams, prevTxFee)
 
     try {
-      const transaction = this.txAsm.finalize(redeemTxCandidate)
+      const transaction = this.txAsm.finalize(depositTxCandidate)
       const txFee = BigInt(transaction.body().fee().to_str())
 
       if (prevTxFee === txFee) {
-        return [transaction, redeemTxCandidate, redeemTxInfo]
+        return [transaction, depositTxCandidate, depositTxInfo]
       } else {
         return this.deposit(depositParams, txFee)
       }
     } catch (e) {
       console.log(e);
-      return [null, redeemTxCandidate, { ...redeemTxInfo, txFee: undefined }];
+      return [null, depositTxCandidate, { ...depositTxInfo, txFee: undefined }];
     }
   }
 }
