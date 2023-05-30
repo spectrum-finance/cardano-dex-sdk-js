@@ -9,6 +9,7 @@ import {Lovelace} from "../../../cardano/types"
 import {InputSelector} from "../../../cardano/wallet/inputSelector"
 import {TxMath} from "../../../cardano/wallet/txMath"
 import {AssetAmount} from "../../../domain/assetAmount"
+import {getChangeOrderValue} from "../../../utils/getChangeOrderValue"
 import {CardanoWasm} from "../../../utils/rustLoader"
 import {AmmPool} from "../../domain/ammPool"
 import {AmmTxFeeMapping} from "../../math/order"
@@ -83,7 +84,7 @@ export class RedeemAmmTxBuilder {
       sum(inputs.map(input => input.txOut.value)),
       orderValue
     );
-    const [, additionalAdaForChange] = this.getChangeOrderValue(estimatedChange, changeAddress);
+    const [, additionalAdaForChange] = getChangeOrderValue(estimatedChange, changeAddress, this.txMath);
 
     if (additionalAdaForChange) {
       inputs = await this.inputSelector.select(add(totalOrderBudget, AdaEntry(additionalAdaForChange)));
@@ -143,29 +144,6 @@ export class RedeemAmmTxBuilder {
           add(orderValue, AdaEntry(requiredAdaForOutput - lovelace.amount)),
           requiredAdaForOutput - lovelace.amount
         ]
-  }
-
-  private getChangeOrderValue(
-    change: Value,
-    addr: Addr
-  ): [Value, bigint] {
-    const estimatedChangeOutput: TxOutCandidate = {
-      value: change,
-      addr
-    }
-    const requiredAdaForChange = this.txMath.minAdaRequiredforOutput(estimatedChangeOutput);
-    const changeLovelace = getLovelace(change);
-
-    if (!changeLovelace.amount) {
-      return [add(change, AdaEntry(requiredAdaForChange)), requiredAdaForChange];
-    }
-    if (changeLovelace.amount >= requiredAdaForChange) {
-      return [change, 0n];
-    }
-    return [
-      add(change, AdaEntry(requiredAdaForChange - changeLovelace.amount)),
-      requiredAdaForChange - changeLovelace.amount
-    ]
   }
 
   private getRedeemOrderValue(

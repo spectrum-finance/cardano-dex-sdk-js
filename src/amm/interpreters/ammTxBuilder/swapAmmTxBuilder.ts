@@ -9,6 +9,7 @@ import {Lovelace} from "../../../cardano/types"
 import {InputSelector} from "../../../cardano/wallet/inputSelector"
 import {TxMath} from "../../../cardano/wallet/txMath"
 import {AssetAmount} from "../../../domain/assetAmount"
+import {getChangeOrderValue} from "../../../utils/getChangeOrderValue"
 import {CardanoWasm} from "../../../utils/rustLoader"
 import {AmmPool} from "../../domain/ammPool"
 import {FeePerToken} from "../../domain/models"
@@ -83,7 +84,7 @@ export class SwapAmmTxBuilder {
       txFee: userTxFee || txFees.swapOrder
     }
 
-    const inputs = await this.inputSelector.select(totalOrderBudget)
+    let inputs = await this.inputSelector.select(totalOrderBudget)
 
     if (inputs instanceof Error) {
       throw new Error("insufficient funds")
@@ -93,9 +94,16 @@ export class SwapAmmTxBuilder {
       sum(inputs.map(input => input.txOut.value)),
       orderValue
     );
-    const changeOrderValue = this.getChangeOrderValue(estimatedChange, changeAddress);
 
-    console.log(changeOrderValue);
+    const [, additionalAdaForChange] = getChangeOrderValue(estimatedChange, changeAddress, this.txMath);
+
+    if (additionalAdaForChange) {
+      inputs = await this.inputSelector.select(add(totalOrderBudget, AdaEntry(additionalAdaForChange)));
+    }
+
+    if (inputs instanceof Error) {
+      throw new Error("insufficient funds")
+    }
 
     return [
       this.ammActions.createOrder(
@@ -150,29 +158,6 @@ export class SwapAmmTxBuilder {
           add(orderValue, AdaEntry(requiredAdaForOutput - lovelace.amount)),
           requiredAdaForOutput - lovelace.amount
         ]
-  }
-
-  private getChangeOrderValue(
-    change: Value,
-    addr: Addr
-  ): [Value, bigint] {
-    const estimatedChangeOutput: TxOutCandidate = {
-      value: change,
-      addr
-    }
-    const requiredAdaForChange = this.txMath.minAdaRequiredforOutput(estimatedChangeOutput);
-    const changeLovelace = getLovelace(change);
-
-    if (!changeLovelace.amount) {
-      return [add(change, AdaEntry(requiredAdaForChange)), requiredAdaForChange];
-    }
-    if (changeLovelace.amount >= requiredAdaForChange) {
-      return [change, 0n];
-    }
-    return [
-      add(change, AdaEntry(requiredAdaForChange - changeLovelace.amount)),
-      requiredAdaForChange - changeLovelace.amount
-    ]
   }
 
   private getSwapOrderValue(

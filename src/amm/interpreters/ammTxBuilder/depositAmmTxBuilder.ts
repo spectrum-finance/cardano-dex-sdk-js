@@ -4,11 +4,12 @@ import {PubKeyHash} from "../../../cardano/entities/publicKey"
 import {stakeKeyHashFromAddr} from "../../../cardano/entities/stakeKey"
 import {TxCandidate} from "../../../cardano/entities/tx"
 import {TxOutCandidate} from "../../../cardano/entities/txOut"
-import {add, getLovelace, Value} from "../../../cardano/entities/value"
+import {add, getLovelace, remove, sum, Value} from "../../../cardano/entities/value"
 import {Lovelace} from "../../../cardano/types"
 import {InputSelector} from "../../../cardano/wallet/inputSelector"
 import {TxMath} from "../../../cardano/wallet/txMath"
 import {AssetAmount} from "../../../domain/assetAmount"
+import {getChangeOrderValue} from "../../../utils/getChangeOrderValue"
 import {CardanoWasm} from "../../../utils/rustLoader"
 import {AmmPool} from "../../domain/ammPool"
 import {AmmTxFeeMapping} from "../../math/order"
@@ -78,7 +79,22 @@ export class DepositAmmTxBuilder {
       txFee: userTxFee || txFees.redeemOrder
     }
 
-    const inputs = await this.inputSelector.select(totalOrderBudget)
+    let inputs = await this.inputSelector.select(totalOrderBudget)
+
+    if (inputs instanceof Error) {
+      throw new Error("insufficient funds")
+    }
+
+    const estimatedChange = remove(
+      sum(inputs.map(input => input.txOut.value)),
+      orderValue
+    );
+
+    const [, additionalAdaForChange] = getChangeOrderValue(estimatedChange, changeAddress, this.txMath);
+
+    if (additionalAdaForChange) {
+      inputs = await this.inputSelector.select(add(totalOrderBudget, AdaEntry(additionalAdaForChange)));
+    }
 
     if (inputs instanceof Error) {
       throw new Error("insufficient funds")
