@@ -73,7 +73,7 @@ export class RedeemAmmTxBuilder {
       txFee: userTxFee || txFees.redeemOrder
     }
 
-    const inputs = await this.inputSelector.select(totalOrderBudget)
+    let inputs = await this.inputSelector.select(totalOrderBudget)
 
     if (inputs instanceof Error) {
       throw new Error("insufficient funds")
@@ -83,9 +83,15 @@ export class RedeemAmmTxBuilder {
       sum(inputs.map(input => input.txOut.value)),
       orderValue
     );
-    const changeOrderValue = this.getChangeOrderValue(estimatedChange, changeAddress);
+    const [, additionalAdaForChange] = this.getChangeOrderValue(estimatedChange, changeAddress);
 
-    console.log(changeOrderValue);
+    if (additionalAdaForChange) {
+      inputs = await this.inputSelector.select(add(totalOrderBudget, AdaEntry(additionalAdaForChange)));
+    }
+
+    if (inputs instanceof Error) {
+      throw new Error("insufficient funds")
+    }
 
     return [
       this.ammActions.createOrder(
