@@ -64,15 +64,6 @@ export class RedeemAmmTxBuilder {
       params,
     )
     const totalOrderBudget = add(orderValue, AdaEntry(userTxFee || txFees.redeemOrder))
-    const txInfo: RedeemTxInfo = {
-      exFee: exFee,
-      xOutput: x,
-      yOutput: y,
-      orderValue: orderValue,
-      orderBudget: totalOrderBudget,
-      refundableDeposit: refundableValuePart + refundableBugdetPart,
-      txFee: userTxFee || txFees.redeemOrder
-    }
 
     let inputs = await this.inputSelector.select(totalOrderBudget)
 
@@ -92,6 +83,16 @@ export class RedeemAmmTxBuilder {
 
     if (inputs instanceof Error) {
       throw new Error("insufficient funds")
+    }
+
+    const txInfo: RedeemTxInfo = {
+      exFee: exFee,
+      xOutput: x,
+      yOutput: y,
+      orderValue: orderValue,
+      orderBudget: totalOrderBudget,
+      refundableDeposit: refundableValuePart + refundableBugdetPart + additionalAdaForChange,
+      txFee: userTxFee || txFees.redeemOrder
     }
 
     return [
