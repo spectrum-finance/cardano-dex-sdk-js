@@ -4,7 +4,7 @@ import {PubKeyHash} from "../../../cardano/entities/publicKey"
 import {stakeKeyHashFromAddr} from "../../../cardano/entities/stakeKey"
 import {TxCandidate} from "../../../cardano/entities/tx"
 import {TxOutCandidate} from "../../../cardano/entities/txOut"
-import {add, getLovelace, Value} from "../../../cardano/entities/value"
+import {add, getLovelace, remove, sum, Value} from "../../../cardano/entities/value"
 import {Lovelace} from "../../../cardano/types"
 import {InputSelector} from "../../../cardano/wallet/inputSelector"
 import {TxMath} from "../../../cardano/wallet/txMath"
@@ -79,6 +79,14 @@ export class RedeemAmmTxBuilder {
       throw new Error("insufficient funds")
     }
 
+    const estimatedChange = remove(
+      sum(inputs.map(input => input.txOut.value)),
+      orderValue
+    );
+    const changeOrderValue = this.getChangeOrderValue(estimatedChange, changeAddress);
+
+    console.log(changeOrderValue);
+
     return [
       this.ammActions.createOrder(
         {
@@ -129,6 +137,29 @@ export class RedeemAmmTxBuilder {
           add(orderValue, AdaEntry(requiredAdaForOutput - lovelace.amount)),
           requiredAdaForOutput - lovelace.amount
         ]
+  }
+
+  private getChangeOrderValue(
+    change: Value,
+    addr: Addr
+  ): [Value, bigint] {
+    const estimatedChangeOutput: TxOutCandidate = {
+      value: change,
+      addr
+    }
+    const requiredAdaForChange = this.txMath.minAdaRequiredforOutput(estimatedChangeOutput);
+    const changeLovelace = getLovelace(change);
+
+    if (!changeLovelace.amount) {
+      return [add(change, AdaEntry(requiredAdaForChange)), requiredAdaForChange];
+    }
+    if (changeLovelace.amount >= requiredAdaForChange) {
+      return [change, 0n];
+    }
+    return [
+      add(change, AdaEntry(requiredAdaForChange - changeLovelace.amount)),
+      requiredAdaForChange - changeLovelace.amount
+    ]
   }
 
   private getRedeemOrderValue(
