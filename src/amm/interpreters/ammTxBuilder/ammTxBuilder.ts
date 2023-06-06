@@ -53,14 +53,17 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
     try {
       const transaction = this.txAsm.finalize(swapTxCandidate)
       const txFee = BigInt(transaction.body().fee().to_str())
-      const newBestTxData: [Transaction | null, TxCandidate, SwapTxInfo] | undefined = !!prevTxFee && txFee < prevTxFee ?
-        [transaction, swapTxCandidate, swapTxInfo] :
-        bestTxData
-      console.log('new:', newBestTxData);
-      console.log('old:', bestTxData);
+
       if (prevTxFee === txFee) {
         return [transaction, swapTxCandidate, swapTxInfo]
       } else {
+        const newBestTxData: [Transaction | null, TxCandidate, SwapTxInfo] | undefined = !!prevTxFee && txFee < prevTxFee ?
+          [transaction, swapTxCandidate, swapTxInfo] :
+          bestTxData
+        console.log('new:', newBestTxData);
+        console.log('old:', bestTxData);
+        console.log(prevTxFee, txFee);
+
         return this.swap(swapParams, currentTry + 1, newBestTxData, txFee)
       }
     } catch (e) {
@@ -84,13 +87,14 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
     try {
       const transaction = this.txAsm.finalize(redeemTxCandidate)
       const txFee = BigInt(transaction.body().fee().to_str())
-      const newBestTxData: [Transaction | null, TxCandidate, RedeemTxInfo] | undefined = !!prevTxFee && txFee < prevTxFee ?
-        [transaction, redeemTxCandidate, redeemTxInfo] :
-        bestTxData
 
       if (prevTxFee === txFee) {
         return [transaction, redeemTxCandidate, redeemTxInfo]
       } else {
+        const newBestTxData: [Transaction | null, TxCandidate, RedeemTxInfo] | undefined = !!prevTxFee && txFee < prevTxFee ?
+          [transaction, redeemTxCandidate, redeemTxInfo] :
+          bestTxData
+
         return this.redeem(redeemParams, currentTry + 1, newBestTxData, txFee)
       }
     } catch (e) {
@@ -114,13 +118,14 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
     try {
       const transaction = this.txAsm.finalize(depositTxCandidate)
       const txFee = BigInt(transaction.body().fee().to_str())
-      const newBestTxData: [Transaction | null, TxCandidate, DepositTxInfo] | undefined = !!prevTxFee && txFee < prevTxFee ?
-        [transaction, depositTxCandidate, depositTxInfo] :
-        bestTxData
 
       if (prevTxFee === txFee) {
         return [transaction, depositTxCandidate, depositTxInfo]
       } else {
+        const newBestTxData: [Transaction | null, TxCandidate, DepositTxInfo] | undefined = !!prevTxFee && txFee < prevTxFee ?
+          [transaction, depositTxCandidate, depositTxInfo] :
+          bestTxData
+
         return this.deposit(depositParams, currentTry + 1, newBestTxData, txFee)
       }
     } catch (e) {
