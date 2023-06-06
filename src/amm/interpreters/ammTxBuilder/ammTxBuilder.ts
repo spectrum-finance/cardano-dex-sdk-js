@@ -16,7 +16,7 @@ export interface AmmTxBuilder {
   deposit(params: DepositParams): Promise<[Transaction | null, TxCandidate, DepositTxInfo]>;
 }
 
-const MAX_TRANSACTION_BUILDING_TRY_COUNT = 4;
+const MAX_TRANSACTION_BUILDING_TRY_COUNT = 3;
 
 export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
   private swapAmmTxBuilder: SwapAmmTxBuilder
@@ -56,7 +56,8 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
       const newBestTxData: [Transaction | null, TxCandidate, SwapTxInfo] | undefined = !!prevTxFee && txFee < prevTxFee ?
         [transaction, swapTxCandidate, swapTxInfo] :
         bestTxData
-
+      console.log('new:', newBestTxData);
+      console.log('old:', bestTxData);
       if (prevTxFee === txFee) {
         return [transaction, swapTxCandidate, swapTxInfo]
       } else {
