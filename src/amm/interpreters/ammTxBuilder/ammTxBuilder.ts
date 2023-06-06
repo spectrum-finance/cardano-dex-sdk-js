@@ -50,10 +50,6 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
       const [swapTxCandidate, swapTxInfo] = await this
         .swapAmmTxBuilder
         .build(swapParams, BigInt(bestTransaction.body().fee().to_str()))
-      console.log(
-        BigInt(bestTransaction.body().fee().to_str()),
-        bestTransaction, swapTxCandidate, swapTxInfo
-      )
       return [bestTransaction, swapTxCandidate, swapTxInfo]
     }
 

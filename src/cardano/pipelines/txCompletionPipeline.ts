@@ -1,3 +1,4 @@
+import {Transaction} from "@emurgo/cardano-serialization-lib-nodejs"
 import {CardanoNetwork} from "../../quickblue/cardanoNetwork"
 import {decodeHex, encodeHex} from "../../utils/hex"
 import {CardanoWasm} from "../../utils/rustLoader"
@@ -7,6 +8,7 @@ import {TxAsm} from "../wallet/txAsm"
 
 export interface TxCompletionPipeline {
   complete(txc: TxCandidate): Promise<RawTx>
+  completeTransaction(tx: Transaction): Promise<RawTx>
 }
 
 export function mkTxCompletionPipeline(
@@ -31,6 +33,21 @@ class DefaultTxCompletionPipeline implements TxCompletionPipeline {
     const txHasScriptInputs = txc.inputs.some(i => i.consumeScript);
 
     const witsWithSignRaw = await this.prover.sign(encodeHex(unsignedTx.to_bytes()), txHasScriptInputs);
+    const witsWithSign = this.R.TransactionWitnessSet.from_bytes(decodeHex(witsWithSignRaw));
+
+
+    const fullWits = unsignedTx.witness_set();
+    const vKeys = witsWithSign.vkeys();
+    if (vKeys) {
+      fullWits.set_vkeys(vKeys);
+    }
+
+    const tx = this.R.Transaction.new(unsignedTx.body(), fullWits);
+    return encodeHex(tx.to_bytes());
+  }
+
+  async completeTransaction(unsignedTx: Transaction): Promise<RawTx> {
+    const witsWithSignRaw = await this.prover.sign(encodeHex(unsignedTx.to_bytes()), false);
     const witsWithSign = this.R.TransactionWitnessSet.from_bytes(decodeHex(witsWithSignRaw));
 
 
