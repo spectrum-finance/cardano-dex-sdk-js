@@ -17,6 +17,17 @@ export type SwapExtremums = {
 
 const I64Max = 9223372036854775807n
 
+export function swapExFee(
+  txFees: AmmTxFeeMapping,
+  minExecutorReward: Lovelace,
+  nitro: number,
+): [bigint, bigint] {
+  const minExFee = minExFeeForOrder(OrderKind.Swap, txFees, minExecutorReward);
+  const maxExFee = Math.floor(Number(minExecutorReward) * nitro) + Number(txFees.swapOrder);
+
+  return [BigInt(minExFee), BigInt(maxExFee)];
+}
+
 /**
  *  @param txFees - fees for second tx
  *  @param minExecutorReward - minimal executor reward
