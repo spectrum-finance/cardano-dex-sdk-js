@@ -11,6 +11,8 @@ export interface TxMath {
   minUtxoValue(preValue: Value, hasDatum: boolean): bigint
 
   minAdaRequiredforOutput(output: TxOutCandidate): bigint
+
+  maxByAssetAndAdaBudget(assetBudget: AssetAmount, adaBudget: bigint): AssetAmount;
 }
 
 export function mkTxMath(params: ProtocolParams, R: CardanoWasm): TxMath {
