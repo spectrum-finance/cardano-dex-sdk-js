@@ -41,7 +41,7 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
     try {
       const transaction = this.txAsm.finalize(swapTxCandidate)
       const txFee = BigInt(transaction.body().fee().to_str())
-
+      console.log(prevTxFee, txFee, prevTxFee === txFee);
       if (prevTxFee === txFee) {
         return [transaction, swapTxCandidate, swapTxInfo]
       } else {
