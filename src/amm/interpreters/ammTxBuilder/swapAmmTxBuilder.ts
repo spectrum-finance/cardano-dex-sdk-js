@@ -86,11 +86,11 @@ export class SwapAmmTxBuilder {
     );
 
     const [, additionalAdaForChange] = getChangeOrderValue(estimatedChange, changeAddress, this.txMath);
-    console.log(estimatedChange, additionalAdaForChange);
+    console.log(estimatedChange, additionalAdaForChange, 'without change');
     if (additionalAdaForChange) {
       inputs = await this.inputSelector.select(add(totalOrderBudget, AdaEntry(additionalAdaForChange)));
     }
-
+    console.log(inputs, 'with change');
     if (inputs instanceof Error) {
       throw new Error("insufficient funds")
     }
