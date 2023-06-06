@@ -40,7 +40,7 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
 
   async swap(
     swapParams: SwapParams,
-    currentTry = 1,
+    currentTry = 0,
     bestTxData?: [Transaction | null, TxCandidate, SwapTxInfo],
     prevTxFee?: bigint
   ): Promise<[Transaction | null, TxCandidate, SwapTxInfo]> {
@@ -71,7 +71,7 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
 
   async redeem(
     redeemParams: RedeemParams,
-    currentTry = 1,
+    currentTry = 0,
     bestTxData?: [Transaction | null, TxCandidate, RedeemTxInfo],
     prevTxFee?: bigint
   ): Promise<[Transaction | null, TxCandidate, RedeemTxInfo]> {
@@ -101,7 +101,7 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
 
   async deposit(
     depositParams: DepositParams,
-    currentTry = 1,
+    currentTry = 0,
     bestTxData?: [Transaction | null, TxCandidate, DepositTxInfo],
     prevTxFee?: bigint
   ): Promise<[Transaction | null, TxCandidate, DepositTxInfo]> {
