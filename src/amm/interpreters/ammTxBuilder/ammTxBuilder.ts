@@ -37,11 +37,11 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
 
   async swap(swapParams: SwapParams, prevTxFee?: bigint): Promise<[Transaction | null, TxCandidate, SwapTxInfo]> {
     const [swapTxCandidate, swapTxInfo] = await this.swapAmmTxBuilder.build(swapParams, prevTxFee)
-
+    console.log()
     try {
       const transaction = this.txAsm.finalize(swapTxCandidate)
       const txFee = BigInt(transaction.body().fee().to_str())
-      console.log(prevTxFee, txFee, prevTxFee === txFee);
+      console.log(prevTxFee, txFee, prevTxFee === txFee, transaction);
       if (prevTxFee === txFee) {
         return [transaction, swapTxCandidate, swapTxInfo]
       } else {
