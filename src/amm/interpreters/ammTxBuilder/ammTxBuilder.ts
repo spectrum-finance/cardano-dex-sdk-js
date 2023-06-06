@@ -62,7 +62,7 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
           bestTxData
         console.log('new:', newBestTxData);
         console.log('old:', bestTxData);
-        console.log(prevTxFee, txFee);
+        console.log(prevTxFee, txFee, !!prevTxFee && txFee < prevTxFee);
 
         return this.swap(swapParams, currentTry + 1, newBestTxData, txFee)
       }
