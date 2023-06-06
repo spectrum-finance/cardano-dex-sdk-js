@@ -12,7 +12,7 @@ export interface TxMath {
 
   minAdaRequiredforOutput(output: TxOutCandidate): bigint
 
-  maxByAssetAndAdaBudget(assetBudget: AssetAmount, adaBudget: bigint): AssetAmount;
+  maxByAssetAndAdaBudget(assetBudget: AssetAmount, adaBudget: bigint, addr: string): AssetAmount;
 }
 
 export function mkTxMath(params: ProtocolParams, R: CardanoWasm): TxMath {
@@ -35,10 +35,15 @@ class CardanoTransactionMath implements TxMath {
     return BigInt(this.R.min_ada_for_output(out, dataCost).to_str());
   }
 
-  maxByAssetAndAdaBudget(assetBudget: AssetAmount, adaBudget: bigint): AssetAmount {
+  maxByAssetAndAdaBudget(assetBudget: AssetAmount, adaBudget: bigint, addr: string): AssetAmount {
     const maxOutputSize = Number(adaBudget) / Number(this.params.coinsPerUtxoByte);
+    const estimatedOutput =  this.toTransactionOutput({
+      value: Value(0n, assetBudget),
+      addr
+    });
 
-    console.log(maxOutputSize, assetBudget);
+
+    console.log(maxOutputSize, assetBudget, estimatedOutput, estimatedOutput.to_bytes().length);
 
     return assetBudget;
   }
