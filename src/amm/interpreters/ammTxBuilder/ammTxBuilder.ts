@@ -12,11 +12,13 @@ import {SwapAmmTxBuilder, SwapParams, SwapTxInfo} from "./swapAmmTxBuilder"
 
 export interface AmmTxBuilder {
   swap(params: SwapParams): Promise<[Transaction | null, TxCandidate, SwapTxInfo]>;
+
   redeem(params: RedeemParams): Promise<[Transaction | null, TxCandidate, RedeemTxInfo]>;
+
   deposit(params: DepositParams): Promise<[Transaction | null, TxCandidate, DepositTxInfo]>;
 }
 
-const MAX_TRANSACTION_BUILDING_TRY_COUNT = 3;
+const MAX_TRANSACTION_BUILDING_TRY_COUNT = 3
 
 export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
   private swapAmmTxBuilder: SwapAmmTxBuilder
@@ -33,19 +35,26 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
     R: CardanoWasm,
     private txAsm: TxAsm
   ) {
-    this.swapAmmTxBuilder = new SwapAmmTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, R);
-    this.redeemAmmTxBuilder = new RedeemAmmTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, R);
-    this.depositAmmTxBuilder = new DepositAmmTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, R);
+    this.swapAmmTxBuilder = new SwapAmmTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, R)
+    this.redeemAmmTxBuilder = new RedeemAmmTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, R)
+    this.depositAmmTxBuilder = new DepositAmmTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, R)
   }
 
   async swap(
     swapParams: SwapParams,
-    currentTry = 0,
-    bestTxData?: [Transaction | null, TxCandidate, SwapTxInfo],
+    currentTry = 1,
+    bestTransaction?: Transaction | null,
     prevTxFee?: bigint
   ): Promise<[Transaction | null, TxCandidate, SwapTxInfo]> {
-    if (currentTry >= MAX_TRANSACTION_BUILDING_TRY_COUNT && bestTxData) {
-      return bestTxData
+    if (currentTry >= MAX_TRANSACTION_BUILDING_TRY_COUNT && bestTransaction) {
+      const [swapTxCandidate, swapTxInfo] = await this
+        .swapAmmTxBuilder
+        .build(swapParams, BigInt(bestTransaction.body().fee().to_str()))
+      console.log(
+        BigInt(bestTransaction.body().fee().to_str()),
+        bestTransaction, swapTxCandidate, swapTxInfo
+      )
+      return [bestTransaction, swapTxCandidate, swapTxInfo]
     }
 
     const [swapTxCandidate, swapTxInfo] = await this.swapAmmTxBuilder.build(swapParams, prevTxFee)
@@ -57,29 +66,29 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
       if (prevTxFee === txFee) {
         return [transaction, swapTxCandidate, swapTxInfo]
       } else {
-        const newBestTxData: [Transaction | null, TxCandidate, SwapTxInfo] | undefined = !!prevTxFee && txFee < prevTxFee ?
-          [transaction, swapTxCandidate, swapTxInfo] :
-          bestTxData
-        console.log('new:', newBestTxData);
-        console.log('old:', bestTxData);
-        console.log(prevTxFee, txFee, !!prevTxFee && txFee < prevTxFee);
+        const newBestTxData: Transaction | null | undefined = !!prevTxFee && txFee < prevTxFee ?
+          transaction :
+          bestTransaction
 
         return this.swap(swapParams, currentTry + 1, newBestTxData, txFee)
       }
     } catch (e) {
-      console.log(e);
-      return [null, swapTxCandidate, { ...swapTxInfo, txFee: undefined }];
+      console.log(e)
+      return [null, swapTxCandidate, {...swapTxInfo, txFee: undefined}]
     }
   }
 
   async redeem(
     redeemParams: RedeemParams,
-    currentTry = 0,
-    bestTxData?: [Transaction | null, TxCandidate, RedeemTxInfo],
+    currentTry = 1,
+    bestTransaction?: Transaction | null,
     prevTxFee?: bigint
   ): Promise<[Transaction | null, TxCandidate, RedeemTxInfo]> {
-    if (currentTry >= MAX_TRANSACTION_BUILDING_TRY_COUNT && bestTxData) {
-      return bestTxData
+    if (currentTry >= MAX_TRANSACTION_BUILDING_TRY_COUNT && bestTransaction) {
+      const [redeemTxCandidate, redeemTxInfo] = await this
+        .redeemAmmTxBuilder
+        .build(redeemParams, BigInt(bestTransaction.body().fee().to_str()))
+      return [bestTransaction, redeemTxCandidate, redeemTxInfo]
     }
 
     const [redeemTxCandidate, redeemTxInfo] = await this.redeemAmmTxBuilder.build(redeemParams, prevTxFee)
@@ -91,26 +100,29 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
       if (prevTxFee === txFee) {
         return [transaction, redeemTxCandidate, redeemTxInfo]
       } else {
-        const newBestTxData: [Transaction | null, TxCandidate, RedeemTxInfo] | undefined = !!prevTxFee && txFee < prevTxFee ?
-          [transaction, redeemTxCandidate, redeemTxInfo] :
-          bestTxData
+        const newBestTxData: Transaction | null | undefined = !!prevTxFee && txFee < prevTxFee ?
+          transaction :
+          bestTransaction
 
         return this.redeem(redeemParams, currentTry + 1, newBestTxData, txFee)
       }
     } catch (e) {
-      console.log(e);
-      return [null, redeemTxCandidate, { ...redeemTxInfo, txFee: undefined }];
+      console.log(e)
+      return [null, redeemTxCandidate, {...redeemTxInfo, txFee: undefined}]
     }
   }
 
   async deposit(
     depositParams: DepositParams,
     currentTry = 0,
-    bestTxData?: [Transaction | null, TxCandidate, DepositTxInfo],
+    bestTransaction?: Transaction | null,
     prevTxFee?: bigint
   ): Promise<[Transaction | null, TxCandidate, DepositTxInfo]> {
-    if (currentTry >= MAX_TRANSACTION_BUILDING_TRY_COUNT && bestTxData) {
-      return bestTxData
+    if (currentTry >= MAX_TRANSACTION_BUILDING_TRY_COUNT && bestTransaction) {
+      const [depositTxCandidate, depositTxInfo] = await this
+        .depositAmmTxBuilder
+        .build(depositParams, BigInt(bestTransaction.body().fee().to_str()))
+      return [bestTransaction, depositTxCandidate, depositTxInfo]
     }
 
     const [depositTxCandidate, depositTxInfo] = await this.depositAmmTxBuilder.build(depositParams, prevTxFee)
@@ -122,15 +134,15 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
       if (prevTxFee === txFee) {
         return [transaction, depositTxCandidate, depositTxInfo]
       } else {
-        const newBestTxData: [Transaction | null, TxCandidate, DepositTxInfo] | undefined = !!prevTxFee && txFee < prevTxFee ?
-          [transaction, depositTxCandidate, depositTxInfo] :
-          bestTxData
+        const newBestTxData: Transaction | null | undefined = !!prevTxFee && txFee < prevTxFee ?
+          transaction :
+          bestTransaction
 
         return this.deposit(depositParams, currentTry + 1, newBestTxData, txFee)
       }
     } catch (e) {
-      console.log(e);
-      return [null, depositTxCandidate, { ...depositTxInfo, txFee: undefined }];
+      console.log(e)
+      return [null, depositTxCandidate, {...depositTxInfo, txFee: undefined}]
     }
   }
 }
