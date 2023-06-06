@@ -86,7 +86,7 @@ export class SwapAmmTxBuilder {
     );
 
     const [, additionalAdaForChange] = getChangeOrderValue(estimatedChange, changeAddress, this.txMath);
-
+    console.log(estimatedChange, additionalAdaForChange);
     if (additionalAdaForChange) {
       inputs = await this.inputSelector.select(add(totalOrderBudget, AdaEntry(additionalAdaForChange)));
     }
