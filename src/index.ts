@@ -80,7 +80,7 @@ export {
 } from "./amm/models/opRequests"
 export { Refunds, AmmOrderRefunds } from './amm/interpreters/refunds'
 export { RefundParams } from './amm/models/refundParams'
-export {SwapExtremums, SwapBudget, SwapValue, swapVars, minBudgetForSwap, minSwapValue} from "./amm/math/swap"
+export {SwapExtremums, SwapBudget, SwapValue, swapVars, minBudgetForSwap, minSwapValue, swapExFee} from "./amm/math/swap"
 export {
   DepositBudget,
   DepositValue,
