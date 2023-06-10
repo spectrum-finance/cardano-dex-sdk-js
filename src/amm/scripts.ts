@@ -12,6 +12,12 @@ export const OrderAddrsV1Testnet: OrderAddrs = {
   ammSwap: "addr_test1wqnp362vmvr8jtc946d3a3utqgclfdl5y9d3kn849e359hst7hkqk"
 }
 
+export const OrderAddrsV1Mainnet: OrderAddrs = {
+  ammDeposit: "addr1wyr4uz0tp75fu8wrg6gm83t20aphuc9vt6n8kvu09ctkugqpsrmeh",
+  ammRedeem: "addr1wxpa5704x8qel88ympf4natfdzn59nc9esj7609y3sczmmsasees8",
+  ammSwap: "addr1wynp362vmvr8jtc946d3a3utqgclfdl5y9d3kn849e359hsskr20n"
+}
+
 export type ScriptCreds = {
   ammPool: HexString
   ammDeposit: HexString
