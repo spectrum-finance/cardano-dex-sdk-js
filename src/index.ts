@@ -95,7 +95,7 @@ export {PoolsParser, mkPoolsParser} from "./amm/parsers/poolsParser"
 export {Pools, mkNetworkPoolsV1} from "./amm/services/pools"
 export {History, mkHistory} from "./amm/services/history"
 export * from "./amm/constants"
-export {ScriptCreds, OrderAddrs, ScriptCredsV1, OrderAddrsV1Testnet} from "./amm/scripts"
+export {ScriptCreds, OrderAddrs, ScriptCredsV1, OrderAddrsV1Testnet, OrderAddrsV1Mainnet} from "./amm/scripts"
 export * from "./amm/contractData"
 
 export {
