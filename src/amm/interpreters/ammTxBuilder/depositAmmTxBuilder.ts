@@ -114,7 +114,7 @@ export class DepositAmmTxBuilder {
           exFee:         exFee,
           uiFee:         0n,
           orderValue:    orderValue,
-          collateralAda: refundableValuePart,
+          collateralAda: refundableValuePart + refundableBugdetPart,
         },
         {
           changeAddr: params.changeAddress,
