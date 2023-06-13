@@ -164,11 +164,17 @@ export class DepositAmmTxBuilder {
     exFee: Lovelace,
     addr: Addr
   ): [Value, bigint] {
-    const estimatedExecutorOutTxCandidate: TxOutCandidate = {
+    const estimatedExecutorOutTxCandidateWithoutAda: TxOutCandidate = {
       value: Value(0n, output),
       addr
     }
-    const requiredAdaForOutput = this.txMath.minAdaRequiredforOutput(estimatedExecutorOutTxCandidate)
+    const requiredAdaForOutputWithoutAda = this.txMath.minAdaRequiredforOutput(estimatedExecutorOutTxCandidateWithoutAda);
+
+    const estimatedExecutorOutTxCandidateWithAda: TxOutCandidate = {
+      value: Value(requiredAdaForOutputWithoutAda, output),
+      addr
+    }
+    const requiredAdaForOutput = this.txMath.minAdaRequiredforOutput(estimatedExecutorOutTxCandidateWithAda);
 
     return [add(add(add(Value(requiredAdaForOutput), inputX.toEntry), inputY.toEntry), AdaEntry(exFee)), requiredAdaForOutput];
   }
