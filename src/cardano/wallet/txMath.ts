@@ -56,6 +56,7 @@ class CardanoTransactionMath implements TxMath {
       const pd = this.R.PlutusData.from_bytes(decodeHex(o.data))
       out.set_plutus_data(pd)
     }
+    console.log(out);
     return out
   }
 }
