@@ -175,7 +175,7 @@ export class DepositAmmTxBuilder {
       addr
     }
     const requiredAdaForOutput = this.txMath.minAdaRequiredforOutput(estimatedExecutorOutTxCandidateWithAda);
-
+    console.log(requiredAdaForOutput, estimatedExecutorOutTxCandidateWithAda, requiredAdaForOutputWithoutAda);
     return [add(add(add(Value(requiredAdaForOutput), inputX.toEntry), inputY.toEntry), AdaEntry(exFee)), requiredAdaForOutput];
   }
 }
