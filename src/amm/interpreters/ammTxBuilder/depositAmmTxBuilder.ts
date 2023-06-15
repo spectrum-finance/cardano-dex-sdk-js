@@ -133,7 +133,7 @@ export class DepositAmmTxBuilder {
     exFee: bigint,
     params: DepositParams,
   ): [Value, bigint] {
-    const estimatedOutput = this.ammOutputs.deposit({
+    const estimatedOutputBlackPaper = this.ammOutputs.deposit({
       kind: OrderKind.Deposit,
       poolId: params.pool.id,
       x: params.x,
@@ -146,14 +146,31 @@ export class DepositAmmTxBuilder {
       orderValue: orderValue,
       collateralAda: depositCollateral,
     })
-    const requiredAdaForOutput = this.txMath.minAdaRequiredforOutput(estimatedOutput)
-    const lovelace = getLovelace(orderValue)
+    const requiredAdaForOutputBlackPaper = this.txMath.minAdaRequiredforOutput(estimatedOutputBlackPaper)
 
+    const estimatedOutput = this.ammOutputs.deposit({
+      kind: OrderKind.Deposit,
+      poolId: params.pool.id,
+      x: params.x,
+      y: params.y,
+      lq: lq.asset,
+      rewardPkh: params.pk,
+      stakePkh: stakeKeyHashFromAddr(params.changeAddress, this.R),
+      exFee: exFee,
+      uiFee: 0n,
+      orderValue: orderValue,
+      collateralAda: depositCollateral > requiredAdaForOutputBlackPaper ?
+                       depositCollateral :
+                       requiredAdaForOutputBlackPaper,
+    })
+    const requiredAdaForOutput = this.txMath.minAdaRequiredforOutput(estimatedOutput);
+    const lovelace = getLovelace(orderValue)
+    console.log(requiredAdaForOutput, requiredAdaForOutputBlackPaper);
     return lovelace.amount >= requiredAdaForOutput
       ? [orderValue, 0n]
       : [
           add(orderValue, AdaEntry(requiredAdaForOutput - lovelace.amount)),
-          requiredAdaForOutput - lovelace.amount
+        requiredAdaForOutput - lovelace.amount
         ]
   }
 
