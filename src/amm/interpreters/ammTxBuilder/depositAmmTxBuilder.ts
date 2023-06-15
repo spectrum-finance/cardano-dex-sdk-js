@@ -133,7 +133,7 @@ export class DepositAmmTxBuilder {
     exFee: bigint,
     params: DepositParams,
   ): [Value, bigint] {
-    const estimatedOutputBlackPaper = this.ammOutputs.deposit({
+    const estimatedOutput = this.ammOutputs.deposit({
       kind: OrderKind.Deposit,
       poolId: params.pool.id,
       x: params.x,
@@ -146,32 +146,15 @@ export class DepositAmmTxBuilder {
       orderValue: orderValue,
       collateralAda: depositCollateral,
     })
-    const requiredAdaForOutputBlackPaper = this.txMath.minAdaRequiredforOutput(estimatedOutputBlackPaper)
-
-    const estimatedOutput = this.ammOutputs.deposit({
-      kind: OrderKind.Deposit,
-      poolId: params.pool.id,
-      x: params.x,
-      y: params.y,
-      lq: lq.asset,
-      rewardPkh: params.pk,
-      stakePkh: stakeKeyHashFromAddr(params.changeAddress, this.R),
-      exFee: exFee,
-      uiFee: 0n,
-      orderValue: orderValue,
-      collateralAda: depositCollateral > requiredAdaForOutputBlackPaper ?
-                       depositCollateral :
-                       requiredAdaForOutputBlackPaper,
-    })
-    const requiredAdaForOutput = this.txMath.minAdaRequiredforOutput(estimatedOutput);
+    const requiredAdaForOutput = this.txMath.minAdaRequiredforOutput(estimatedOutput)
     const lovelace = getLovelace(orderValue)
-    console.log(requiredAdaForOutput, requiredAdaForOutputBlackPaper);
+
     return lovelace.amount >= requiredAdaForOutput
       ? [orderValue, 0n]
       : [
-          add(orderValue, AdaEntry(requiredAdaForOutput - lovelace.amount)),
+        add(orderValue, AdaEntry(requiredAdaForOutput - lovelace.amount)),
         requiredAdaForOutput - lovelace.amount
-        ]
+      ]
   }
 
   private getDepositOrderValue(
@@ -192,7 +175,6 @@ export class DepositAmmTxBuilder {
       addr
     }
     const requiredAdaForOutput = this.txMath.minAdaRequiredforOutput(estimatedExecutorOutTxCandidateWithAda);
-    console.log(requiredAdaForOutput, estimatedExecutorOutTxCandidateWithAda, requiredAdaForOutputWithoutAda);
     return [add(add(add(Value(requiredAdaForOutput), inputX.toEntry), inputY.toEntry), AdaEntry(exFee)), requiredAdaForOutput];
   }
 }
