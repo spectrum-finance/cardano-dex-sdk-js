@@ -27,7 +27,7 @@ class CardanoTransactionMath implements TxMath {
   minUtxoValue(preValue: Value, hasDatum: boolean): bigint {
     const value = toWasmValue(preValue, this.R)
     const utxoCost = this.R.BigNum.from_str(this.params.utxoCostPerWord.toString())
-    return BigInt(this.R.min_ada_required(value, hasDatum, utxoCost).to_str()) +
+    return BigInt(this.R.min_ada_required(value, hasDatum, utxoCost).to_str())
   }
 
   minAdaRequiredforOutput(outCandidate: TxOutCandidate): bigint {
