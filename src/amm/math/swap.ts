@@ -55,7 +55,7 @@ export function swapVars(
       }
     }
     const adjustedMinExFee = Math.floor(exFeePerToken * Number(minOutput.amount))
-    const maxExFee = Math.floor(Number(minExecutorReward) * nitro) + Number(txFees.swapOrder);
+    const maxExFee = Math.floor(Number(adjustedMinExFee) * nitro) + Number(txFees.swapOrder);
     const maxOutput = minOutput.withAmount(BigInt(Math.floor(maxExFee / exFeePerToken)))
     return [
       feePerTokenFromDecimal(exFeePerToken),
