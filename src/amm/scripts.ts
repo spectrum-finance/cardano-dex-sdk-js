@@ -43,7 +43,7 @@ export type OpInRefs = {
   ammRedeem: OpInRef;
 }
 
-export const OpInRefsV1: OpInRefs = {
+export const OpInRefsPreviewV1: OpInRefs = {
   ammSwap: {
     opInRefHash: 'b2f79375bf73234bb988cfdb911c78ac4e9b5470197e828d507babfdcca08d16',
     opInRefIndex: 2
@@ -54,6 +54,21 @@ export const OpInRefsV1: OpInRefs = {
   },
   ammRedeem: {
     opInRefHash: 'b2f79375bf73234bb988cfdb911c78ac4e9b5470197e828d507babfdcca08d16',
+    opInRefIndex: 1
+  }
+}
+
+export const OpInRefsMainnetV1: OpInRefs = {
+  ammSwap: {
+    opInRefHash: 'fc9e99fd12a13a137725da61e57a410e36747d513b965993d92c32c67df9259a',
+    opInRefIndex: 2
+  },
+  ammDeposit: {
+    opInRefHash: 'fc9e99fd12a13a137725da61e57a410e36747d513b965993d92c32c67df9259a',
+    opInRefIndex: 0
+  },
+  ammRedeem: {
+    opInRefHash: 'fc9e99fd12a13a137725da61e57a410e36747d513b965993d92c32c67df9259a',
     opInRefIndex: 1
   }
 }

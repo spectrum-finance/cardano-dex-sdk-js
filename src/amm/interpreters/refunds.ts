@@ -5,7 +5,13 @@ import {TxOutCandidate} from "../../cardano/entities/txOut"
 import {emptyValue} from "../../cardano/entities/value"
 import {CardanoNetwork} from "../../quickblue/cardanoNetwork"
 import {RefundParams} from "../models/refundParams"
-import {OpInRefsV1, OrderAddrsV1Mainnet, OrderAddrsV1Testnet, ScriptCredsV1} from "../scripts"
+import {
+  OpInRefsMainnetV1,
+  OpInRefsPreviewV1,
+  OrderAddrsV1Mainnet,
+  OrderAddrsV1Testnet,
+  ScriptCredsV1
+} from "../scripts"
 
 export interface Refunds {
   /** Redeem assets from a proxy order box.
@@ -34,13 +40,13 @@ const mapRefundAddressToScript = {
 }
 
 const mapRefundAddressToOpInRef = {
-  [OrderAddrsV1Testnet.ammDeposit]: OpInRefsV1.ammDeposit,
-  [OrderAddrsV1Testnet.ammSwap]:    OpInRefsV1.ammSwap,
-  [OrderAddrsV1Testnet.ammRedeem]:  OpInRefsV1.ammRedeem,
+  [OrderAddrsV1Testnet.ammDeposit]: OpInRefsPreviewV1.ammDeposit,
+  [OrderAddrsV1Testnet.ammSwap]:    OpInRefsPreviewV1.ammSwap,
+  [OrderAddrsV1Testnet.ammRedeem]:  OpInRefsPreviewV1.ammRedeem,
 
-  [OrderAddrsV1Mainnet.ammDeposit]: OpInRefsV1.ammDeposit,
-  [OrderAddrsV1Mainnet.ammSwap]:    OpInRefsV1.ammSwap,
-  [OrderAddrsV1Mainnet.ammRedeem]:  OpInRefsV1.ammRedeem
+  [OrderAddrsV1Mainnet.ammDeposit]: OpInRefsMainnetV1.ammDeposit,
+  [OrderAddrsV1Mainnet.ammSwap]:    OpInRefsMainnetV1.ammSwap,
+  [OrderAddrsV1Mainnet.ammRedeem]:  OpInRefsMainnetV1.ammRedeem
 }
 
 export class AmmOrderRefunds implements Refunds {
@@ -50,7 +56,7 @@ export class AmmOrderRefunds implements Refunds {
   async refund(params: RefundParams): Promise<TxCandidate> {
     const tx = await this.network.getTx(params.txId)
     const outputToRefund = tx?.outputs.find(o => AddressesToRefund.includes(o.addr))
-    console.log(outputToRefund, tx);
+
     if (outputToRefund) {
       const input: FullTxIn = {
         txOut:         outputToRefund,
