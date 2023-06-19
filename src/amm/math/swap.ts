@@ -42,8 +42,7 @@ export function swapVars(
   minOutput: AssetAmount
 ): [FeePerToken, SwapExtremums] | undefined {
   if (minOutput.amount > 0) {
-    const minExFee = minExFeeForOrder(OrderKind.Swap, txFees, minExecutorReward);
-    let exFeePerToken = Number(minExFee) / Number(minOutput.amount)
+    let exFeePerToken = Number(minExecutorReward) / Number(minOutput.amount)
     while (true) {
       const [n, d] = decimalToFractional(exFeePerToken)
       if (n <= I64Max && d <= I64Max) break
@@ -54,8 +53,8 @@ export function swapVars(
         exFeePerToken = Number(exFeePerToken.toFixed(decimalsNum - 1))
       }
     }
-    const adjustedMinExFee = Math.floor(exFeePerToken * Number(minOutput.amount))
-    const maxExFee = Math.floor(Number(adjustedMinExFee) * nitro) + Number(txFees.swapOrder);
+    const adjustedMinExFee = Math.floor(exFeePerToken * Number(minOutput.amount)) + Number(txFees.swapOrder);
+    const maxExFee = Math.floor(Number(minExecutorReward) * nitro) + Number(txFees.swapOrder);
     const maxOutput = minOutput.withAmount(BigInt(Math.floor(maxExFee / exFeePerToken)))
     return [
       feePerTokenFromDecimal(exFeePerToken),
