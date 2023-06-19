@@ -5,7 +5,7 @@ import {TxOutCandidate} from "../../cardano/entities/txOut"
 import {emptyValue} from "../../cardano/entities/value"
 import {CardanoNetwork} from "../../quickblue/cardanoNetwork"
 import {RefundParams} from "../models/refundParams"
-import {OpInRefsV1, OrderAddrsV1Testnet, ScriptCredsV1} from "../scripts"
+import {OpInRefsV1, OrderAddrsV1Mainnet, OrderAddrsV1Testnet, ScriptCredsV1} from "../scripts"
 
 export interface Refunds {
   /** Redeem assets from a proxy order box.
@@ -16,19 +16,31 @@ export interface Refunds {
 const AddressesToRefund = [
   OrderAddrsV1Testnet.ammDeposit,
   OrderAddrsV1Testnet.ammSwap,
-  OrderAddrsV1Testnet.ammRedeem
+  OrderAddrsV1Testnet.ammRedeem,
+
+  OrderAddrsV1Mainnet.ammDeposit,
+  OrderAddrsV1Mainnet.ammSwap,
+  OrderAddrsV1Mainnet.ammRedeem,
 ]
 
 const mapRefundAddressToScript = {
   [OrderAddrsV1Testnet.ammDeposit]: ScriptCredsV1.ammDeposit,
   [OrderAddrsV1Testnet.ammSwap]:    ScriptCredsV1.ammSwap,
-  [OrderAddrsV1Testnet.ammRedeem]:  ScriptCredsV1.ammRedeem
+  [OrderAddrsV1Testnet.ammRedeem]:  ScriptCredsV1.ammRedeem,
+
+  [OrderAddrsV1Mainnet.ammDeposit]: ScriptCredsV1.ammDeposit,
+  [OrderAddrsV1Mainnet.ammSwap]:    ScriptCredsV1.ammSwap,
+  [OrderAddrsV1Mainnet.ammRedeem]:  ScriptCredsV1.ammRedeem
 }
 
 const mapRefundAddressToOpInRef = {
   [OrderAddrsV1Testnet.ammDeposit]: OpInRefsV1.ammDeposit,
   [OrderAddrsV1Testnet.ammSwap]:    OpInRefsV1.ammSwap,
-  [OrderAddrsV1Testnet.ammRedeem]:  OpInRefsV1.ammRedeem
+  [OrderAddrsV1Testnet.ammRedeem]:  OpInRefsV1.ammRedeem,
+
+  [OrderAddrsV1Mainnet.ammDeposit]: OpInRefsV1.ammDeposit,
+  [OrderAddrsV1Mainnet.ammSwap]:    OpInRefsV1.ammSwap,
+  [OrderAddrsV1Mainnet.ammRedeem]:  OpInRefsV1.ammRedeem
 }
 
 export class AmmOrderRefunds implements Refunds {
