@@ -50,7 +50,7 @@ export class AmmOrderRefunds implements Refunds {
   async refund(params: RefundParams): Promise<TxCandidate> {
     const tx = await this.network.getTx(params.txId)
     const outputToRefund = tx?.outputs.find(o => AddressesToRefund.includes(o.addr))
-
+    console.log(outputToRefund, tx);
     if (outputToRefund) {
       const input: FullTxIn = {
         txOut:         outputToRefund,
