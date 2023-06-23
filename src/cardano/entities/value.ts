@@ -19,11 +19,14 @@ export function sum(values: Value[]): Value {
       const key = `${item.policyId}.${item.name}`
 
       if (!dictionary[key]) {
-        dictionary[key] = item
+        dictionary[key] = {
+          ...item,
+          quantity: BigInt(item.quantity)
+        }
       } else {
         dictionary[key] = {
           ...dictionary[key],
-          quantity: dictionary[key].quantity + item.quantity
+          quantity: dictionary[key].quantity + BigInt(item.quantity)
         }
       }
     })
