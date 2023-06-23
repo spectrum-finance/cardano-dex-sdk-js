@@ -165,7 +165,7 @@ export class RefundTxBuilder {
       return Promise.reject('insufficient balance for refund');
     }
     console.log(inputs, refundOutput.value, 'useInputs');
-    const outputValue = sum(inputs.map(item => item.txOut.value).concat(refundOutput.value));
+    const outputValue = sum([...inputs.map(item => item.txOut.value), refundOutput.value]);
     const normalizedRefundOutput: TxOutCandidate = {
       addr:  refundOutput.addr,
       value: outputValue.map(item => item.policyId === AdaPolicyId && item.name === AdaAssetName ?
