@@ -135,8 +135,8 @@ export class RefundTxBuilder {
       addr:  params.recipientAddress,
       value: outputToRefund.value.map(item => ({ ...item, quantity: BigInt(item.quantity) }))
     }
-    const outputAdaWithoutFee = getLovelace(outputToRefund.value).amount - (Number(fee) as any);
-    const minAdaRequired = this.txMath.minAdaRequiredforOutput(outputToRefund);
+    const outputAdaWithoutFee = getLovelace(refundOut.value).amount - fee;
+    const minAdaRequired = this.txMath.minAdaRequiredforOutput(refundOut);
 
     if (minAdaRequired > outputAdaWithoutFee) {
       return this.buildCandidateWithUserInputs(params, input, refundOut, collateral, fee, minAdaRequired, outputAdaWithoutFee)
