@@ -133,7 +133,7 @@ export class RefundTxBuilder {
     }
     const refundOut: TxOutCandidate = {
       addr:  params.recipientAddress,
-      value: outputToRefund.value
+      value: outputToRefund.value.map(item => ({ ...item, quantity: BigInt(item.quantity) }))
     }
     const outputAdaWithoutFee = getLovelace(outputToRefund.value).amount - (Number(fee) as any);
     const minAdaRequired = this.txMath.minAdaRequiredforOutput(outputToRefund);
@@ -192,8 +192,7 @@ export class RefundTxBuilder {
     const normalizedRefundOutput: TxOutCandidate = {
       addr:  refundOutput.addr,
       value: refundOutput.value.map(item => item.policyId === AdaPolicyId && item.name === AdaAssetName ?
-        // TODO: FIX Type and value missmatches
-        ({...item, quantity: item.quantity - (Number(fee) as any)}) : item
+        ({...item, quantity: item.quantity - fee}) : item
       )
     }
 
