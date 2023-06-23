@@ -95,10 +95,11 @@ export class RefundTxBuilder {
           transaction :
           bestTransaction
 
-        console.log(prevTxFee, txFee, 'recalc');
         return this.refund(params, currentTry + 1, newBestTxData, txFee)
       }
     } catch (e) {
+      console.warn(e)
+      console.dir(e)
       return [refundTxCandidate, null];
     }
   }
