@@ -164,7 +164,7 @@ export class RefundTxBuilder {
     if (inputs instanceof Error) {
       return Promise.reject('insufficient balance for refund');
     }
-    console.log(inputs, 'useInputs');
+    console.log(inputs, refundOutput.value, 'useInputs');
     const outputValue = sum(inputs.map(item => item.txOut.value).concat(refundOutput.value));
     const normalizedRefundOutput: TxOutCandidate = {
       addr:  refundOutput.addr,
