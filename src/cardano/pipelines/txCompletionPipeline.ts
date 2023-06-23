@@ -8,7 +8,7 @@ import {TxAsm} from "../wallet/txAsm"
 
 export interface TxCompletionPipeline {
   complete(txc: TxCandidate): Promise<RawTx>
-  completeTransaction(tx: Transaction): Promise<RawTx>
+  completeTransaction(tx: Transaction, partial?: boolean): Promise<RawTx>
 }
 
 export function mkTxCompletionPipeline(
