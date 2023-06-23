@@ -46,8 +46,8 @@ class DefaultTxCompletionPipeline implements TxCompletionPipeline {
     return encodeHex(tx.to_bytes());
   }
 
-  async completeTransaction(unsignedTx: Transaction): Promise<RawTx> {
-    const witsWithSignRaw = await this.prover.sign(encodeHex(unsignedTx.to_bytes()), false);
+  async completeTransaction(unsignedTx: Transaction, txHasScriptInputs = false): Promise<RawTx> {
+    const witsWithSignRaw = await this.prover.sign(encodeHex(unsignedTx.to_bytes()), txHasScriptInputs);
     const witsWithSign = this.R.TransactionWitnessSet.from_bytes(decodeHex(witsWithSignRaw));
 
 
