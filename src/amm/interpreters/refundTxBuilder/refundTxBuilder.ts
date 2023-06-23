@@ -33,8 +33,6 @@ export interface RefundParams {
   readonly recipientAddress: string
 }
 
-const DEFAULT_REFUND_FEE = 2000000n;
-
 const MAX_TRANSACTION_BUILDING_TRY_COUNT = 3
 
 export class RefundTxBuilder {
@@ -104,7 +102,7 @@ export class RefundTxBuilder {
     }
   }
 
-  private async buildRefundTxCandidate(params: RefundParams, fee: bigint = DEFAULT_REFUND_FEE): Promise<TxCandidate> {
+  private async buildRefundTxCandidate(params: RefundParams, fee = 0n): Promise<TxCandidate> {
     const tx = await this.network.getTx(params.txId)
     if (!tx) {
       return Promise.reject(`No AMM orders found in the given Tx{id=${params.txId}`)
