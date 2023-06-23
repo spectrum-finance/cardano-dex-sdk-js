@@ -88,12 +88,14 @@ export class RefundTxBuilder {
       const txFee = BigInt(transaction.body().fee().to_str())
 
       if (prevTxFee === txFee) {
+        console.log(prevTxFee, txFee, 'completing');
         return [refundTxCandidate, transaction]
       } else {
         const newBestTxData: Transaction | null | undefined = !!prevTxFee && txFee < prevTxFee ?
           transaction :
           bestTransaction
 
+        console.log(prevTxFee, txFee, 'recalc');
         return this.refund(params, currentTry + 1, newBestTxData, txFee)
       }
     } catch (e) {
@@ -164,7 +166,7 @@ export class RefundTxBuilder {
     if (inputs instanceof Error) {
       return Promise.reject('insufficient balance for refund');
     }
-    console.log(inputs, refundOutput.value, 'useInputs');
+
     const outputValue = sum([...inputs.map(item => item.txOut.value), refundOutput.value]);
     const normalizedRefundOutput: TxOutCandidate = {
       addr:  refundOutput.addr,
