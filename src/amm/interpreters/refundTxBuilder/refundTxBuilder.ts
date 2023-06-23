@@ -14,6 +14,10 @@ import {TxMath} from "../../../cardano/wallet/txMath"
 import {CardanoNetwork} from "../../../quickblue/cardanoNetwork"
 import {OpInRef} from "../../scripts"
 
+const FEE_REGEX = /fee (\d+)/;
+
+const DEFAULT_REFUND_FEE = 2000000n;
+
 interface RefundTxBuilderParamsItem {
   readonly address: HexString;
   readonly script: HexString;
@@ -96,10 +100,18 @@ export class RefundTxBuilder {
       }
     } catch (e) {
       console.warn(e);
-      console.dir(e);
-      console.dir(typeof e);
+
+      if (typeof e === 'string' && FEE_REGEX.test(e)) {
+        return this.refund(params, currentTry + 1, bestTransaction, this.getFeeFromError(e));
+      }
       return [refundTxCandidate, null];
     }
+  }
+
+  private getFeeFromError (e: string): bigint {
+    const normalFee = e.match(FEE_REGEX)?.[1];
+
+    return normalFee ? BigInt(normalFee) : DEFAULT_REFUND_FEE;
   }
 
   private async buildRefundTxCandidate(params: RefundParams, fee = 0n): Promise<TxCandidate> {
