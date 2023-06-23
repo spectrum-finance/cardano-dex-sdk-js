@@ -1,5 +1,4 @@
 import {Transaction} from "@emurgo/cardano-serialization-lib-nodejs"
-import {AdaAssetName, AdaPolicyId} from "../../../cardano/constants"
 import {AdaEntry} from "../../../cardano/entities/assetEntry"
 import {ProtocolParams} from "../../../cardano/entities/env"
 import {TxCandidate} from "../../../cardano/entities/tx"
@@ -88,14 +87,12 @@ export class RefundTxBuilder {
       const txFee = BigInt(transaction.body().fee().to_str())
 
       if (prevTxFee === txFee) {
-        console.log(prevTxFee, txFee, 'completing');
         return [refundTxCandidate, transaction]
       } else {
         const newBestTxData: Transaction | null | undefined = !!prevTxFee && txFee < prevTxFee ?
           transaction :
           bestTransaction
 
-        console.log(prevTxFee, txFee, 'recalc');
         return this.refund(params, currentTry + 1, newBestTxData, txFee)
       }
     } catch (e) {
@@ -141,9 +138,9 @@ export class RefundTxBuilder {
     const minAdaRequired = this.txMath.minAdaRequiredforOutput(refundOut);
 
     if (minAdaRequired > outputAdaWithoutFee) {
-      return this.buildCandidateWithUserInputs(params, input, refundOut, collateral, fee, minAdaRequired, outputAdaWithoutFee)
+      return this.buildCandidateWithUserInputs(params, input, refundOut, collateral, minAdaRequired, outputAdaWithoutFee)
     } else {
-      return Promise.resolve(this.buildCandidateWithoutUserInputs(params, input, refundOut, collateral, fee))
+      return Promise.resolve(this.buildCandidateWithoutUserInputs(params, input, refundOut, collateral))
     }
   }
 
@@ -152,14 +149,13 @@ export class RefundTxBuilder {
     refundInput: FullTxIn,
     refundOutput: TxOutCandidate,
     collateral: FullTxIn[],
-    fee: bigint,
     minAdaRequired: bigint,
     outputAdaWithoutFee: bigint,
   ): Promise<TxCandidate> {
     const adaDiff = minAdaRequired - outputAdaWithoutFee;
 
     if (adaDiff <= 0) {
-      return Promise.resolve(this.buildCandidateWithoutUserInputs(params, refundInput, refundOutput, collateral, fee));
+      return Promise.resolve(this.buildCandidateWithoutUserInputs(params, refundInput, refundOutput, collateral));
     }
     const inputs = await this.inputSelector.select([AdaEntry(adaDiff)]);
 
@@ -170,9 +166,7 @@ export class RefundTxBuilder {
     const outputValue = sum([...inputs.map(item => item.txOut.value), refundOutput.value]);
     const normalizedRefundOutput: TxOutCandidate = {
       addr:  refundOutput.addr,
-      value: outputValue.map(item => item.policyId === AdaPolicyId && item.name === AdaAssetName ?
-        ({...item, quantity: item.quantity - fee}) : item
-      )
+      value: outputValue
     }
 
     return {
@@ -189,13 +183,10 @@ export class RefundTxBuilder {
     refundInput: FullTxIn,
     refundOutput: TxOutCandidate,
     collateral: FullTxIn[],
-    fee: bigint,
   ): TxCandidate {
     const normalizedRefundOutput: TxOutCandidate = {
       addr:  refundOutput.addr,
-      value: refundOutput.value.map(item => item.policyId === AdaPolicyId && item.name === AdaAssetName ?
-        ({...item, quantity: item.quantity - fee}) : item
-      )
+      value: refundOutput.value
     }
 
     return {
