@@ -86,7 +86,6 @@ export class RefundTxBuilder {
       const txFee = BigInt(transaction.body().fee().to_str())
 
       if (prevTxFee === txFee) {
-        console.log(prevTxFee, txFee, 'completing');
         return [refundTxCandidate, transaction]
       } else {
         const newBestTxData: Transaction | null | undefined = !!prevTxFee && txFee < prevTxFee ?
@@ -96,8 +95,9 @@ export class RefundTxBuilder {
         return this.refund(params, currentTry + 1, newBestTxData, txFee)
       }
     } catch (e) {
-      console.warn(e)
-      console.dir(e)
+      console.warn(e);
+      console.dir(e);
+      console.dir(typeof e);
       return [refundTxCandidate, null];
     }
   }
