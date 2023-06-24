@@ -111,7 +111,7 @@ export class RefundTxBuilder {
   private getFeeFromError (e: string): bigint {
     const normalFee = e.match(FEE_REGEX)?.[1];
 
-    return normalFee ? BigInt(normalFee) : DEFAULT_REFUND_FEE;
+    return normalFee ? BigInt(Math.floor(Number(normalFee) * 1.05)) : DEFAULT_REFUND_FEE;
   }
 
   private async buildRefundTxCandidate(params: RefundParams, fee = 0n): Promise<TxCandidate> {
