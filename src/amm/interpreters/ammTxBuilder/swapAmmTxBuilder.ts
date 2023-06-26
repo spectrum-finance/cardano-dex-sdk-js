@@ -72,7 +72,7 @@ export class SwapAmmTxBuilder {
       exFeePerToken,
       extremums
     )
-    const totalOrderBudget = add(orderValue, AdaEntry(userTxFee || txFees.swapOrder))
+    let totalOrderBudget = add(orderValue, AdaEntry(userTxFee || txFees.swapOrder))
 
     let inputs = await this.inputSelector.select(totalOrderBudget)
 
@@ -89,8 +89,11 @@ export class SwapAmmTxBuilder {
     console.log('estimatedChange', additionalAdaForChange);
     console.log('oldInputs', inputs)
     console.log('oldInputs  sum', sum(inputs.map(input => input.txOut.value)))
+    console.log('totalOrderBudget', totalOrderBudget);
     if (additionalAdaForChange) {
-      inputs = await this.inputSelector.select(add(totalOrderBudget, AdaEntry(additionalAdaForChange)));
+      console.log('recalculating inputs');
+      totalOrderBudget = add(totalOrderBudget, AdaEntry(additionalAdaForChange));
+      inputs = await this.inputSelector.select(totalOrderBudget);
     }
 
     if (inputs instanceof Error) {
@@ -98,6 +101,7 @@ export class SwapAmmTxBuilder {
     }
     console.log('new Inputs', inputs)
     console.log('newInputs  sum', sum(inputs.map(input => input.txOut.value)))
+    console.log('newTotalOrderBudget', totalOrderBudget);
 
     const txInfo: SwapTxInfo = {
       minExFee: extremums.minExFee,
