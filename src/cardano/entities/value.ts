@@ -37,6 +37,11 @@ export function sum(values: Value[]): Value {
 
 export function add(value: Value, x: AssetEntry): Value {
   const amt = assetAmountOf(value, assetEntryToClass(x))
+  console.log(
+    value,
+    x,
+    [...value.filter(e => e.policyId !== x.policyId || e.name !== x.name), amt.add(x.quantity).toEntry]
+  );
   return [...value.filter(e => e.policyId !== x.policyId || e.name !== x.name), amt.add(x.quantity).toEntry] // todo: check comparison
 }
 
