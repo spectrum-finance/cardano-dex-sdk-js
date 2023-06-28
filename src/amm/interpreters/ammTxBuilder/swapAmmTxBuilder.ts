@@ -177,9 +177,14 @@ export class SwapAmmTxBuilder {
     if (!maxOutput.isAda) {
       return [add(add(Value(requiredAdaForOutput), input.toEntry), AdaEntry(maxExFee)), requiredAdaForOutput]
     }
+    console.log('here1', [add(Value(maxExFee), input.toEntry), 0n]);
     if (maxOutput.amount >= requiredAdaForOutput) {
       return [add(Value(maxExFee), input.toEntry), 0n]
     }
+    console.log('here2', [
+      add(add(Value(requiredAdaForOutput - maxOutput.amount), input.toEntry), AdaEntry(maxExFee)),
+      requiredAdaForOutput - maxOutput.amount
+    ]);
     return [
       add(add(Value(requiredAdaForOutput - maxOutput.amount), input.toEntry), AdaEntry(maxExFee)),
       requiredAdaForOutput - maxOutput.amount
