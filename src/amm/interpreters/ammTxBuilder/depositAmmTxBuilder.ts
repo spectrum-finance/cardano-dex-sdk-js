@@ -83,11 +83,12 @@ export class DepositAmmTxBuilder {
     const [, additionalAdaForChange] = getChangeOrderValue(estimatedChange, changeAddress, this.txMath);
 
     if (additionalAdaForChange) {
-      inputs = await this.inputSelector.select(add(totalOrderBudget, AdaEntry(additionalAdaForChange)));
-    }
+      const additionalInput = await this.inputSelector.select([AdaEntry(additionalAdaForChange)], inputs);
 
-    if (inputs instanceof Error) {
-      throw new Error("insufficient funds")
+      if (additionalInput instanceof Error) {
+        throw new Error("insufficient funds")
+      }
+      inputs = inputs.concat(additionalInput);
     }
 
     const txInfo: DepositTxInfo = {
@@ -114,7 +115,7 @@ export class DepositAmmTxBuilder {
           exFee:         exFee,
           uiFee:         0n,
           orderValue:    orderValue,
-          collateralAda: refundableValuePart,
+          collateralAda: refundableValuePart + refundableBugdetPart,
         },
         {
           changeAddr: params.changeAddress,
@@ -152,9 +153,9 @@ export class DepositAmmTxBuilder {
     return lovelace.amount >= requiredAdaForOutput
       ? [orderValue, 0n]
       : [
-          add(orderValue, AdaEntry(requiredAdaForOutput - lovelace.amount)),
-          requiredAdaForOutput - lovelace.amount
-        ]
+        add(orderValue, AdaEntry(requiredAdaForOutput - lovelace.amount)),
+        requiredAdaForOutput - lovelace.amount
+      ]
   }
 
   private getDepositOrderValue(
@@ -164,12 +165,17 @@ export class DepositAmmTxBuilder {
     exFee: Lovelace,
     addr: Addr
   ): [Value, bigint] {
-    const estimatedExecutorOutTxCandidate: TxOutCandidate = {
+    const estimatedExecutorOutTxCandidateWithoutAda: TxOutCandidate = {
       value: Value(0n, output),
       addr
     }
-    const requiredAdaForOutput = this.txMath.minAdaRequiredforOutput(estimatedExecutorOutTxCandidate)
+    const requiredAdaForOutputWithoutAda = this.txMath.minAdaRequiredforOutput(estimatedExecutorOutTxCandidateWithoutAda);
 
+    const estimatedExecutorOutTxCandidateWithAda: TxOutCandidate = {
+      value: Value(requiredAdaForOutputWithoutAda, output),
+      addr
+    }
+    const requiredAdaForOutput = this.txMath.minAdaRequiredforOutput(estimatedExecutorOutTxCandidateWithAda);
     return [add(add(add(Value(requiredAdaForOutput), inputX.toEntry), inputY.toEntry), AdaEntry(exFee)), requiredAdaForOutput];
   }
 }

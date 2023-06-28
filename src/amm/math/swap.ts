@@ -40,7 +40,7 @@ export function swapVars(
   minExecutorReward: Lovelace,
   nitro: number,
   minOutput: AssetAmount
-): [FeePerToken, SwapExtremums] | undefined {
+): [FeePerToken, SwapExtremums, number] | undefined {
   if (minOutput.amount > 0) {
     const minExFee = minExFeeForOrder(OrderKind.Swap, txFees, minExecutorReward);
     let exFeePerToken = Number(minExFee) / Number(minOutput.amount)
@@ -55,11 +55,12 @@ export function swapVars(
       }
     }
     const adjustedMinExFee = Math.floor(exFeePerToken * Number(minOutput.amount))
-    const maxExFee = Math.floor(Number(minExecutorReward) * nitro) + Number(txFees.swapOrder);
+    const maxExFee = Math.floor(Number(adjustedMinExFee) * nitro);
     const maxOutput = minOutput.withAmount(BigInt(Math.floor(maxExFee / exFeePerToken)))
     return [
       feePerTokenFromDecimal(exFeePerToken),
-      {minExFee: BigInt(adjustedMinExFee), maxExFee: BigInt(maxExFee), minOutput, maxOutput}
+      {minExFee: BigInt(adjustedMinExFee), maxExFee: BigInt(maxExFee), minOutput, maxOutput},
+      exFeePerToken
     ]
   } else {
     return undefined
