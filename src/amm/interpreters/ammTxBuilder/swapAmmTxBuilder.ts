@@ -74,6 +74,11 @@ export class SwapAmmTxBuilder {
     )
     const totalOrderBudget = add(orderValue, AdaEntry(userTxFee || txFees.swapOrder))
 
+    console.log("refundable part: %d", refundableBugdetPart)
+
+    console.log("refundableBugdetPart part: %d", refundableBugdetPart)
+
+
     let inputs = await this.inputSelector.select(totalOrderBudget)
 
     if (inputs instanceof Error) {
@@ -86,6 +91,8 @@ export class SwapAmmTxBuilder {
     );
 
     const [, additionalAdaForChange] = getChangeOrderValue(estimatedChange, changeAddress, this.txMath);
+
+    console.log("additionalAdaForChange part: %d", additionalAdaForChange)
 
     if (additionalAdaForChange) {
       const additionalInput = await this.inputSelector.select([AdaEntry(additionalAdaForChange)], inputs);
