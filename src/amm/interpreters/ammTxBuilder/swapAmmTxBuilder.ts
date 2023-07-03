@@ -74,11 +74,6 @@ export class SwapAmmTxBuilder {
     )
     const totalOrderBudget = add(orderValue, AdaEntry(userTxFee || txFees.swapOrder))
 
-    console.log("refundable part: %d", refundableBugdetPart)
-
-    console.log("refundableBugdetPart part: %d", refundableBugdetPart)
-
-
     let inputs = await this.inputSelector.select(totalOrderBudget)
 
     if (inputs instanceof Error) {

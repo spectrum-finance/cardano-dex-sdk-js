@@ -1,6 +1,6 @@
-import {MintingDataRequest, MintingDataResponse} from "./models";
 import axios, {AxiosInstance} from "axios";
 import {JSONBI} from "../utils/json";
+import {MintingDataRequest, MintingDataResponse} from "./models";
 
 export interface MetaMintingService {
 
