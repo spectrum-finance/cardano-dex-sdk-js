@@ -1,10 +1,11 @@
 import {
   BaseAddress, Ed25519KeyHash,
-  EnterpriseAddress, PlutusWitness, Transaction,
+  EnterpriseAddress, MintBuilder, PlutusWitness, Transaction,
   TransactionBuilderConfig, TransactionInput, TransactionOutput, TxInputsBuilder, Value
 } from "@emurgo/cardano-serialization-lib-nodejs"
+import {MintingAsset} from "../../amm/domain/models"
 import {toWasmValue} from "../../interop/serlib"
-import {decodeHex} from "../../utils/hex"
+import {decodeHex, encodeHex} from "../../utils/hex"
 import {decimalToFractional} from "../../utils/math"
 import {CardanoWasm} from "../../utils/rustLoader"
 import {Addr} from "../entities/address"
@@ -34,6 +35,9 @@ class DefaultTxAsm implements TxAsm {
     }
     if (candidate.collateral) {
       txBuilder.set_collateral(this.getCollateralBuilder(candidate.collateral))
+    }
+    if (candidate.mintingScripts) {
+      txBuilder.set_mint_builder(this.getMintBuilder(candidate.mintingScripts))
     }
 
     for (const i of candidate.inputs) {
@@ -146,6 +150,21 @@ class DefaultTxAsm implements TxAsm {
 
   private toKeyHash(addr: Addr): Ed25519KeyHash | undefined {
     return this.toBaseOrEnterpriseAddress(addr).payment_cred().to_keyhash()
+  }
+
+  private getMintBuilder(mintScripts: MintingAsset[]): MintBuilder {
+    const mintBuilder = this.R.MintBuilder.new();
+
+    for (const data of mintScripts) {
+      const plutusScriptSource = this.R.PlutusScriptSource.new(this.R.PlutusScript.from_hex(data.script));
+      const redeemer = this.R.Redeemer.from_json('{"constructor":0,"fields":[]}')
+      const mintWitness = this.R.MintWitness.new_plutus_script(plutusScriptSource, redeemer);
+      const assetName = this.R.AssetName.from_hex(encodeHex(new TextEncoder().encode(data.amount.asset.name)));
+      const amount = this.R.Int.from_str(data.amount.amount.toString());
+
+      mintBuilder.add_asset(mintWitness, assetName, amount);
+    }
+    return mintBuilder;
   }
 
   private getCollateralBuilder(collateral: FullTxIn[]): TxInputsBuilder {

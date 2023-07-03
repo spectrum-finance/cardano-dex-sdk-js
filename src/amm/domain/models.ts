@@ -1,6 +1,6 @@
-import {decimalToFractional} from "../../utils/math"
-import {AssetAmount} from "../../domain/assetAmount";
 import {HexString} from "../../cardano/types";
+import {AssetAmount} from "../../domain/assetAmount";
+import {decimalToFractional} from "../../utils/math"
 
 export type MintingAsset = {
   amount: AssetAmount,
