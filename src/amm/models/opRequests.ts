@@ -1,7 +1,7 @@
 import {AssetClass} from "../../cardano/entities/assetClass"
 import {PubKeyHash} from "../../cardano/entities/publicKey"
 import {Value} from "../../cardano/entities/value"
-import {Lovelace} from "../../cardano/types"
+import {HexString, Lovelace, TxHash} from "../../cardano/types"
 import {AssetAmount} from "../../domain/assetAmount"
 import {FeePerToken} from "../domain/models"
 import {PoolId} from "../domain/types"
@@ -17,13 +17,15 @@ export type CreateRequest = {
 export enum OrderKind {
   Deposit,
   Redeem,
-  Swap
+  Swap,
+  PoolCreation = 3
 }
 
 export function foldOrderKind<A>(
   onDeposit: () => A,
   onRedeem: () => A,
-  onSwap: () => A
+  onSwap: () => A,
+  onPoolCreation: () => A
 ): (kind: OrderKind) => A {
   return (kind: OrderKind) => {
     switch (kind) {
@@ -33,6 +35,8 @@ export function foldOrderKind<A>(
         return onRedeem()
       case OrderKind.Swap:
         return onSwap()
+      case OrderKind.PoolCreation:
+        return onPoolCreation()
     }
   }
 }
@@ -78,4 +82,19 @@ export type SwapRequest = {
   readonly orderValue: Value
 }
 
-export type OrderRequest = DepositRequest | RedeemRequest | SwapRequest
+export type PoolCreationRequest = {
+  readonly kind: OrderKind.PoolCreation
+  readonly x: AssetAmount
+  readonly y: AssetAmount
+  readonly lq: AssetAmount
+  readonly lqMintingScript: HexString
+  readonly nft: AssetAmount
+  readonly nftMintingScript: HexString
+  readonly feeNum: bigint
+  readonly uiFee: Lovelace
+  readonly poolValue: Value
+  readonly mintingCreationTxHash: TxHash
+  readonly mintingCreationTxOutIdx: number
+}
+
+export type OrderRequest = DepositRequest | RedeemRequest | SwapRequest | PoolCreationRequest

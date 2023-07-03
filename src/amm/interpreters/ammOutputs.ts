@@ -2,8 +2,8 @@ import {TxOutCandidate} from "../../cardano/entities/txOut"
 import {TxMath} from "../../cardano/wallet/txMath"
 import {encodeHex} from "../../utils/hex"
 import {CardanoWasm} from "../../utils/rustLoader"
-import {mkDepositDatum, mkRedeemDatum, mkSwapDatum} from "../contractData"
-import {DepositRequest, RedeemRequest, SwapRequest} from "../models/opRequests"
+import {mkDepositDatum, mkPoolDatum, mkRedeemDatum, mkSwapDatum} from "../contractData"
+import {DepositRequest, PoolCreationRequest, RedeemRequest, SwapRequest} from "../models/opRequests"
 import {OrderAddrs} from "../scripts"
 
 export interface AmmOutputs {
@@ -12,6 +12,8 @@ export interface AmmOutputs {
   redeem(req: RedeemRequest): TxOutCandidate
 
   swap(req: SwapRequest): TxOutCandidate
+
+  poolCreation(req: PoolCreationRequest): TxOutCandidate
 }
 
 export function mkAmmOutputs(addrs: OrderAddrs, txMath: TxMath, R: CardanoWasm): AmmOutputsImpl {
@@ -48,6 +50,15 @@ class AmmOutputsImpl implements AmmOutputs {
     return {
       value: req.orderValue,
       addr: this.addrs.ammSwap,
+      data
+    }
+  }
+
+  poolCreation(req: PoolCreationRequest): TxOutCandidate {
+    const data = encodeHex(mkPoolDatum(req, this.R).to_bytes())
+    return  {
+      value: req.poolValue,
+      addr: this.addrs.ammPool,
       data
     }
   }
