@@ -4,7 +4,6 @@ import {emptyValue, Value} from "../../cardano/entities/value"
 import {TxContext} from "../../cardano/wallet/entities/txContext"
 import {OrderKind, OrderRequest} from "../models/opRequests"
 import {AmmOutputs} from "./ammOutputs"
-import {TxOutCandidate} from "../../cardano/entities/txOut";
 import {MintingAsset} from "../domain/models";
 
 export interface AmmActions {
@@ -32,7 +31,7 @@ class DefaultAmmActions implements AmmActions {
       }
     }
 
-    const outputs = [orderCandidate()]
+    const outputs = orderCandidate()
     if (req.uiFee > 0n) outputs.push({value: Value(req.uiFee), addr: this.uiRewardAddr})
 
     const [mintValue, mintAssets] = this.getMintingData(req)

@@ -5,6 +5,7 @@ import {HexString, Lovelace, TxHash} from "../../cardano/types"
 import {AssetAmount} from "../../domain/assetAmount"
 import {FeePerToken} from "../domain/models"
 import {PoolId} from "../domain/types"
+import {Addr} from "../../cardano/entities/address";
 
 export type CreateRequest = {
   readonly x: AssetAmount
@@ -95,6 +96,7 @@ export type PoolCreationRequest = {
   readonly poolValue: Value
   readonly mintingCreationTxHash: TxHash
   readonly mintingCreationTxOutIdx: number
+  readonly userAddress: Addr
 }
 
 export type OrderRequest = DepositRequest | RedeemRequest | SwapRequest | PoolCreationRequest

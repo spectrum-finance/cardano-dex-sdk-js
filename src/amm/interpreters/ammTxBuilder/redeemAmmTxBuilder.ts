@@ -125,7 +125,7 @@ export class RedeemAmmTxBuilder {
     exFee: bigint,
     params: RedeemParams,
   ): [Value, bigint] {
-    const estimatedOutput = this.ammOutputs.redeem({
+    const [estimatedOutput] = this.ammOutputs.redeem({
       kind: OrderKind.Redeem,
       poolId: params.pool.id,
       x: params.pool.x.asset,

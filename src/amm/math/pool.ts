@@ -2,6 +2,8 @@ import {AssetAmount} from "../../domain/assetAmount";
 import {HexString, Lovelace, TxHash} from "../../cardano/types";
 import {Value} from "../../cardano/entities/value";
 import {Addr} from "../../cardano/entities/address";
+import {AssetClass} from "../../cardano/entities/assetClass";
+import {sqrt} from "../../utils/math";
 
 export interface PoolCreationParams {
   readonly x: AssetAmount
@@ -15,19 +17,12 @@ export interface PoolCreationParams {
   readonly uiFee: Lovelace
   readonly mintingCreationTxHash: TxHash
   readonly mintingCreationTxOutIdx: number
-  readonly changeAddress: Addr
+  readonly userAddress: Addr
   readonly collateralAmount?: bigint;
 }
 
-export function makePoolCreationParams(
-  x: AssetAmount,
-  y: AssetAmount,
-  fee: number,
-  uiFee: bigint
-): PoolCreationParams | undefined {
-
-  const mockPoolCreationParams: PoolCreationParams = undefined
-
-  return mockPoolCreationParams
+export function calculateInitUserRewardLq(x: AssetAmount, y: AssetAmount, lqAssetClass: AssetClass): AssetAmount {
+  const lqValue = sqrt(x.amount * y.amount)
+  return new AssetAmount(lqAssetClass, lqValue)
 }
 

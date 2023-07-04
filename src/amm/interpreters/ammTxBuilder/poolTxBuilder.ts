@@ -1,21 +1,13 @@
-import {AssetAmount} from "../../../domain/assetAmount";
 import {TxCandidate} from "../../../cardano/entities/tx";
-import {SwapParams, SwapTxInfo} from "./swapAmmTxBuilder";
 import {PoolCreationParams} from "../../math/pool";
 import {add, getLovelace, remove, sum, Value} from "../../../cardano/entities/value";
 import {AdaEntry} from "../../../cardano/entities/assetEntry";
 import {getChangeOrderValue} from "../../../utils/getChangeOrderValue";
 import {OrderKind} from "../../models/opRequests";
-import {stakeKeyHashFromAddr} from "../../../cardano/entities/stakeKey";
-import {DepositTxInfo} from "./depositAmmTxBuilder";
-import {TxOutCandidate} from "../../../cardano/entities/txOut";
 import {TxMath} from "../../../cardano/wallet/txMath";
 import {AmmOutputs} from "../ammOutputs";
 import {AmmActions} from "../ammActions";
 import {InputSelector} from "../../../cardano/wallet/inputSelector";
-import {CardanoWasm} from "../../../utils/rustLoader";
-import {OrderAddrs} from "../../scripts";
-import {HexString, Lovelace, TxHash} from "../../../cardano/types";
 
 export interface PoolCreationTxInfo {
 
@@ -27,8 +19,7 @@ export class PoolCreationBuilder {
     private txMath: TxMath,
     private ammOutputs: AmmOutputs,
     private ammActions: AmmActions,
-    private inputSelector: InputSelector,
-    private R: CardanoWasm
+    private inputSelector: InputSelector
   ) {
   }
 
@@ -51,7 +42,7 @@ export class PoolCreationBuilder {
       totalOrderBudget
     );
 
-    const [, additionalAdaForChange] = getChangeOrderValue(estimatedChange, params.changeAddress, this.txMath);
+    const [, additionalAdaForChange] = getChangeOrderValue(estimatedChange, params.userAddress, this.txMath);
 
     if (additionalAdaForChange) {
       const additionalInput = await this.inputSelector.select([AdaEntry(additionalAdaForChange)], inputs);
@@ -62,9 +53,7 @@ export class PoolCreationBuilder {
       inputs = inputs.concat(additionalInput);
     }
 
-    const txInfo: PoolCreationTxInfo = {
-
-    }
+    const txInfo: PoolCreationTxInfo = {}
 
     return [
       this.ammActions.createOrder(
@@ -81,9 +70,10 @@ export class PoolCreationBuilder {
           poolValue: params.value,
           mintingCreationTxHash: params.mintingCreationTxHash,
           mintingCreationTxOutIdx: params.mintingCreationTxOutIdx,
+          userAddress: params.userAddress
         },
         {
-          changeAddr: params.changeAddress,
+          changeAddr: params.userAddress,
           collateralInputs: [],
           inputs: inputs.concat(inputForMinting)
         }
@@ -95,7 +85,7 @@ export class PoolCreationBuilder {
   private getPoolBudget(
     params: PoolCreationParams
   ): Value {
-    const estimatedPoolOut: TxOutCandidate = this.ammOutputs.poolCreation({
+    const [poolOutputPreUpdated, userLqOutput] = this.ammOutputs.poolCreation({
       kind: OrderKind.PoolCreation,
       x: params.x.withAmount(BigInt("0x7fffffffffffffff")),
       y: params.y.withAmount(BigInt("0x7fffffffffffffff")),
@@ -108,12 +98,20 @@ export class PoolCreationBuilder {
       poolValue: params.value,
       mintingCreationTxHash: params.mintingCreationTxHash,
       mintingCreationTxOutIdx: params.mintingCreationTxOutIdx,
+      userAddress: params.userAddress
     })
-    const requiredAdaForOutput = this.txMath.minAdaRequiredforOutput(estimatedPoolOut);
+    const updatedPoolOutput = {
+      value: add(poolOutputPreUpdated.value, params.lq.withAmount(BigInt("0x7fffffffffffffff")).toEntry),
+      addr: poolOutputPreUpdated.addr,
+      data: poolOutputPreUpdated.data
+    }
+    const requiredAdaForPoolOutput = this.txMath.minAdaRequiredforOutput(updatedPoolOutput);
+    const requiredAdaForUserLqOutput = this.txMath.minAdaRequiredforOutput(userLqOutput);
+    const requiredAdaForOutputs = requiredAdaForPoolOutput + requiredAdaForUserLqOutput
     const lovelace = getLovelace(params.value)
 
-    return lovelace.amount >= requiredAdaForOutput
+    return lovelace.amount >= requiredAdaForOutputs
       ? params.value
-      : add(params.value, AdaEntry(requiredAdaForOutput - lovelace.amount))
+      : add(params.value, AdaEntry(requiredAdaForOutputs - lovelace.amount))
   }
 }
