@@ -1,3 +1,4 @@
+import {Addr} from "../../cardano/entities/address";
 import {AssetClass} from "../../cardano/entities/assetClass"
 import {PubKeyHash} from "../../cardano/entities/publicKey"
 import {Value} from "../../cardano/entities/value"
@@ -5,7 +6,6 @@ import {HexString, Lovelace, TxHash} from "../../cardano/types"
 import {AssetAmount} from "../../domain/assetAmount"
 import {FeePerToken} from "../domain/models"
 import {PoolId} from "../domain/types"
-import {Addr} from "../../cardano/entities/address";
 
 export type CreateRequest = {
   readonly x: AssetAmount

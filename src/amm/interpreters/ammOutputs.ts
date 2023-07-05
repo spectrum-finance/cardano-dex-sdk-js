@@ -1,12 +1,12 @@
 import {TxOutCandidate} from "../../cardano/entities/txOut"
+import {remove, Value} from "../../cardano/entities/value";
 import {TxMath} from "../../cardano/wallet/txMath"
 import {encodeHex} from "../../utils/hex"
 import {CardanoWasm} from "../../utils/rustLoader"
 import {mkDepositDatum, mkPoolDatum, mkRedeemDatum, mkSwapDatum} from "../contractData"
+import {calculateInitUserRewardLq} from "../math/pool";
 import {DepositRequest, PoolCreationRequest, RedeemRequest, SwapRequest} from "../models/opRequests"
 import {OrderAddrs} from "../scripts"
-import {calculateInitUserRewardLq} from "../math/pool";
-import {remove, Value} from "../../cardano/entities/value";
 
 export interface AmmOutputs {
   deposit(req: DepositRequest): TxOutCandidate[]

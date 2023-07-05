@@ -1,13 +1,13 @@
-import {TxCandidate} from "../../../cardano/entities/tx";
-import {PoolCreationParams} from "../../math/pool";
-import {add, getLovelace, remove, sum, Value} from "../../../cardano/entities/value";
 import {AdaEntry} from "../../../cardano/entities/assetEntry";
-import {getChangeOrderValue} from "../../../utils/getChangeOrderValue";
-import {OrderKind} from "../../models/opRequests";
-import {TxMath} from "../../../cardano/wallet/txMath";
-import {AmmOutputs} from "../ammOutputs";
-import {AmmActions} from "../ammActions";
+import {TxCandidate} from "../../../cardano/entities/tx";
+import {add, getLovelace, remove, sum, Value} from "../../../cardano/entities/value";
 import {InputSelector} from "../../../cardano/wallet/inputSelector";
+import {TxMath} from "../../../cardano/wallet/txMath";
+import {getChangeOrderValue} from "../../../utils/getChangeOrderValue";
+import {PoolCreationParams} from "../../math/pool";
+import {OrderKind} from "../../models/opRequests";
+import {AmmActions} from "../ammActions";
+import {AmmOutputs} from "../ammOutputs";
 
 export interface PoolCreationTxInfo {
   readonly txFee: bigint | undefined;
@@ -27,7 +27,7 @@ export class PoolTxBuilder {
     const totalOrderBudget = this.getPoolBudget(params);
 
     let inputs = await this.inputSelector.select(totalOrderBudget)
-    let inputForMinting = await this.inputSelector.selectById(params.mintingCreationTxHash, params.mintingCreationTxOutIdx)
+    const inputForMinting = await this.inputSelector.selectById(params.mintingCreationTxHash, params.mintingCreationTxOutIdx)
 
     if (inputs instanceof Error) {
       throw new Error("insufficient funds")

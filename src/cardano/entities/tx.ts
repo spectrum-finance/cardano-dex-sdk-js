@@ -1,9 +1,9 @@
+import {MintingAsset} from "../../amm/domain/models";
 import {HexString, TxHash, ValidityRange} from "../types"
 import {Addr} from "./address"
 import {FullTxIn, TxIn} from "./txIn"
 import {TxOut, TxOutCandidate} from "./txOut"
 import {Value} from "./value"
-import {MintingAsset} from "../../amm/domain/models";
 
 export type Tx = {
   hash: TxHash

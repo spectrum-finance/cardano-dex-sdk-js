@@ -2,9 +2,9 @@ import {Addr} from "../../cardano/entities/address"
 import {TxCandidate} from "../../cardano/entities/tx"
 import {emptyValue, Value} from "../../cardano/entities/value"
 import {TxContext} from "../../cardano/wallet/entities/txContext"
+import {MintingAsset} from "../domain/models";
 import {OrderKind, OrderRequest} from "../models/opRequests"
 import {AmmOutputs} from "./ammOutputs"
-import {MintingAsset} from "../domain/models";
 
 export interface AmmActions {
   createOrder(req: OrderRequest, ctx: TxContext): TxCandidate
@@ -15,7 +15,8 @@ export function mkAmmActions(outputs: AmmOutputs, uiRewardAddr: Addr): AmmAction
 }
 
 class DefaultAmmActions implements AmmActions {
-  constructor(public readonly outputs: AmmOutputs, public readonly uiRewardAddr: Addr) {}
+  constructor(public readonly outputs: AmmOutputs, public readonly uiRewardAddr: Addr) {
+  }
 
   createOrder(req: OrderRequest, ctx: TxContext): TxCandidate {
     const orderCandidate = () => {
