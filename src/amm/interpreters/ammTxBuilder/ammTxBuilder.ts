@@ -3,14 +3,14 @@ import {TxCandidate} from "../../../cardano/entities/tx"
 import {InputSelector} from "../../../cardano/wallet/inputSelector"
 import {TxAsm} from "../../../cardano/wallet/txAsm"
 import {TxMath} from "../../../cardano/wallet/txMath"
-import {MetaMintingService} from "../../../mintingMeta/metaMintingService"
 import {CardanoWasm} from "../../../utils/rustLoader"
 import {AmmActions} from "../ammActions"
 import {AmmOutputs} from "../ammOutputs"
 import {DepositAmmTxBuilder, DepositParams, DepositTxInfo} from "./depositAmmTxBuilder"
 import {RedeemAmmTxBuilder, RedeemParams, RedeemTxInfo} from "./redeemAmmTxBuilder"
-import {SetupAmmTxBuilder, SetupParams, SetupTxInfo} from "./setupAmmTxBuilder"
 import {SwapAmmTxBuilder, SwapParams, SwapTxInfo} from "./swapAmmTxBuilder"
+import {PoolCreationTxInfo, PoolTxBuilder} from "./poolTxBuilder";
+import {PoolCreationParams} from "../../math/pool";
 
 export interface AmmTxBuilder {
   swap(params: SwapParams): Promise<[Transaction | null, TxCandidate, SwapTxInfo]>;
@@ -18,6 +18,8 @@ export interface AmmTxBuilder {
   redeem(params: RedeemParams): Promise<[Transaction | null, TxCandidate, RedeemTxInfo]>;
 
   deposit(params: DepositParams): Promise<[Transaction | null, TxCandidate, DepositTxInfo]>;
+
+  poolCreation(params: PoolCreationParams): Promise<[Transaction | null, TxCandidate, PoolCreationTxInfo]>;
 }
 
 const MAX_TRANSACTION_BUILDING_TRY_COUNT = 3
@@ -29,21 +31,20 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
 
   private depositAmmTxBuilder: DepositAmmTxBuilder
 
-  private setupAmmTxBuilder: SetupAmmTxBuilder
+  private poolTxBuilder: PoolTxBuilder
 
   constructor(
     txMath: TxMath,
     ammOuptuts: AmmOutputs,
     ammActions: AmmActions,
     inputSelector: InputSelector,
-    mintingService: MetaMintingService,
     R: CardanoWasm,
     private txAsm: TxAsm
   ) {
     this.swapAmmTxBuilder = new SwapAmmTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, R)
     this.redeemAmmTxBuilder = new RedeemAmmTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, R)
     this.depositAmmTxBuilder = new DepositAmmTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, R)
-    this.setupAmmTxBuilder = new SetupAmmTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, mintingService, R)
+    this.poolTxBuilder = new PoolTxBuilder(txMath, ammOuptuts, ammActions, inputSelector)
   }
 
   async swap(
@@ -148,37 +149,37 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
     }
   }
 
-  async setup(
-    setupParams: SetupParams,
+  async poolCreation(
+    poolParams: PoolCreationParams,
     currentTry = 0,
     bestTransaction?: Transaction | null,
     prevTxFee?: bigint
-  ): Promise<[Transaction | null, TxCandidate, SetupTxInfo]> {
+  ): Promise<[Transaction | null, TxCandidate, PoolCreationTxInfo]> {
     if (currentTry >= MAX_TRANSACTION_BUILDING_TRY_COUNT && bestTransaction) {
       const [setupTxCandidate, setupTxInfo] = await this
-        .setupAmmTxBuilder
-        .build(setupParams, BigInt(bestTransaction.body().fee().to_str()))
+        .poolTxBuilder
+        .build(poolParams, BigInt(bestTransaction.body().fee().to_str()))
       return [bestTransaction, setupTxCandidate, setupTxInfo]
     }
 
-    const [setupTxCandidate, setupTxInfo] = await this.setupAmmTxBuilder.build(setupParams, prevTxFee)
+    const [poolCreationTxCandidate, poolCreationTxInfo] = await this.poolTxBuilder.build(poolParams, prevTxFee)
 
     try {
-      const transaction = this.txAsm.finalize(setupTxCandidate)
+      const transaction = this.txAsm.finalize(poolCreationTxCandidate)
       const txFee = BigInt(transaction.body().fee().to_str())
 
       if (prevTxFee === txFee) {
-        return [transaction, setupTxCandidate, setupTxInfo]
+        return [transaction, poolCreationTxCandidate, poolCreationTxInfo]
       } else {
         const newBestTxData: Transaction | null | undefined = !!prevTxFee && txFee < prevTxFee ?
           transaction :
           bestTransaction
 
-        return this.setup(setupParams, currentTry + 1, newBestTxData, txFee)
+        return this.poolCreation(poolParams, currentTry + 1, newBestTxData, txFee)
       }
     } catch (e) {
       console.log(e)
-      return [null, setupTxCandidate, {...setupTxInfo, txFee: undefined}]
+      return [null, poolCreationTxCandidate, {...poolCreationTxInfo, txFee: undefined}]
     }
   }
 }

@@ -10,10 +10,10 @@ import {AmmActions} from "../ammActions";
 import {InputSelector} from "../../../cardano/wallet/inputSelector";
 
 export interface PoolCreationTxInfo {
-
+  readonly txFee: bigint | undefined;
 }
 
-export class PoolCreationBuilder {
+export class PoolTxBuilder {
 
   constructor(
     private txMath: TxMath,
@@ -23,7 +23,7 @@ export class PoolCreationBuilder {
   ) {
   }
 
-  async build(params: PoolCreationParams): Promise<[TxCandidate, PoolCreationTxInfo]> {
+  async build(params: PoolCreationParams, userTxFee?: bigint): Promise<[TxCandidate, PoolCreationTxInfo]> {
     const totalOrderBudget = this.getPoolBudget(params);
 
     let inputs = await this.inputSelector.select(totalOrderBudget)
@@ -53,7 +53,9 @@ export class PoolCreationBuilder {
       inputs = inputs.concat(additionalInput);
     }
 
-    const txInfo: PoolCreationTxInfo = {}
+    const txInfo: PoolCreationTxInfo = {
+      txFee: userTxFee
+    }
 
     return [
       this.ammActions.createOrder(

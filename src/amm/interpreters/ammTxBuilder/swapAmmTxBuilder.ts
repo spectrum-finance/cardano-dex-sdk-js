@@ -140,7 +140,7 @@ export class SwapAmmTxBuilder {
     exFeePerToken: FeePerToken,
     extremums: SwapExtremums
   ): [Value, bigint] {
-    const estimatedOutput = this.ammOutputs.swap({
+    const [estimatedOutput] = this.ammOutputs.swap({
       kind: OrderKind.Swap,
       poolId: params.pool.id,
       rewardPkh: params.pk,

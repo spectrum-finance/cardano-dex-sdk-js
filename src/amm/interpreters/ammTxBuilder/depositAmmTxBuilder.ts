@@ -134,7 +134,7 @@ export class DepositAmmTxBuilder {
     exFee: bigint,
     params: DepositParams,
   ): [Value, bigint] {
-    const estimatedOutput = this.ammOutputs.deposit({
+    const [estimatedOutput] = this.ammOutputs.deposit({
       kind: OrderKind.Deposit,
       poolId: params.pool.id,
       x: params.x,
