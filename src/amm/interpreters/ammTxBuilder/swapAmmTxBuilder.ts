@@ -86,8 +86,12 @@ export class SwapAmmTxBuilder {
     );
 
     const [, additionalAdaForChange] = getChangeOrderValue(estimatedChange, changeAddress, this.txMath);
-
+    console.log('change');
     if (additionalAdaForChange) {
+      console.log('test 1');
+      console.log(AdaEntry(additionalAdaForChange));
+      console.log('test 2');
+
       const additionalInput = await this.inputSelector.select([AdaEntry(additionalAdaForChange)], inputs);
 
       if (additionalInput instanceof Error) {
@@ -95,6 +99,7 @@ export class SwapAmmTxBuilder {
       }
       inputs = inputs.concat(additionalInput);
     }
+    console.log('change normalized');
 
     const txInfo: SwapTxInfo = {
       minExFee: extremums.minExFee,
