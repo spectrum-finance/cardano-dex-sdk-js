@@ -50,6 +50,7 @@ export function toWasmValue(value: Value, R: CardanoWasm): WASM.Value {
   for (const [policy, entries] of Object.entries(groupedAssets)) {
     const wAssets = R.Assets.new()
     for (const e of entries) {
+      console.log(e.name, new TextEncoder().encode(e.name));
       const name = R.AssetName.new(new TextEncoder().encode(e.name))
       const amt = R.BigNum.from_str(e.quantity.toString())
       wAssets.insert(name, amt)
