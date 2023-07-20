@@ -54,11 +54,12 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
     }
 
     const [swapTxCandidate, swapTxInfo] = await this.swapAmmTxBuilder.build(swapParams, prevTxFee)
-
+    console.log('created order');
     try {
       const transaction = this.txAsm.finalize(swapTxCandidate)
+      console.log('tx finalizing');
       const txFee = BigInt(transaction.body().fee().to_str())
-
+      console.log('tx finalized');
       if (prevTxFee === txFee) {
         return [transaction, swapTxCandidate, swapTxInfo]
       } else {
