@@ -54,6 +54,7 @@ export function toWasmValue(value: Value, R: CardanoWasm): WASM.Value {
       const amt = R.BigNum.from_str(e.quantity.toString())
       wAssets.insert(name, amt)
     }
+    console.log(wAssets);
     const wPolicyId = R.ScriptHash.from_bytes(decodeHex(policy))
     wmAssets.insert(wPolicyId, wAssets)
   }
