@@ -13,9 +13,11 @@ export function getChangeOrderValue (
     value: change,
     addr
   }
+  console.log('test 0.5')
   const requiredAdaForChange = txMath.minAdaRequiredforOutput(estimatedChangeOutput);
+  console.log('test 0.7')
   const changeLovelace = getLovelace(change);
-
+  console.log('test 0.9')
   if (!changeLovelace.amount) {
     return [add(change, AdaEntry(requiredAdaForChange)), requiredAdaForChange];
   }

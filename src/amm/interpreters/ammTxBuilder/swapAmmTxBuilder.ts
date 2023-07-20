@@ -84,7 +84,7 @@ export class SwapAmmTxBuilder {
       sum(inputs.map(input => input.txOut.value)),
       orderValue
     );
-
+    console.log('before change');
     const [, additionalAdaForChange] = getChangeOrderValue(estimatedChange, changeAddress, this.txMath);
     console.log('change');
     if (additionalAdaForChange) {
