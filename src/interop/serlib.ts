@@ -27,7 +27,9 @@ export function fromWasmValue(value: WASM.Value): Value {
       const entries: AssetEntry[] = []
       for (let i = 0; i < numAssets; i++) {
         const assetName = assets.get(i)
+        console.log(assetName);
         const nameStr = new TextDecoder().decode(assetName.name())
+        console.log(nameStr);
         const quantity = BigInt(as.get(assetName)!.to_str())
         entries.push({name: nameStr, policyId, quantity})
       }
@@ -50,7 +52,10 @@ export function toWasmValue(value: Value, R: CardanoWasm): WASM.Value {
   for (const [policy, entries] of Object.entries(groupedAssets)) {
     const wAssets = R.Assets.new()
     for (const e of entries) {
-      console.log(e.name, new TextEncoder().encode(e.name));
+      console.log(
+        e.name,
+        new TextEncoder().encode(e.name)
+      );
       const name = R.AssetName.new(new TextEncoder().encode(e.name))
       const amt = R.BigNum.from_str(e.quantity.toString())
       wAssets.insert(name, amt)
