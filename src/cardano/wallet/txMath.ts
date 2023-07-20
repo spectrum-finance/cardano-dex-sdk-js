@@ -55,10 +55,14 @@ class CardanoTransactionMath implements TxMath {
 
   private toTransactionOutput(o: TxOutCandidate): TransactionOutput {
     const addr = this.R.Address.from_bech32(o.addr)
+    console.log('0.51', o.value)
     const value = toWasmValue(o.value, this.R)
+    console.log('0.52', o.addr)
     const out = this.R.TransactionOutput.new(addr, value)
+    console.log('0.53', o.data)
     if (o.data) {
       const pd = this.R.PlutusData.from_bytes(decodeHex(o.data))
+      console.log('0.54')
       out.set_plutus_data(pd)
     }
     return out
