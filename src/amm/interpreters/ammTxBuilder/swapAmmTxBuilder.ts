@@ -95,11 +95,7 @@ export class SwapAmmTxBuilder {
       }
       inputs = inputs.concat(additionalInput);
     }
-    console.log(
-      `output: ${refundableValuePart}`,
-      `input: ${refundableBugdetPart}`,
-      `change: ${additionalAdaForChange}`
-    )
+
     const txInfo: SwapTxInfo = {
       minExFee: extremums.minExFee,
       maxExFee: extremums.maxExFee,
@@ -107,7 +103,7 @@ export class SwapAmmTxBuilder {
       maxOutput: extremums.maxOutput,
       orderValue: orderValue,
       orderBudget: totalOrderBudget,
-      refundableDeposit: refundableValuePart + refundableBugdetPart + additionalAdaForChange,
+      refundableDeposit: refundableValuePart + refundableBugdetPart,
       txFee: userTxFee || txFees.swapOrder
     }
 
