@@ -98,7 +98,7 @@ export class DepositAmmTxBuilder {
       lq: lp,
       orderValue: orderValue,
       orderBudget: totalOrderBudget,
-      refundableDeposit: refundableValuePart + refundableBugdetPart + additionalAdaForChange,
+      refundableDeposit: refundableValuePart + refundableBugdetPart,
       txFee: userTxFee || txFees.redeemOrder
     }
 

@@ -92,7 +92,7 @@ export class RedeemAmmTxBuilder {
       yOutput: y,
       orderValue: orderValue,
       orderBudget: totalOrderBudget,
-      refundableDeposit: refundableValuePart + refundableBugdetPart + additionalAdaForChange,
+      refundableDeposit: refundableValuePart + refundableBugdetPart,
       txFee: userTxFee || txFees.redeemOrder
     }
 
