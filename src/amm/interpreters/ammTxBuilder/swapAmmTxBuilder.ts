@@ -95,7 +95,11 @@ export class SwapAmmTxBuilder {
       }
       inputs = inputs.concat(additionalInput);
     }
-
+    console.log(
+      `output: ${refundableValuePart}`,
+      `input: ${refundableBugdetPart}`,
+      `change: ${additionalAdaForChange}`
+    )
     const txInfo: SwapTxInfo = {
       minExFee: extremums.minExFee,
       maxExFee: extremums.maxExFee,
