@@ -54,7 +54,7 @@ export class SwapAmmTxBuilder {
   async build(params: SwapParams, userTxFee?: bigint): Promise<[TxCandidate, SwapTxInfo]> {
     const {txFees, minExecutorReward, nitro, quote, base, changeAddress} = params
     const vars = swapVars(txFees, minExecutorReward, nitro, quote)
-
+    console.log('vars', vars);
     if (!vars) {
       throw new Error("amount is equals zero")
     }
@@ -66,16 +66,18 @@ export class SwapAmmTxBuilder {
       extremums.maxOutput,
       changeAddress
     )
+    console.log('value', refundableValuePart);
     const [orderValue, refundableBugdetPart] = this.getSwapOrderBudget(
       rawOrderValue,
       params,
       exFeePerToken,
       extremums
     )
+    console.log('budget', refundableBugdetPart);
     const totalOrderBudget = add(orderValue, AdaEntry(userTxFee || txFees.swapOrder))
-
+    console.log('total', totalOrderBudget);
     let inputs = await this.inputSelector.select(totalOrderBudget)
-
+    console.log('inputs', inputs);
     if (inputs instanceof Error) {
       throw new Error("insufficient funds")
     }
@@ -84,9 +86,10 @@ export class SwapAmmTxBuilder {
       sum(inputs.map(input => input.txOut.value)),
       orderValue
     );
+    console.log('change', estimatedChange);
 
     const [, additionalAdaForChange] = getChangeOrderValue(estimatedChange, changeAddress, this.txMath);
-
+    console.log('additional change', additionalAdaForChange);
     if (additionalAdaForChange) {
       const additionalInput = await this.inputSelector.select([AdaEntry(additionalAdaForChange)], inputs);
 
