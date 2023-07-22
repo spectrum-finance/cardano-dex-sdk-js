@@ -205,8 +205,7 @@ export function parseAssetClass(pd: PlutusData): AssetClass | undefined {
   const name = new TextDecoder().decode(ac.get(1).as_bytes()!)
   const hex = ac.get(1).to_hex()
 
-  console.log(ac, name, hex, policyId);
-  return {policyId, name, hex}
+  return {policyId, name, nameHex: hex}
 }
 
 function parseInteger(pd: PlutusData): bigint | undefined {

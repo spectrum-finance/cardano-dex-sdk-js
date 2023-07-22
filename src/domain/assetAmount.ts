@@ -27,6 +27,6 @@ export class AssetAmount {
   }
 
   static fromEntry(entry: AssetEntry): AssetAmount {
-    return new AssetAmount({policyId: entry.policyId, name: entry.name, hex: entry.hex}, entry.quantity)
+    return new AssetAmount({policyId: entry.policyId, name: entry.name, nameHex: entry.nameHex}, entry.quantity)
   }
 }
