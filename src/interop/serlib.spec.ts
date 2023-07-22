@@ -15,12 +15,14 @@ test("Encode/decode Value", async t => {
     {
       name: "MELD",
       policyId: "6ac8ef33b510ec004fe11585f7c5a9f0c07f0c23428ab4f29c1d7d10",
-      quantity: 95252n
+      quantity: 95252n,
+      hex: ''
     },
     {
       name: "",
       policyId: "",
-      quantity: 8069323n
+      quantity: 8069323n,
+      hex: ''
     }
   ])
   const encoded = encodeWasmValue(r, RustModule.CardanoWasm)
@@ -40,6 +42,7 @@ test("Encode/decode UTXO", async t => {
       {
         policyId: AdaPolicyId,
         name: AdaAssetName,
+        hex: '',
         quantity: 10788200n
       }
     ]
