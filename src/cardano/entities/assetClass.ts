@@ -1,9 +1,10 @@
 import {encodeHex} from "../../utils/hex"
-import {AssetName, PolicyId, Subject} from "../types"
+import {AssetName, HexString, PolicyId, Subject} from "../types"
 
 export type AssetClass = {
   policyId: PolicyId
   name: AssetName
+  hex: HexString;
 }
 
 export const mkSubject = ({policyId, name}: AssetClass): Subject =>

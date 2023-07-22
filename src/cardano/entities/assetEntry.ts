@@ -10,7 +10,7 @@ export type AssetEntry = {
 }
 
 export function assetEntryToClass(e: AssetEntry): AssetClass {
-  return {policyId: e.policyId, name: e.name}
+  return {policyId: e.policyId, name: e.name, hex: e.hex}
 }
 
 export function AdaEntry(quantity: Lovelace): AssetEntry {
