@@ -54,7 +54,6 @@ class CardanoTransactionMath implements TxMath {
   }
 
   private toTransactionOutput(o: TxOutCandidate): TransactionOutput {
-    console.log(o);
     const addr = this.R.Address.from_bech32(o.addr)
     const value = toWasmValue(o.value, this.R)
     const out = this.R.TransactionOutput.new(addr, value)
