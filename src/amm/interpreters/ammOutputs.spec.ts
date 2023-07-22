@@ -15,22 +15,22 @@ const poolTokens = {
   lq: {
     name: "pool_lq",
     policyId: "6c71",
-    hex:''
+    nameHex: ''
   },
   nft: {
     name: "pool_nft",
     policyId: "6e6674",
-    hex:''
+    nameHex:''
   },
   x: {
     name: "pool_x",
     policyId: "78",
-    hex:''
+    nameHex:''
   },
   y: {
     name: "pool_y",
     policyId: "79",
-    hex:''
+    nameHex: ''
   }
 }
 
