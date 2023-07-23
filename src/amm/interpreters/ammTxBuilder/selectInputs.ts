@@ -11,10 +11,16 @@ export const selectInputs = async (
   changeAddress: string,
   inputSelector: InputSelector,
   txMath: TxMath): Promise<FullTxIn[] | Error> => {
-  const inputs = await inputSelector.select(totalOrderBudget)
-  console.log(inputs, 'error');
+  let inputs: FullTxIn[] | Error;
+
+  try {
+    inputs = await inputSelector.select(totalOrderBudget);
+  } catch (e) {
+    console.log('error!');
+    return new Error("insufficient funds");
+  }
   if (inputs instanceof Error) {
-    throw new Error("insufficient funds")
+    return new Error("insufficient funds")
   }
 
   const normalizeChange = async (inputs: FullTxIn[]): Promise<FullTxIn[] | Error> => {
