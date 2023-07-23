@@ -12,7 +12,7 @@ export const selectInputs = async (
   inputSelector: InputSelector,
   txMath: TxMath): Promise<FullTxIn[] | Error> => {
   const inputs = await inputSelector.select(totalOrderBudget)
-
+  console.log(inputs, 'error');
   if (inputs instanceof Error) {
     throw new Error("insufficient funds")
   }
