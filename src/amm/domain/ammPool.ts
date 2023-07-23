@@ -3,7 +3,7 @@ import {AssetAmount} from "../../domain/assetAmount"
 import {Price} from "../../domain/price"
 import {EmissionLP} from "../constants"
 import {PoolId} from "./types"
-import {evaluate} from "../../utils/math"
+import {evaluate, math} from "../../utils/math"
 
 export class AmmPool {
   constructor(
@@ -79,8 +79,13 @@ export class AmmPool {
       output.amount <= this.x.amount
     ) {
       return this.y.withAmount(
-        (this.y.amount * output.amount * this.feeDenom * (10000n + slippage)) /
-        (10000n * (this.x.amount - output.amount) * this.feeNum)
+        BigInt(
+          math
+            .evaluate!(`(${this.y.amount} * ${output.amount} * ${this.feeDenom} * (${10000n} + ${slippage})) / (${10000n} * (${this.x.amount} - ${output.amount}) * ${this.feeNum})`)
+            .toFixed(0)
+        )
+        // (this.y.amount * output.amount * this.feeDenom * (10000n + slippage)) /
+        // (10000n * (this.x.amount - output.amount) * this.feeNum)
       )
     } else if (
       isAssetClassEquals(output.asset, this.y.asset) &&
@@ -88,8 +93,11 @@ export class AmmPool {
       output.amount <= this.y.amount
     ) {
       return this.x.withAmount(
-        (this.x.amount * output.amount * this.feeDenom * (10000n + slippage)) /
-        (10000n * (this.y.amount - output.amount) * this.feeNum)
+        BigInt(
+          math
+            .evaluate!(`(${this.x.amount} * ${output.amount} * ${this.feeDenom} * (${10000n} + ${slippage})) / (${10000n} * (${this.y.amount} - ${output.amount}) * ${this.feeNum})`)
+            .toFixed(0)
+        )
       )
     } else {
       return undefined
@@ -108,15 +116,19 @@ export class AmmPool {
       )
 
       return this.y.withAmount(
-        (this.y.amount * input.amount * this.feeNum) /
-        ((this.x.amount + (this.x.amount * slippage) / (100n * 100n)) * this.feeDenom +
-          input.amount * this.feeNum)
+        BigInt(
+          math
+            .evaluate!(`(${this.y.amount} * ${input.amount} * ${this.feeNum}) / ((${this.x.amount} + (${this.x.amount} * ${slippage}) / ${10000n}) * ${this.feeDenom} + ${input.amount} * ${this.feeNum}`)
+            .toFixed(0)
+        )
       )
     } else {
       return this.x.withAmount(
-        (this.x.amount * input.amount * this.feeNum) /
-        ((this.y.amount + (this.y.amount * slippage) / (100n * 100n)) * this.feeDenom +
-          input.amount * this.feeNum)
+        BigInt(
+          math
+            .evaluate!(`(${this.x.amount} * ${input.amount} * ${this.feeNum}) / ((${this.y.amount} + (${this.y.amount} * ${slippage}) / ${10000n}) * ${this.feeDenom} + ${input.amount} * ${this.feeNum}`)
+            .toFixed(0)
+        )
       )
     }
   }
