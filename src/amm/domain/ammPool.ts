@@ -112,13 +112,13 @@ export class AmmPool {
     const slippage = BigInt((maxSlippage || 0) * 100)
     if (isAssetClassEquals(input.asset, this.x.asset)) {
       console.log(
-        evaluate(`(${this.y.amount} * ${input.amount} * ${this.feeNum}) / ((${this.x.amount} + (${this.x.amount} * ${slippage}) / ${(100n * 100n)}))`)
+        evaluate(`(${this.x.amount} * ${input.amount} * ${this.feeNum}) / ((${this.y.amount} + (${this.y.amount} * ${slippage}) / ${10000n}) * ${this.feeDenom} + ${input.amount} * ${this.feeNum})`)
       )
 
       return this.y.withAmount(
         BigInt(
           math
-            .evaluate!(`(${this.y.amount} * ${input.amount} * ${this.feeNum}) / ((${this.x.amount} + (${this.x.amount} * ${slippage}) / ${10000n}) * ${this.feeDenom} + ${input.amount} * ${this.feeNum}`)
+            .evaluate!(`(${this.y.amount} * ${input.amount} * ${this.feeNum}) / ((${this.x.amount} + (${this.x.amount} * ${slippage}) / ${10000n}) * ${this.feeDenom} + ${input.amount} * ${this.feeNum})`)
             .toFixed(0)
         )
       )
