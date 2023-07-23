@@ -1,9 +1,9 @@
 import {isAssetClassEquals} from "../../cardano/entities/assetClass"
 import {AssetAmount} from "../../domain/assetAmount"
 import {Price} from "../../domain/price"
+import {math} from "../../utils/math"
 import {EmissionLP} from "../constants"
 import {PoolId} from "./types"
-import {evaluate, math} from "../../utils/math"
 
 export class AmmPool {
   constructor(
@@ -78,6 +78,7 @@ export class AmmPool {
       minimalOutput > 0 &&
       output.amount <= this.x.amount
     ) {
+      console.log('str:', `(${this.y.amount} * ${output.amount} * ${this.feeDenom} * (${10000n} + ${slippage})) / (${10000n} * (${this.x.amount} - ${output.amount}) * ${this.feeNum})`);
       return this.y.withAmount(
         BigInt(
           math
@@ -92,6 +93,7 @@ export class AmmPool {
       minimalOutput > 0 &&
       output.amount <= this.y.amount
     ) {
+      console.log('str: ', `(${this.x.amount} * ${output.amount} * ${this.feeDenom} * (${10000n} + ${slippage})) / (${10000n} * (${this.y.amount} - ${output.amount}) * ${this.feeNum})`)
       return this.x.withAmount(
         BigInt(
           math
@@ -112,7 +114,14 @@ export class AmmPool {
     const slippage = BigInt((maxSlippage || 0) * 100)
     if (isAssetClassEquals(input.asset, this.x.asset)) {
       console.log(
-        evaluate(`(${this.x.amount} * ${input.amount} * ${this.feeNum}) / ((${this.y.amount} + (${this.y.amount} * ${slippage}) / ${10000n}) * ${this.feeDenom} + ${input.amount} * ${this.feeNum})`)
+        `old: ${(this.y.amount * input.amount * this.feeNum) /
+        ((this.x.amount + (this.x.amount * slippage) / (100n * 100n)) * this.feeDenom +
+          input.amount * this.feeNum)}`,
+        `new: ${BigInt(
+          math
+            .evaluate!(`(${this.y.amount} * ${input.amount} * ${this.feeNum}) / ((${this.x.amount} + (${this.x.amount} * ${slippage}) / ${10000n}) * ${this.feeDenom} + ${input.amount} * ${this.feeNum})`)
+            .toFixed(0)
+        )}`
       )
 
       return this.y.withAmount(
@@ -123,6 +132,17 @@ export class AmmPool {
         )
       )
     } else {
+      console.log(
+        `old: ${(this.x.amount * input.amount * this.feeNum) /
+        ((this.y.amount + (this.y.amount * slippage) / (100n * 100n)) * this.feeDenom +
+          input.amount * this.feeNum)}`,
+        `new: ${BigInt(
+          math
+            .evaluate!(`(${this.x.amount} * ${input.amount} * ${this.feeNum}) / ((${this.y.amount} + (${this.y.amount} * ${slippage}) / ${10000n}) * ${this.feeDenom} + ${input.amount} * ${this.feeNum}`)
+            .toFixed(0)
+        )}`
+      )
+
       return this.x.withAmount(
         BigInt(
           math
