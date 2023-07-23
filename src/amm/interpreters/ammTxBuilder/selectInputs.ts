@@ -18,7 +18,7 @@ export const selectInputs = async (
   } catch (e) {
     return new Error("insufficient funds");
   }
-  if (inputs instanceof Error) {
+  if (inputs instanceof Error || !inputs.length) {
     return new Error("insufficient funds")
   }
 
@@ -39,7 +39,7 @@ export const selectInputs = async (
     } catch (e) {
       return new Error("insufficient funds")
     }
-    if (additionalInput instanceof Error) {
+    if (additionalInput instanceof Error || !additionalInput.length) {
       return new Error("insufficient funds")
     }
     return normalizeChange(inputs.concat(additionalInput));
