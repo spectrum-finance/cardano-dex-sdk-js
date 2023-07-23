@@ -11,10 +11,15 @@ export const selectInputs = async (
   changeAddress: string,
   inputSelector: InputSelector,
   txMath: TxMath): Promise<FullTxIn[] | Error> => {
-  const inputs = await inputSelector.select(totalOrderBudget)
+  let inputs: FullTxIn[] | Error;
 
+  try {
+    inputs = await inputSelector.select(totalOrderBudget);
+  } catch (e) {
+    return new Error("insufficient funds");
+  }
   if (inputs instanceof Error) {
-    throw new Error("insufficient funds")
+    return new Error("insufficient funds")
   }
 
   const normalizeChange = async (inputs: FullTxIn[]): Promise<FullTxIn[] | Error> => {
@@ -23,16 +28,21 @@ export const selectInputs = async (
       totalOrderBudget
     );
     const [, additionalAdaForChange] = getChangeOrderValue(estimatedChange, changeAddress, txMath);
-    if (additionalAdaForChange) {
-      const additionalInput = await inputSelector.select([AdaEntry(additionalAdaForChange)], inputs);
 
-      if (additionalInput instanceof Error) {
-        throw new Error("insufficient funds")
-      }
-      return normalizeChange(inputs.concat(additionalInput));
-    } else {
+    if (!additionalAdaForChange) {
       return Promise.resolve(inputs);
     }
+    let additionalInput: FullTxIn[] | Error;
+
+    try {
+      additionalInput = await inputSelector.select([AdaEntry(additionalAdaForChange)], inputs);
+    } catch (e) {
+      return new Error("insufficient funds")
+    }
+    if (additionalInput instanceof Error) {
+      return new Error("insufficient funds")
+    }
+    return normalizeChange(inputs.concat(additionalInput));
   }
 
   return normalizeChange(inputs);

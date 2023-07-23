@@ -16,6 +16,7 @@ import {OrderKind} from "../../models/opRequests"
 import {AmmActions} from "../ammActions"
 import {AmmOutputs} from "../ammOutputs"
 import {selectInputs} from "./selectInputs"
+import {FullTxIn} from "../../../cardano/entities/txIn"
 
 export interface RedeemParams {
   readonly lq: AssetAmount;
@@ -65,11 +66,8 @@ export class RedeemAmmTxBuilder {
     )
     const totalOrderBudget = add(orderValue, AdaEntry(userTxFee || txFees.redeemOrder))
 
-    const inputs = await selectInputs(totalOrderBudget, changeAddress, this.inputSelector, this.txMath);
-
-    if (inputs instanceof Error) {
-      throw new Error("insufficient funds")
-    }
+    const inputsOrError = await selectInputs(totalOrderBudget, changeAddress, this.inputSelector, this.txMath);
+    const inputs: FullTxIn[] = inputsOrError instanceof Error ? [] : inputsOrError;
 
     const txInfo: RedeemTxInfo = {
       exFee: exFee,
