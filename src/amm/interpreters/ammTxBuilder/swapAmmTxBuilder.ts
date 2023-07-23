@@ -18,6 +18,7 @@ import {OrderKind} from "../../models/opRequests"
 import {AmmActions} from "../ammActions"
 import {AmmOutputs} from "../ammOutputs"
 import {selectInputs} from "./selectInputs"
+import {FullTxIn} from "../../../cardano/entities/txIn"
 
 export interface SwapParams {
   readonly base: AssetAmount
@@ -74,11 +75,9 @@ export class SwapAmmTxBuilder {
     )
     const totalOrderBudget = add(orderValue, AdaEntry(userTxFee || txFees.swapOrder))
 
-    const inputs = await selectInputs(totalOrderBudget, changeAddress, this.inputSelector, this.txMath);
+    const inputsOrError = await selectInputs(totalOrderBudget, changeAddress, this.inputSelector, this.txMath);
+    const inputs: FullTxIn[] = inputsOrError instanceof Error ? [] : inputsOrError;
 
-    if (inputs instanceof Error) {
-      throw new Error("insufficient funds")
-    }
 
     const txInfo: SwapTxInfo = {
       minExFee: extremums.minExFee,
