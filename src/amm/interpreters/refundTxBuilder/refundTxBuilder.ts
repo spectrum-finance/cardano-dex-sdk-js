@@ -13,6 +13,7 @@ import {TxAsm} from "../../../cardano/wallet/txAsm"
 import {TxMath} from "../../../cardano/wallet/txMath"
 import {CardanoNetwork} from "../../../quickblue/cardanoNetwork"
 import {OpInRef} from "../../scripts"
+import {CardanoWasm} from "../../../utils/rustLoader"
 
 const FEE_REGEX = /fee (\d+)/;
 
@@ -49,6 +50,7 @@ export class RefundTxBuilder {
   constructor(private params: RefundTxBuilderParams,
               private inputSelector: InputSelector,
               private collateralSelector: CollateralSelector,
+              private R: CardanoWasm,
               private txMath: TxMath,
               private txAsm: TxAsm,
               private pparams: ProtocolParams,
@@ -146,7 +148,11 @@ export class RefundTxBuilder {
     }
     const refundOut: TxOutCandidate = {
       addr:  params.recipientAddress,
-      value: outputToRefund.value.map(item => ({ ...item, quantity: BigInt(item.quantity) }))
+      value: outputToRefund.value.map(item => ({
+        ...item,
+        quantity: BigInt(item.quantity),
+        nameHex:  this.R.AssetName.new(new TextEncoder().encode(item.name)).to_hex()
+      }))
     }
     const outputAdaWithoutFee = getLovelace(refundOut.value).amount - fee;
     const minAdaRequired = this.txMath.minAdaRequiredforOutput(refundOut);
