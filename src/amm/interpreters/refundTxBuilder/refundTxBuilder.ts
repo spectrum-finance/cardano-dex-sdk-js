@@ -122,9 +122,16 @@ export class RefundTxBuilder {
       return Promise.reject(`No AMM orders found in the given Tx{id=${params.txId}`)
     }
 
-    const outputToRefund = tx?.outputs.find(o => this.addressesToRefund.includes(o.addr))
+    let outputToRefund = tx?.outputs.find(o => this.addressesToRefund.includes(o.addr))
     if (!outputToRefund) {
       return Promise.reject(`No refundable outputs in Tx{id=${params.txId}`)
+    }
+    outputToRefund = {
+      ...outputToRefund,
+      value: outputToRefund.value.map(item => ({
+        ...item,
+        nameHex:  this.R.AssetName.new(new TextEncoder().encode(item.name)).to_hex()
+      }))
     }
 
     const collateral = await this
@@ -148,11 +155,7 @@ export class RefundTxBuilder {
     }
     const refundOut: TxOutCandidate = {
       addr:  params.recipientAddress,
-      value: outputToRefund.value.map(item => ({
-        ...item,
-        quantity: BigInt(item.quantity),
-        nameHex:  this.R.AssetName.new(new TextEncoder().encode(item.name)).to_hex()
-      }))
+      value: outputToRefund.value.map(item => ({...item, quantity: BigInt(item.quantity)}))
     }
     const outputAdaWithoutFee = getLovelace(refundOut.value).amount - fee;
     const minAdaRequired = this.txMath.minAdaRequiredforOutput(refundOut);
