@@ -147,11 +147,30 @@ export class DepositAmmTxBuilder {
     exFee: Lovelace,
     addr: Addr
   ): [Value, bigint] {
-    const estimatedExecutorOutTxCandidate: TxOutCandidate = {
+    const estimatedRewardOutTxCandidate: TxOutCandidate = {
       value: Value(0n, [output, inputX, inputY]),
       addr
     }
-    const requiredAdaForOutput = this.txMath.minAdaRequiredforOutput(estimatedExecutorOutTxCandidate);
+    const requiredAdaForOutput = this.txMath.minAdaRequiredforOutput(estimatedRewardOutTxCandidate);
+
+    console.log('reward v1', estimatedRewardOutTxCandidate, requiredAdaForOutput);
+
+
+    let amount = [output];
+    if (!inputX.isAda) {
+      amount = amount.concat(inputX);
+    }
+    if (!inputY.isAda) {
+      amount = amount.concat(inputY);
+    }
+    const estimatedRewardOutTxCandidateV2: TxOutCandidate = {
+      value: Value(0n, amount),
+      addr
+    }
+    const requiredAdaForOutputV2 = this.txMath.minAdaRequiredforOutput(estimatedRewardOutTxCandidate);
+
+    console.log('reward v2', estimatedRewardOutTxCandidateV2, requiredAdaForOutputV2);
+
     return [add(add(add(Value(requiredAdaForOutput), inputX.toEntry), inputY.toEntry), AdaEntry(exFee)), requiredAdaForOutput];
   }
 }
