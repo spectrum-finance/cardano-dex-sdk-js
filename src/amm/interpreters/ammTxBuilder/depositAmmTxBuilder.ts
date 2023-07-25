@@ -151,28 +151,20 @@ export class DepositAmmTxBuilder {
     const isXAda = inputX.asset.policyId === AdaPolicyId && inputX.asset.name === AdaAssetName;
     const isYAda = inputY.asset.policyId === AdaPolicyId && inputY.asset.name === AdaAssetName;
 
-    let amounts: AssetAmount[] = [output];
-    if (!isXAda) {
-      amounts = amounts.concat(inputX);
-    }
-    if (!isYAda) {
-      amounts = amounts.concat(inputX);
-    }
-
-    const estimatedExecutorOutTxCandidateWithoutAda: TxOutCandidate = {
-      value: Value(0n, amounts),
+    const estimatedExecutorOutTxCandidate: TxOutCandidate = {
+      value: Value(0n, [output, inputX, inputY]),
       addr
     }
-    const requiredAdaForOutputWithoutAda = this.txMath.minAdaRequiredforOutput(estimatedExecutorOutTxCandidateWithoutAda);
-    console.log(estimatedExecutorOutTxCandidateWithoutAda, requiredAdaForOutputWithoutAda);
-
-    const estimatedExecutorOutTxCandidateWithAda: TxOutCandidate = {
-      value: Value(requiredAdaForOutputWithoutAda, amounts),
-      addr
+    const requiredAdaForOutput = this.txMath.minAdaRequiredforOutput(estimatedExecutorOutTxCandidate);
+    console.log(estimatedExecutorOutTxCandidate, requiredAdaForOutput);
+    if (isXAda) {
+      console.log(requiredAdaForOutput - inputX.amount, inputX);
+      return [add(add(add(Value(requiredAdaForOutput - inputX.amount), inputX.toEntry), inputY.toEntry), AdaEntry(exFee)), requiredAdaForOutput - inputX.amount];
     }
-    const requiredAdaForOutput = this.txMath.minAdaRequiredforOutput(estimatedExecutorOutTxCandidateWithAda);
-    console.log(estimatedExecutorOutTxCandidateWithAda, requiredAdaForOutput);
-
+    if (isYAda) {
+      console.log(requiredAdaForOutput - inputY.amount, inputY);
+      return [add(add(add(Value(requiredAdaForOutput - inputY.amount), inputX.toEntry), inputY.toEntry), AdaEntry(exFee)), requiredAdaForOutput - inputY.amount];
+    }
     return [add(add(add(Value(requiredAdaForOutput), inputX.toEntry), inputY.toEntry), AdaEntry(exFee)), requiredAdaForOutput];
   }
 }
