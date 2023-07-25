@@ -17,6 +17,7 @@ import {AmmActions} from "../ammActions"
 import {AmmOutputs} from "../ammOutputs"
 import {selectInputs} from "./selectInputs"
 import {FullTxIn} from "../../../cardano/entities/txIn"
+import {AdaAssetName, AdaPolicyId} from "../../../cardano/constants"
 
 export interface DepositParams {
   readonly x: AssetAmount;
@@ -147,17 +148,31 @@ export class DepositAmmTxBuilder {
     exFee: Lovelace,
     addr: Addr
   ): [Value, bigint] {
+    const isXAda = inputX.asset.policyId === AdaPolicyId && inputX.asset.name === AdaAssetName;
+    const isYAda = inputY.asset.policyId === AdaPolicyId && inputY.asset.name === AdaAssetName;
+
+    let amounts: AssetAmount[] = [output];
+    if (!isXAda) {
+      amounts = amounts.concat(inputX);
+    }
+    if (!isYAda) {
+      amounts = amounts.concat(inputX);
+    }
+
     const estimatedExecutorOutTxCandidateWithoutAda: TxOutCandidate = {
-      value: Value(0n, output),
+      value: Value(0n, amounts),
       addr
     }
     const requiredAdaForOutputWithoutAda = this.txMath.minAdaRequiredforOutput(estimatedExecutorOutTxCandidateWithoutAda);
+    console.log(estimatedExecutorOutTxCandidateWithoutAda, requiredAdaForOutputWithoutAda);
 
     const estimatedExecutorOutTxCandidateWithAda: TxOutCandidate = {
-      value: Value(requiredAdaForOutputWithoutAda, output),
+      value: Value(requiredAdaForOutputWithoutAda, amounts),
       addr
     }
     const requiredAdaForOutput = this.txMath.minAdaRequiredforOutput(estimatedExecutorOutTxCandidateWithAda);
+    console.log(estimatedExecutorOutTxCandidateWithAda, requiredAdaForOutput);
+
     return [add(add(add(Value(requiredAdaForOutput), inputX.toEntry), inputY.toEntry), AdaEntry(exFee)), requiredAdaForOutput];
   }
 }
