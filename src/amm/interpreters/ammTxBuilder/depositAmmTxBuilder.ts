@@ -3,6 +3,7 @@ import {AdaEntry} from "../../../cardano/entities/assetEntry"
 import {PubKeyHash} from "../../../cardano/entities/publicKey"
 import {stakeKeyHashFromAddr} from "../../../cardano/entities/stakeKey"
 import {TxCandidate} from "../../../cardano/entities/tx"
+import {FullTxIn} from "../../../cardano/entities/txIn"
 import {TxOutCandidate} from "../../../cardano/entities/txOut"
 import {add, getLovelace, Value} from "../../../cardano/entities/value"
 import {Lovelace} from "../../../cardano/types"
@@ -16,7 +17,6 @@ import {OrderKind} from "../../models/opRequests"
 import {AmmActions} from "../ammActions"
 import {AmmOutputs} from "../ammOutputs"
 import {selectInputs} from "./selectInputs"
-import {FullTxIn} from "../../../cardano/entities/txIn"
 
 export interface DepositParams {
   readonly x: AssetAmount;
@@ -147,17 +147,11 @@ export class DepositAmmTxBuilder {
     exFee: Lovelace,
     addr: Addr
   ): [Value, bigint] {
-    const estimatedExecutorOutTxCandidateWithoutAda: TxOutCandidate = {
-      value: Value(0n, output),
+    const estimatedExecutorOutTxCandidate: TxOutCandidate = {
+      value: Value(0n, [output, inputX, inputY]),
       addr
     }
-    const requiredAdaForOutputWithoutAda = this.txMath.minAdaRequiredforOutput(estimatedExecutorOutTxCandidateWithoutAda);
-
-    const estimatedExecutorOutTxCandidateWithAda: TxOutCandidate = {
-      value: Value(requiredAdaForOutputWithoutAda, output),
-      addr
-    }
-    const requiredAdaForOutput = this.txMath.minAdaRequiredforOutput(estimatedExecutorOutTxCandidateWithAda);
+    const requiredAdaForOutput = this.txMath.minAdaRequiredforOutput(estimatedExecutorOutTxCandidate);
     return [add(add(add(Value(requiredAdaForOutput), inputX.toEntry), inputY.toEntry), AdaEntry(exFee)), requiredAdaForOutput];
   }
 }
