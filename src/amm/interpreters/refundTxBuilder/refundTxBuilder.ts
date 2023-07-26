@@ -12,7 +12,7 @@ import {InputSelector} from "../../../cardano/wallet/inputSelector"
 import {TxAsm} from "../../../cardano/wallet/txAsm"
 import {TxMath} from "../../../cardano/wallet/txMath"
 import {CardanoNetwork} from "../../../quickblue/cardanoNetwork"
-import {OpInRef} from "../../scripts"
+import {datumRewardPKHIndex, OpInRef} from "../../scripts"
 import {CardanoWasm} from "../../../utils/rustLoader"
 
 const FEE_REGEX = /fee (\d+)/;
@@ -47,6 +47,8 @@ export class RefundTxBuilder {
 
   private mapRefundAddressToOpInRef: {[key: string]: OpInRef}
 
+  private mapRefundAddressToDatumRewardPKHIdex: {[key: string]: number}
+
   constructor(private params: RefundTxBuilderParams,
               private inputSelector: InputSelector,
               private collateralSelector: CollateralSelector,
@@ -69,6 +71,11 @@ export class RefundTxBuilder {
       [this.params.deposit.address]: this.params.deposit.opInRef,
       [this.params.swap.address]:    this.params.swap.opInRef,
       [this.params.redeem.address]:  this.params.redeem.opInRef
+    }
+    this.mapRefundAddressToDatumRewardPKHIdex = {
+      [this.params.deposit.address]: datumRewardPKHIndex.ammDeposit,
+      [this.params.swap.address]:    datumRewardPKHIndex.ammSwap,
+      [this.params.redeem.address]:  datumRewardPKHIndex.ammRedeem
     }
   }
 
@@ -135,6 +142,15 @@ export class RefundTxBuilder {
       }))
     }
 
+    const rewardPKHDatumIndex = this.mapRefundAddressToDatumRewardPKHIdex[outputToRefund.addr]
+    console.log(
+      'addr:', outputToRefund.addr,
+      'index:', rewardPKHDatumIndex,
+      'datum', outputToRefund.data,
+      'datumItem', outputToRefund.data?.[rewardPKHDatumIndex]
+
+    )
+
     const collateral = await this
       .collateralSelector
       .getCollateral(params.collateralAmount || this.params.defaultCollateralAmount);
@@ -182,7 +198,14 @@ export class RefundTxBuilder {
     if (adaDiff <= 0) {
       return Promise.resolve(this.buildCandidateWithoutUserInputs(params, refundInput, refundOutput, collateral, fee));
     }
-    const inputs = await this.inputSelector.select([AdaEntry(adaDiff)]);
+
+    let inputs: FullTxIn[] | Error;
+
+    try {
+      inputs = await this.inputSelector.select([AdaEntry(adaDiff)]);
+    } catch (e) {
+      return Promise.reject('insufficient balance for refund');
+    }
 
     if (inputs instanceof Error) {
       return Promise.reject('insufficient balance for refund');
