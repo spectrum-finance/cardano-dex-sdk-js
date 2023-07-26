@@ -28,13 +28,15 @@ class DefaultTxAsm implements TxAsm {
   finalize(candidate: TxCandidate): Transaction {
     const txBuilder = this.R.TransactionBuilder.new(this.getTxBuilderConfig(this.env.pparams))
 
-    const userAddressKeyHash = candidate.requiredSigner ?
+    const userAddressKeyHash = this.toKeyHash(candidate.changeAddr)
+    const additionalKeyHash = candidate.requiredSigner ?
       this.R.Ed25519KeyHash.from_hex(candidate.requiredSigner) :
-      this.toKeyHash(candidate.changeAddr)
-
+      undefined;
     if (userAddressKeyHash) {
-      console.log(userAddressKeyHash);
       txBuilder.add_required_signer(userAddressKeyHash)
+    }
+    if (additionalKeyHash) {
+      txBuilder.add_required_signer(additionalKeyHash);
     }
     if (candidate.collateral) {
       txBuilder.set_collateral(this.getCollateralBuilder(candidate.collateral))
