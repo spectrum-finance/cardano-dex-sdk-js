@@ -144,13 +144,6 @@ export class RefundTxBuilder {
 
     const rewardPKHDatumIndex = this.mapRefundAddressToDatumRewardPKHIdex[outputToRefund.addr];
     const rewardPKH = outputToRefund.data?.fields[rewardPKHDatumIndex].bytes;
-    console.log(
-      'addr:', outputToRefund.addr,
-      'index:', rewardPKHDatumIndex,
-      'datum', outputToRefund.data,
-      'datumItem', rewardPKH
-
-    )
 
     const collateral = await this
       .collateralSelector
@@ -179,9 +172,9 @@ export class RefundTxBuilder {
     const minAdaRequired = this.txMath.minAdaRequiredforOutput(refundOut);
 
     if (minAdaRequired > outputAdaWithoutFee) {
-      return this.buildCandidateWithUserInputs(params, input, refundOut, collateral, fee, minAdaRequired, outputAdaWithoutFee)
+      return this.buildCandidateWithUserInputs(params, input, refundOut, collateral, fee, minAdaRequired, outputAdaWithoutFee, rewardPKH)
     } else {
-      return Promise.resolve(this.buildCandidateWithoutUserInputs(params, input, refundOut, collateral, fee))
+      return Promise.resolve(this.buildCandidateWithoutUserInputs(params, input, refundOut, collateral, fee, rewardPKH))
     }
   }
 
@@ -193,11 +186,12 @@ export class RefundTxBuilder {
     fee: bigint,
     minAdaRequired: bigint,
     outputAdaWithoutFee: bigint,
+    requiredSigner: string
   ): Promise<TxCandidate> {
     const adaDiff = minAdaRequired - outputAdaWithoutFee;
 
     if (adaDiff <= 0) {
-      return Promise.resolve(this.buildCandidateWithoutUserInputs(params, refundInput, refundOutput, collateral, fee));
+      return Promise.resolve(this.buildCandidateWithoutUserInputs(params, refundInput, refundOutput, collateral, fee, requiredSigner));
     }
 
     let inputs: FullTxIn[] | Error;
@@ -225,7 +219,8 @@ export class RefundTxBuilder {
       outputs:    [normalizedRefundOutput],
       valueMint:  emptyValue,
       changeAddr: params.recipientAddress,
-      collateral: collateral
+      collateral: collateral,
+      requiredSigner
     }
   }
 
@@ -235,6 +230,7 @@ export class RefundTxBuilder {
     refundOutput: TxOutCandidate,
     collateral: FullTxIn[],
     fee: bigint,
+    requiredSigner: string
   ): TxCandidate {
     const normalizedRefundOutput: TxOutCandidate = {
       addr:  refundOutput.addr,
@@ -248,7 +244,8 @@ export class RefundTxBuilder {
       outputs:    [normalizedRefundOutput],
       valueMint:  emptyValue,
       changeAddr: params.recipientAddress,
-      collateral: collateral
+      collateral: collateral,
+      requiredSigner
     }
   }
 }
