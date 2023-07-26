@@ -142,12 +142,13 @@ export class RefundTxBuilder {
       }))
     }
 
-    const rewardPKHDatumIndex = this.mapRefundAddressToDatumRewardPKHIdex[outputToRefund.addr]
+    const rewardPKHDatumIndex = this.mapRefundAddressToDatumRewardPKHIdex[outputToRefund.addr];
+    const rewardPKH = outputToRefund.data?.fields[rewardPKHDatumIndex].bytes;
     console.log(
       'addr:', outputToRefund.addr,
       'index:', rewardPKHDatumIndex,
       'datum', outputToRefund.data,
-      'datumItem', outputToRefund.data?.[rewardPKHDatumIndex]
+      'datumItem', rewardPKH
 
     )
 

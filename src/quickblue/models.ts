@@ -21,7 +21,7 @@ export type QuickblueTxOut = {
   dataHash?: Hash32
   spentByTxHash?: HexString
   dataBin?: HexString
-  data?: any[]
+  data?: any
 }
 
 const toBigInt = (v: number) => BigInt(v)
