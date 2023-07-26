@@ -170,7 +170,7 @@ export class RefundTxBuilder {
     }
     const outputAdaWithoutFee = getLovelace(refundOut.value).amount - fee;
     const minAdaRequired = this.txMath.minAdaRequiredforOutput(refundOut);
-
+    console.log(minAdaRequired, outputAdaWithoutFee, fee, getLovelace(refundOut.value));
     if (minAdaRequired > outputAdaWithoutFee) {
       return this.buildCandidateWithUserInputs(params, input, refundOut, collateral, fee, minAdaRequired, outputAdaWithoutFee, rewardPKH)
     } else {
