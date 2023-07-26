@@ -43,6 +43,12 @@ export type OpInRefs = {
   ammRedeem: OpInRef;
 }
 
+export type DatumRewardPKHIndex = {
+  ammSwap: number;
+  ammDeposit: number;
+  ammRedeem: number;
+}
+
 export const OpInRefsPreviewV1: OpInRefs = {
   ammSwap: {
     opInRefHash: 'b2f79375bf73234bb988cfdb911c78ac4e9b5470197e828d507babfdcca08d16',
@@ -56,6 +62,12 @@ export const OpInRefsPreviewV1: OpInRefs = {
     opInRefHash: 'b2f79375bf73234bb988cfdb911c78ac4e9b5470197e828d507babfdcca08d16',
     opInRefIndex: 1
   }
+}
+
+export const datumRewardPKHIndex: DatumRewardPKHIndex = {
+  ammSwap: 6,
+  ammDeposit: 5,
+  ammRedeem: 5
 }
 
 export const OpInRefsMainnetV1: OpInRefs = {
