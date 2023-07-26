@@ -38,7 +38,11 @@ class DefaultTxCompletionPipeline implements TxCompletionPipeline {
 
     const fullWits = unsignedTx.witness_set();
     const vKeys = witsWithSign.vkeys();
-    console.log(witsWithSign);
+    console.log(
+      'not signed: ', fullWits,
+      '\n',
+      'signed: ', witsWithSign, vKeys
+    )
     if (vKeys) {
       fullWits.set_vkeys(vKeys);
     }
