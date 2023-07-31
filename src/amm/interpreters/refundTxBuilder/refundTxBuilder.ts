@@ -84,12 +84,12 @@ export class RefundTxBuilder {
     currentTry = 1,
     bestTransaction?: Transaction | null,
     prevTxFee?: bigint
-  ): Promise<[TxCandidate, Transaction | null]> {
+  ): Promise<[TxCandidate, Transaction | null, Error | null]> {
     if (currentTry >= MAX_TRANSACTION_BUILDING_TRY_COUNT && bestTransaction) {
       const refundTxCandidate: TxCandidate = await this
         .buildRefundTxCandidate(params, BigInt(bestTransaction.body().fee().to_str()))
 
-      return [refundTxCandidate, bestTransaction]
+      return [refundTxCandidate, bestTransaction, null]
     }
 
     const refundTxCandidate = await this.buildRefundTxCandidate(params, prevTxFee);
@@ -99,7 +99,7 @@ export class RefundTxBuilder {
       const txFee = BigInt(transaction.body().fee().to_str())
 
       if (prevTxFee === txFee) {
-        return [refundTxCandidate, transaction]
+        return [refundTxCandidate, transaction, null]
       } else {
         const newBestTxData: Transaction | null | undefined = !!prevTxFee && txFee < prevTxFee ?
           transaction :
@@ -114,7 +114,7 @@ export class RefundTxBuilder {
         console.log(e, 'fee_regex')
         return this.refund(params, currentTry + 1, bestTransaction, this.getFeeFromError(e));
       }
-      return [refundTxCandidate, null];
+      return [refundTxCandidate, null, e];
     }
   }
 
