@@ -114,7 +114,6 @@ export class RefundTxBuilder {
         console.log(e, 'fee_regex')
         return this.refund(params, currentTry + 1, bestTransaction, this.getFeeFromError(e));
       }
-      console.log(refundTxCandidate, null, e);
       return [refundTxCandidate, null, e];
     }
   }
