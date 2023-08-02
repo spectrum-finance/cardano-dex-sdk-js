@@ -14,6 +14,7 @@ import {TxMath} from "../../../cardano/wallet/txMath"
 import {CardanoNetwork} from "../../../quickblue/cardanoNetwork"
 import {datumRewardPKHIndex, OpInRef} from "../../scripts"
 import {CardanoWasm} from "../../../utils/rustLoader"
+import {extractPaymentCred} from "../../../cardano/entities/address"
 
 const FEE_REGEX = /fee (\d+)/;
 
@@ -164,29 +165,38 @@ export class RefundTxBuilder {
         opInRef:   this.mapRefundAddressToOpInRef[outputToRefund.addr]
       }
     }
-    const userInput = tx.inputs.find(input => input.out.paymentCred === rewardPKH);
 
-    if (!userInput) {
-      throw new Error('no user input found');
+    let rewardAddress: string;
+
+    if (rewardPKH === extractPaymentCred(params.recipientAddress, this.R)) {
+      rewardAddress = params.recipientAddress;
+    } else {
+      const userInput = tx.inputs.find(input => input.out.paymentCred === rewardPKH);
+      if (!userInput) {
+        throw new Error('no user input found');
+      }
+      console.log(userInput);
+
+      rewardAddress = userInput.out.addr;
     }
-    console.log(userInput);
 
     const refundOut: TxOutCandidate = {
-      addr:  userInput.out.addr,
+      addr:  rewardAddress,
       value: outputToRefund.value.map(item => ({...item, quantity: BigInt(item.quantity)}))
     }
     const outputAdaWithoutFee = getLovelace(refundOut.value).amount - fee;
     const minAdaRequired = this.txMath.minAdaRequiredforOutput(refundOut);
     console.log(minAdaRequired, outputAdaWithoutFee, fee, getLovelace(refundOut.value));
     if (minAdaRequired > outputAdaWithoutFee) {
-      return this.buildCandidateWithUserInputs(params, input, refundOut, collateral, fee, minAdaRequired, outputAdaWithoutFee, rewardPKH)
+      return this.buildCandidateWithUserInputs(params, rewardAddress, input, refundOut, collateral, fee, minAdaRequired, outputAdaWithoutFee, rewardPKH)
     } else {
-      return Promise.resolve(this.buildCandidateWithoutUserInputs(params, input, refundOut, collateral, fee, rewardPKH))
+      return Promise.resolve(this.buildCandidateWithoutUserInputs(params, rewardAddress, input, refundOut, collateral, fee, rewardPKH))
     }
   }
 
   private async buildCandidateWithUserInputs (
     params: RefundParams,
+    rewardAddress: string,
     refundInput: FullTxIn,
     refundOutput: TxOutCandidate,
     collateral: FullTxIn[],
@@ -198,7 +208,7 @@ export class RefundTxBuilder {
     const adaDiff = minAdaRequired - outputAdaWithoutFee;
 
     if (adaDiff <= 0) {
-      return Promise.resolve(this.buildCandidateWithoutUserInputs(params, refundInput, refundOutput, collateral, fee, requiredSigner));
+      return Promise.resolve(this.buildCandidateWithoutUserInputs(params, rewardAddress, refundInput, refundOutput, collateral, fee, requiredSigner));
     }
 
     let inputs: FullTxIn[] | Error;
@@ -225,7 +235,7 @@ export class RefundTxBuilder {
       inputs:     [refundInput, ...inputs],
       outputs:    [normalizedRefundOutput],
       valueMint:  emptyValue,
-      changeAddr: params.recipientAddress,
+      changeAddr: rewardAddress,
       collateral: collateral,
       requiredSigner
     }
@@ -233,12 +243,14 @@ export class RefundTxBuilder {
 
   private buildCandidateWithoutUserInputs (
     params: RefundParams,
+    rewardAddress: string,
     refundInput: FullTxIn,
     refundOutput: TxOutCandidate,
     collateral: FullTxIn[],
     fee: bigint,
     requiredSigner: string
   ): TxCandidate {
+    console.log(params);
     const normalizedRefundOutput: TxOutCandidate = {
       addr:  refundOutput.addr,
       value: refundOutput.value.map(item => item.policyId === AdaPolicyId && item.name === AdaAssetName ?
@@ -250,7 +262,7 @@ export class RefundTxBuilder {
       inputs:     [refundInput],
       outputs:    [normalizedRefundOutput],
       valueMint:  emptyValue,
-      changeAddr: params.recipientAddress,
+      changeAddr: rewardAddress,
       collateral: collateral,
       requiredSigner
     }
