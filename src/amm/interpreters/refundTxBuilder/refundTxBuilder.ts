@@ -164,8 +164,15 @@ export class RefundTxBuilder {
         opInRef:   this.mapRefundAddressToOpInRef[outputToRefund.addr]
       }
     }
+    const userInput = tx.inputs.find(input => input.out.paymentCred === rewardPKH);
+
+    if (!userInput) {
+      throw new Error('no user input found');
+    }
+    console.log(userInput);
+
     const refundOut: TxOutCandidate = {
-      addr:  params.recipientAddress,
+      addr:  userInput.out.addr,
       value: outputToRefund.value.map(item => ({...item, quantity: BigInt(item.quantity)}))
     }
     const outputAdaWithoutFee = getLovelace(refundOut.value).amount - fee;
