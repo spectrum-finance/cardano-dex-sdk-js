@@ -107,8 +107,8 @@ class DefaultTxAsm implements TxAsm {
         this.R.BigNum.one(),
         this.R.PlutusData.from_hex(consumeScript.redeemer),
         this.R.ExUnits.new(
-          this.R.BigNum.from_str("300000"),
-          this.R.BigNum.from_str("150000000")
+          this.R.BigNum.from_str(consumeScript.mem),
+          this.R.BigNum.from_str(consumeScript.steps)
         )
       )
     )
