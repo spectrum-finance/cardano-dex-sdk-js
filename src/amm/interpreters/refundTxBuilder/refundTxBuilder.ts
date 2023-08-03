@@ -34,8 +34,8 @@ export interface RefundTxBuilderParams {
   readonly defaultCollateralAmount: bigint;
 }
 
-const DEFAULT_EX_UNITS_MEM = "10000000";
-const DEFAULT_EX_UNITS_STEPS = "9000000000";
+export const DEFAULT_EX_UNITS_MEM = "10000000";
+export const DEFAULT_EX_UNITS_STEPS = "9000000000";
 
 export interface ExUnitsDescriptor {
   readonly mem: string;
