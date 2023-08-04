@@ -117,17 +117,7 @@ export function parseDepositConfig(raw: Datum, R: CardanoWasm): DepositConfig | 
     const stakePkh = stakePkhPd ? paseByteString(stakePkhPd) : undefined
     const collateralAda = parseInteger(constr.get(7))
 
-    console.log(
-      poolId,
-      x,
-      y,
-      lq,
-      exFee,
-      rewardPkh,
-      collateralAda
-    );
-
-    return poolId && x && y && lq && exFee && rewardPkh && collateralAda
+    return poolId && x && y && lq && exFee && rewardPkh && collateralAda !== undefined
       ? {poolId, x, y, lq, exFee, rewardPkh, stakePkh, collateralAda}
       : undefined
   } else {
