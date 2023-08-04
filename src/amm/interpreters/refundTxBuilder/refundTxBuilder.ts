@@ -228,24 +228,16 @@ export class RefundTxBuilder {
       if (!rewardAddrData) {
         throw new Error('no valid reward data');
       }
-      console.log('rewardPKH ', rewardPKH);
-      console.log('rewardAddrData ', rewardAddrData);
-      const paymentCredential = this.R.StakeCredential.from_keyhash(this.R.Ed25519KeyHash.from_bech32(rewardAddrData[0]));
-      console.log(paymentCredential, paymentCredential.to_hex());
-      const stakeCredential =  rewardAddrData[1] ? this.R.StakeCredential.from_keyhash(this.R.Ed25519KeyHash.from_bech32(rewardAddrData[1])) : undefined;
-      console.log(stakeCredential, stakeCredential?.to_hex());
+      const paymentCredential = this.R.StakeCredential
+        .from_keyhash(this.R.Ed25519KeyHash.from_hex(rewardAddrData[0]));
+      const stakeCredential =  rewardAddrData[1] ?
+        this.R.StakeCredential.from_keyhash(this.R.Ed25519KeyHash.from_hex(rewardAddrData[1])) :
+        undefined;
       const addr = stakeCredential ?
         this.R.BaseAddress.new(this.R.NetworkIdKind.Mainnet, paymentCredential, stakeCredential) :
-        this.R.RewardAddress.new(this.R.NetworkIdKind.Mainnet, paymentCredential);
+        this.R.EnterpriseAddress.new(this.R.NetworkIdKind.Mainnet, paymentCredential);
 
-      console.log('addr1 ', addr)
-      console.log('addr2 ', addr.to_address().to_bech32(),  addr.to_address().to_bytes(), addr.to_address().to_hex());
-
-      const userInput = tx.inputs.find(input => input.out.paymentCred === rewardPKH)
-      if (!userInput) {
-        throw new Error("no user input found")
-      }
-      rewardAddress = userInput.out.addr
+      rewardAddress = addr.to_address().to_bech32();
     }
 
     const refundOut: TxOutCandidate = {
