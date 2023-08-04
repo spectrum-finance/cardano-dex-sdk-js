@@ -7,7 +7,7 @@ import {TxCandidate} from "../../../cardano/entities/tx"
 import {FullTxIn} from "../../../cardano/entities/txIn"
 import {TxOutCandidate} from "../../../cardano/entities/txOut"
 import {emptyValue, getLovelace, sum} from "../../../cardano/entities/value"
-import {HexString} from "../../../cardano/types"
+import {Datum, HexString} from "../../../cardano/types"
 import {CollateralSelector} from "../../../cardano/wallet/collateralSelector"
 import {InputSelector} from "../../../cardano/wallet/inputSelector"
 import {TxAsm} from "../../../cardano/wallet/txAsm"
@@ -16,6 +16,7 @@ import {CardanoNetwork} from "../../../quickblue/cardanoNetwork"
 import {QuickblueTx, QuickblueTxOut} from "../../../quickblue/models"
 import {CardanoWasm} from "../../../utils/rustLoader"
 import {datumRewardPKHIndex, OpInRef} from "../../scripts"
+import {parseDepositConfig, parseRedeemConfig, parseSwapConfig} from "../../contractData"
 
 const FEE_REGEX = /fee (\d+)/
 
@@ -34,8 +35,8 @@ export interface RefundTxBuilderParams {
   readonly defaultCollateralAmount: bigint;
 }
 
-export const DEFAULT_EX_UNITS_MEM = "10000000";
-export const DEFAULT_EX_UNITS_STEPS = "9000000000";
+export const DEFAULT_EX_UNITS_MEM = "10000000"
+export const DEFAULT_EX_UNITS_STEPS = "9000000000"
 
 export interface ExUnitsDescriptor {
   readonly mem: string;
@@ -44,6 +45,26 @@ export interface ExUnitsDescriptor {
 
 export interface ExUnitsCalculator {
   calculateExUnits: (tx: QuickblueTx, outToRefund: QuickblueTxOut) => Promise<ExUnitsDescriptor>
+}
+
+export type PKHParser = (datum: Datum, R: CardanoWasm) => [HexString, HexString | undefined] | undefined
+
+export const depositParser: PKHParser = (datum, R: CardanoWasm) => {
+  const parsedDatum = parseDepositConfig(datum, R);
+
+  return parsedDatum ? [parsedDatum.rewardPkh, parsedDatum.stakePkh] : undefined;
+}
+
+export const swapParser: PKHParser = (datum, R: CardanoWasm) => {
+  const parsedDatum = parseSwapConfig(datum, R);
+
+  return parsedDatum ? [parsedDatum.rewardPkh, parsedDatum.stakePkh] : undefined;
+}
+
+export const redeemParser: PKHParser = (datum, R: CardanoWasm) => {
+  const parsedDatum = parseRedeemConfig(datum, R);
+
+  return parsedDatum ? [parsedDatum.rewardPkh, parsedDatum.stakePkh] : undefined;
 }
 
 export interface RefundParams {
@@ -62,6 +83,8 @@ export class RefundTxBuilder {
   private mapRefundAddressToOpInRef: {[key: string]: OpInRef}
 
   private mapRefundAddressToDatumRewardPKHIdex: {[key: string]: number}
+
+  private mapRefundAddressToDatumPkhParser: {[key: string]: PKHParser}
 
   constructor(private params: RefundTxBuilderParams,
               private inputSelector: InputSelector,
@@ -91,6 +114,11 @@ export class RefundTxBuilder {
       [this.params.deposit.address]: datumRewardPKHIndex.ammDeposit,
       [this.params.swap.address]:    datumRewardPKHIndex.ammSwap,
       [this.params.redeem.address]:  datumRewardPKHIndex.ammRedeem
+    }
+    this.mapRefundAddressToDatumPkhParser = {
+      [this.params.deposit.address]: depositParser,
+      [this.params.swap.address]:    swapParser,
+      [this.params.redeem.address]:  redeemParser
     }
   }
 
@@ -159,6 +187,9 @@ export class RefundTxBuilder {
 
     const rewardPKHDatumIndex = this.mapRefundAddressToDatumRewardPKHIdex[outputToRefund.addr]
     const rewardPKH = outputToRefund.data?.fields[rewardPKHDatumIndex].bytes
+    const rewardAddressData = this.mapRefundAddressToDatumPkhParser[outputToRefund.addr](outputToRefund.dataBin!, this.R);
+
+    console.log(rewardAddressData, rewardPKH);
 
     const collateral = await this
       .collateralSelector
@@ -170,12 +201,12 @@ export class RefundTxBuilder {
       return Promise.reject(`Too many collateral inputs`)
     }
 
-    let exUnits: ExUnitsDescriptor;
+    let exUnits: ExUnitsDescriptor
 
     try {
-      exUnits = await this.exUnitsCalculator.calculateExUnits(tx, outputToRefund);
+      exUnits = await this.exUnitsCalculator.calculateExUnits(tx, outputToRefund)
     } catch {
-      exUnits = { mem: DEFAULT_EX_UNITS_MEM, steps: DEFAULT_EX_UNITS_STEPS };
+      exUnits = {mem: DEFAULT_EX_UNITS_MEM, steps: DEFAULT_EX_UNITS_STEPS}
     }
 
     const input: FullTxIn = {
@@ -199,8 +230,6 @@ export class RefundTxBuilder {
       if (!userInput) {
         throw new Error("no user input found")
       }
-      console.log(userInput)
-
       rewardAddress = userInput.out.addr
     }
 
@@ -210,7 +239,7 @@ export class RefundTxBuilder {
     }
     const outputAdaWithoutFee = getLovelace(refundOut.value).amount - fee
     const minAdaRequired = this.txMath.minAdaRequiredforOutput(refundOut)
-    console.log(minAdaRequired, outputAdaWithoutFee, fee, getLovelace(refundOut.value))
+
     if (minAdaRequired > outputAdaWithoutFee) {
       return this.buildCandidateWithUserInputs(params, rewardAddress, input, refundOut, collateral, fee, minAdaRequired, outputAdaWithoutFee, rewardPKH)
     } else {
