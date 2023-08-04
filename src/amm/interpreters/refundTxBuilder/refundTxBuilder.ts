@@ -17,6 +17,7 @@ import {QuickblueTx, QuickblueTxOut} from "../../../quickblue/models"
 import {CardanoWasm} from "../../../utils/rustLoader"
 import {datumRewardPKHIndex, OpInRef} from "../../scripts"
 import {parseDepositConfig, parseRedeemConfig, parseSwapConfig} from "../../contractData"
+import {decodeHex} from "../../../utils/hex"
 
 const FEE_REGEX = /fee (\d+)/
 
@@ -230,9 +231,9 @@ export class RefundTxBuilder {
       }
       console.log('rewardPKH ', rewardPKH);
       console.log('rewardAddrData ', rewardAddrData);
-      const paymentCredential = this.R.StakeCredential.from_hex(rewardAddrData[0]);
+      const paymentCredential = this.R.StakeCredential.from_bytes(decodeHex(rewardAddrData[0]));
       console.log(paymentCredential, paymentCredential.to_hex());
-      const stakeCredential =  rewardAddrData[1] ? this.R.StakeCredential.from_hex(rewardAddrData[1]) : undefined;
+      const stakeCredential =  rewardAddrData[1] ? this.R.StakeCredential.from_bytes(decodeHex(rewardAddrData[1])) : undefined;
       console.log(stakeCredential, stakeCredential?.to_hex());
       const addr = stakeCredential ?
         this.R.BaseAddress.new(this.R.NetworkIdKind.Mainnet, paymentCredential, stakeCredential) :
