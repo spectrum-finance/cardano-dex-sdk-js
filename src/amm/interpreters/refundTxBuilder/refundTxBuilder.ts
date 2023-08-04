@@ -187,9 +187,6 @@ export class RefundTxBuilder {
 
     const rewardPKHDatumIndex = this.mapRefundAddressToDatumRewardPKHIdex[outputToRefund.addr]
     const rewardPKH = outputToRefund.data?.fields[rewardPKHDatumIndex].bytes
-    const rewardAddressData = this.mapRefundAddressToDatumPkhParser[outputToRefund.addr](outputToRefund.dataBin!, this.R);
-
-    console.log(rewardAddressData, rewardPKH);
 
     const collateral = await this
       .collateralSelector
@@ -226,6 +223,21 @@ export class RefundTxBuilder {
     if (rewardPKH === extractPaymentCred(params.recipientAddress, this.R)) {
       rewardAddress = params.recipientAddress
     } else {
+      const rewardAddrData = this.mapRefundAddressToDatumPkhParser[outputToRefund.addr](outputToRefund.dataBin!, this.R);
+
+      if (!rewardAddrData) {
+        throw new Error('no valid reward data');
+      }
+      const paymentCredential = this.R.StakeCredential.from_hex(rewardAddrData[0]);
+      const stakeCredential =  rewardAddrData[1] ? this.R.StakeCredential.from_hex(rewardAddrData[1]) : undefined;
+      const addr = stakeCredential ?
+        this.R.BaseAddress.new(this.R.NetworkIdKind.Mainnet, paymentCredential, stakeCredential) :
+        this.R.RewardAddress.new(this.R.NetworkIdKind.Mainnet, paymentCredential);
+
+      console.log('rewardPKH ', rewardPKH);
+      console.log('rewardAddrData ', rewardAddrData);
+      console.log('addr ', addr.to_address().to_bech32(),  addr.to_address().to_bytes(), addr.to_address().to_hex());
+
       const userInput = tx.inputs.find(input => input.out.paymentCred === rewardPKH)
       if (!userInput) {
         throw new Error("no user input found")
