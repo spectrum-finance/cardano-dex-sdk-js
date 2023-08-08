@@ -20,6 +20,7 @@ export type TxCandidate = {
   validityRange?: ValidityRange;
   collateral?: FullTxIn[];
   ttl?: number;
+  requiredSigner?: string;
 }
 
 export type RawUnsignedTx = HexString

@@ -16,6 +16,8 @@ export type ConsumeScriptInput = {
   redeemer: Redeemer;
   datum?: Datum
   opInRef: OperationInRef;
+  mem: string;
+  steps: string;
 }
 
 export type FullTxIn = {

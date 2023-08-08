@@ -61,7 +61,9 @@ export function toWasmValue(value: Value, R: CardanoWasm): WASM.Value {
   const coins = getLovelace(value)
   const wValue = R.Value.zero()
   wValue.set_coin(R.BigNum.from_str(coins.amount.toString()))
-  wValue.set_multiasset(wmAssets)
+  if (wmAssets.len()) {
+    wValue.set_multiasset(wmAssets);
+  }
   return wValue
 }
 

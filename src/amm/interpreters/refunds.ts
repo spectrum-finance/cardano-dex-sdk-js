@@ -12,6 +12,7 @@ import {
   OrderAddrsV1Testnet,
   ScriptCredsV1
 } from "../scripts"
+import {DEFAULT_EX_UNITS_MEM, DEFAULT_EX_UNITS_STEPS} from "./refundTxBuilder/refundTxBuilder"
 
 export interface Refunds {
   /** Redeem assets from a proxy order box.
@@ -64,7 +65,9 @@ export class AmmOrderRefunds implements Refunds {
           validator: mapRefundAddressToScript[outputToRefund.addr],
           redeemer:  "d8799f00000001ff",
           datum:     outputToRefund.dataBin,
-          opInRef:   mapRefundAddressToOpInRef[outputToRefund.addr]
+          opInRef:   mapRefundAddressToOpInRef[outputToRefund.addr],
+          mem: DEFAULT_EX_UNITS_MEM,
+          steps: DEFAULT_EX_UNITS_STEPS
         }
       }
 
