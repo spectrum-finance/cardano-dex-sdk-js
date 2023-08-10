@@ -125,7 +125,8 @@ export function parseDepositConfig(raw: Datum, R: CardanoWasm): DepositConfig | 
     const stakePkhPd = parseMaybe(constr.get(6))
     const stakePkh = stakePkhPd ? paseByteString(stakePkhPd) : undefined
     const collateralAda = parseInteger(constr.get(7))
-    return poolId && x && y && lq && exFee && rewardPkh && collateralAda
+
+    return poolId && x && y && lq && exFee && rewardPkh && collateralAda !== undefined
       ? {poolId, x, y, lq, exFee, rewardPkh, stakePkh, collateralAda}
       : undefined
   } else {
@@ -212,7 +213,9 @@ export function parseAssetClass(pd: PlutusData): AssetClass | undefined {
   const ac = pd.as_constr_plutus_data()!.data()
   const policyId = encodeHex(ac.get(0).as_bytes()!)
   const name = new TextDecoder().decode(ac.get(1).as_bytes()!)
-  return {policyId, name}
+  const hex = ac.get(1).to_hex()
+
+  return {policyId, name, nameHex: hex}
 }
 
 function parseInteger(pd: PlutusData): bigint | undefined {

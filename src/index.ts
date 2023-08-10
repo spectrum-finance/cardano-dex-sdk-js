@@ -79,7 +79,12 @@ export {
   CreateRequest
 } from "./amm/models/opRequests"
 export { Refunds, AmmOrderRefunds } from './amm/interpreters/refunds'
-export { RefundTxBuilder, RefundTxBuilderParams } from './amm/interpreters/refundTxBuilder/refundTxBuilder'
+export {
+  RefundTxBuilder,
+  RefundTxBuilderParams,
+  ExUnitsCalculator,
+  ExUnitsDescriptor
+} from './amm/interpreters/refundTxBuilder/refundTxBuilder'
 export { RefundParams } from './amm/models/refundParams'
 export {SwapExtremums, SwapBudget, SwapValue, swapVars, minBudgetForSwap, minSwapValue, swapExFee} from "./amm/math/swap"
 export {

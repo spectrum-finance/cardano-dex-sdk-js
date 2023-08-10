@@ -4,18 +4,19 @@ import {PubKeyHash} from "../../../cardano/entities/publicKey"
 import {stakeKeyHashFromAddr} from "../../../cardano/entities/stakeKey"
 import {TxCandidate} from "../../../cardano/entities/tx"
 import {TxOutCandidate} from "../../../cardano/entities/txOut"
-import {add, getLovelace, remove, sum, Value} from "../../../cardano/entities/value"
+import {add, getLovelace, Value} from "../../../cardano/entities/value"
 import {Lovelace} from "../../../cardano/types"
 import {InputSelector} from "../../../cardano/wallet/inputSelector"
 import {TxMath} from "../../../cardano/wallet/txMath"
 import {AssetAmount} from "../../../domain/assetAmount"
-import {getChangeOrderValue} from "../../../utils/getChangeOrderValue"
 import {CardanoWasm} from "../../../utils/rustLoader"
 import {AmmPool} from "../../domain/ammPool"
 import {AmmTxFeeMapping} from "../../math/order"
 import {OrderKind} from "../../models/opRequests"
 import {AmmActions} from "../ammActions"
 import {AmmOutputs} from "../ammOutputs"
+import {selectInputs} from "./selectInputs"
+import {FullTxIn} from "../../../cardano/entities/txIn"
 
 export interface RedeemParams {
   readonly lq: AssetAmount;
@@ -65,26 +66,8 @@ export class RedeemAmmTxBuilder {
     )
     const totalOrderBudget = add(orderValue, AdaEntry(userTxFee || txFees.redeemOrder))
 
-    let inputs = await this.inputSelector.select(totalOrderBudget)
-
-    if (inputs instanceof Error) {
-      throw new Error("insufficient funds")
-    }
-
-    const estimatedChange = remove(
-      sum(inputs.map(input => input.txOut.value)),
-      orderValue
-    );
-    const [, additionalAdaForChange] = getChangeOrderValue(estimatedChange, changeAddress, this.txMath);
-
-    if (additionalAdaForChange) {
-      const additionalInput = await this.inputSelector.select([AdaEntry(additionalAdaForChange)], inputs);
-
-      if (additionalInput instanceof Error) {
-        throw new Error("insufficient funds")
-      }
-      inputs = inputs.concat(additionalInput);
-    }
+    const inputsOrError = await selectInputs(totalOrderBudget, changeAddress, this.inputSelector, this.txMath);
+    const inputs: FullTxIn[] = inputsOrError instanceof Error ? [] : inputsOrError;
 
     const txInfo: RedeemTxInfo = {
       exFee: exFee,
@@ -92,7 +75,7 @@ export class RedeemAmmTxBuilder {
       yOutput: y,
       orderValue: orderValue,
       orderBudget: totalOrderBudget,
-      refundableDeposit: refundableValuePart + refundableBugdetPart + additionalAdaForChange,
+      refundableDeposit: refundableValuePart + refundableBugdetPart,
       txFee: userTxFee || txFees.redeemOrder
     }
 

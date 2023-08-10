@@ -29,7 +29,7 @@ export type ScriptCreds = {
 }
 
 export const ScriptCredsV1: ScriptCreds = {
-  ammPool: "a258f896dff1d01ac9a8bd0598304b933a8f3e9e0953938767178099",
+  ammPool: "e628bfd68c07a7a38fcd7d8df650812a9dfdbee54b1ed4c25c87ffbf",
   ammDeposit: "075e09eb0fa89e1dc34691b3c56a7f437e60ac5ea67b338f2e176e20",
   ammRedeem: "83da79f531c19f9ce4d85359f56968a742cf05cc25ed3ca48c302dee",
   ammSwap: "2618e94cdb06792f05ae9b1ec78b0231f4b7f4215b1b4cf52e6342de"
@@ -46,6 +46,12 @@ export type OpInRefs = {
   ammRedeem: OpInRef;
 }
 
+export type DatumRewardPKHIndex = {
+  ammSwap: number;
+  ammDeposit: number;
+  ammRedeem: number;
+}
+
 export const OpInRefsPreviewV1: OpInRefs = {
   ammSwap: {
     opInRefHash: 'b2f79375bf73234bb988cfdb911c78ac4e9b5470197e828d507babfdcca08d16',
@@ -59,6 +65,12 @@ export const OpInRefsPreviewV1: OpInRefs = {
     opInRefHash: 'b2f79375bf73234bb988cfdb911c78ac4e9b5470197e828d507babfdcca08d16',
     opInRefIndex: 1
   }
+}
+
+export const datumRewardPKHIndex: DatumRewardPKHIndex = {
+  ammSwap: 6,
+  ammDeposit: 5,
+  ammRedeem: 5
 }
 
 export const OpInRefsMainnetV1: OpInRefs = {

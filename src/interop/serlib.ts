@@ -28,8 +28,9 @@ export function fromWasmValue(value: WASM.Value): Value {
       for (let i = 0; i < numAssets; i++) {
         const assetName = assets.get(i)
         const nameStr = new TextDecoder().decode(assetName.name())
+        const nameHex = assetName.to_hex();
         const quantity = BigInt(as.get(assetName)!.to_str())
-        entries.push({name: nameStr, policyId, quantity})
+        entries.push({name: nameStr, policyId, quantity, nameHex})
       }
       totalEntries.push(...entries)
     }
@@ -50,7 +51,7 @@ export function toWasmValue(value: Value, R: CardanoWasm): WASM.Value {
   for (const [policy, entries] of Object.entries(groupedAssets)) {
     const wAssets = R.Assets.new()
     for (const e of entries) {
-      const name = R.AssetName.new(new TextEncoder().encode(e.name))
+      const name = R.AssetName.from_hex(e.nameHex);
       const amt = R.BigNum.from_str(e.quantity.toString())
       wAssets.insert(name, amt)
     }
@@ -60,7 +61,9 @@ export function toWasmValue(value: Value, R: CardanoWasm): WASM.Value {
   const coins = getLovelace(value)
   const wValue = R.Value.zero()
   wValue.set_coin(R.BigNum.from_str(coins.amount.toString()))
-  wValue.set_multiasset(wmAssets)
+  if (wmAssets.len()) {
+    wValue.set_multiasset(wmAssets);
+  }
   return wValue
 }
 

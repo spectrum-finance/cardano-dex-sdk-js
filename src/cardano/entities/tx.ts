@@ -22,6 +22,7 @@ export type TxCandidate = {
   mintingScripts?: MintingAsset[];
   collateral?: FullTxIn[];
   ttl?: number;
+  requiredSigner?: string;
 }
 
 export type RawUnsignedTx = HexString

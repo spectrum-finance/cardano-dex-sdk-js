@@ -29,10 +29,18 @@ class DefaultTxAsm implements TxAsm {
   finalize(candidate: TxCandidate): Transaction {
     const txBuilder = this.R.TransactionBuilder.new(this.getTxBuilderConfig(this.env.pparams))
 
-    const userAddressKeyHash = this.toKeyHash(candidate.changeAddr)
+    const userAddressKeyHash =  this.toKeyHash(candidate.changeAddr);
     if (userAddressKeyHash) {
       txBuilder.add_required_signer(userAddressKeyHash)
     }
+
+    const additionalSigner =  candidate.requiredSigner ?
+      this.R.Ed25519KeyHash.from_hex(candidate.requiredSigner) :
+      undefined;
+    if (additionalSigner && additionalSigner.to_hex() !== userAddressKeyHash?.to_hex()) {
+      txBuilder.add_required_signer(additionalSigner);
+    }
+
     if (candidate.collateral) {
       txBuilder.set_collateral(this.getCollateralBuilder(candidate.collateral))
     }
@@ -103,8 +111,8 @@ class DefaultTxAsm implements TxAsm {
         this.R.BigNum.one(),
         this.R.PlutusData.from_hex(consumeScript.redeemer),
         this.R.ExUnits.new(
-          this.R.BigNum.from_str("10000000"),
-          this.R.BigNum.from_str("9000000000")
+          this.R.BigNum.from_str(consumeScript.mem),
+          this.R.BigNum.from_str(consumeScript.steps)
         )
       )
     )
