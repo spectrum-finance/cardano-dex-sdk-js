@@ -41,10 +41,10 @@ class DefaultTxAsm implements TxAsm {
       txBuilder.add_required_signer(additionalSigner);
     }
 
-    if (candidate.collateral) {
+    if (candidate.collateral?.length) {
       txBuilder.set_collateral(this.getCollateralBuilder(candidate.collateral))
     }
-    if (candidate.mintingScripts) {
+    if (candidate.mintingScripts?.length) {
       txBuilder.set_mint_builder(this.getMintBuilder(candidate.mintingScripts))
     }
 
