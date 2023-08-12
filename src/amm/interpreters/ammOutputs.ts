@@ -59,7 +59,7 @@ class AmmOutputsImpl implements AmmOutputs {
 
   poolCreation(req: PoolCreationRequest): TxOutCandidate[] {
     const data = encodeHex(mkPoolDatum(req, this.R).to_bytes())
-    const userOutputValue = Value(0n, calculateInitUserRewardLq(req.x, req.y, req.lq.asset))
+    const userOutputValue = Value(req.minAdaForUserOutput, calculateInitUserRewardLq(req.x, req.y, req.lq.asset))
     const poolOutput = {
       value: remove(req.poolValue, userOutputValue),
       addr: this.addrs.ammPool,

@@ -4,11 +4,10 @@ import {InputSelector} from "../../../cardano/wallet/inputSelector"
 import {TxAsm} from "../../../cardano/wallet/txAsm"
 import {TxMath} from "../../../cardano/wallet/txMath"
 import {CardanoWasm} from "../../../utils/rustLoader"
-import {PoolCreationParams} from "../../math/pool";
 import {AmmActions} from "../ammActions"
 import {AmmOutputs} from "../ammOutputs"
 import {DepositAmmTxBuilder, DepositParams, DepositTxInfo} from "./depositAmmTxBuilder"
-import {PoolCreationTxInfo, PoolTxBuilder} from "./poolTxBuilder";
+import {PoolCreationParams, PoolCreationTxBuilder, PoolCreationTxInfo} from "./poolCreationTxBuilder";
 import {RedeemAmmTxBuilder, RedeemParams, RedeemTxInfo} from "./redeemAmmTxBuilder"
 import {SwapAmmTxBuilder, SwapParams, SwapTxInfo} from "./swapAmmTxBuilder"
 
@@ -31,7 +30,7 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
 
   private depositAmmTxBuilder: DepositAmmTxBuilder
 
-  private poolTxBuilder: PoolTxBuilder
+  private poolTxBuilder: PoolCreationTxBuilder
 
   constructor(
     txMath: TxMath,
@@ -44,7 +43,7 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
     this.swapAmmTxBuilder = new SwapAmmTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, R)
     this.redeemAmmTxBuilder = new RedeemAmmTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, R)
     this.depositAmmTxBuilder = new DepositAmmTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, R)
-    this.poolTxBuilder = new PoolTxBuilder(txMath, ammOuptuts, ammActions, inputSelector)
+    this.poolTxBuilder = new PoolCreationTxBuilder(txMath, ammOuptuts, ammActions, inputSelector)
   }
 
   async swap(

@@ -97,6 +97,7 @@ export type PoolCreationRequest = {
   readonly mintingCreationTxHash: TxHash
   readonly mintingCreationTxOutIdx: number
   readonly userAddress: Addr
+  readonly minAdaForUserOutput: bigint;
 }
 
 export type OrderRequest = DepositRequest | RedeemRequest | SwapRequest | PoolCreationRequest

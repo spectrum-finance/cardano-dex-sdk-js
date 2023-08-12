@@ -3,7 +3,6 @@ import {HexString, TxHash, ValidityRange} from "../types"
 import {Addr} from "./address"
 import {FullTxIn, TxIn} from "./txIn"
 import {TxOut, TxOutCandidate} from "./txOut"
-import {Value} from "./value"
 
 export type Tx = {
   hash: TxHash
@@ -16,7 +15,6 @@ export type Tx = {
 export type TxCandidate = {
   inputs: FullTxIn[];
   outputs: TxOutCandidate[];
-  valueMint: Value;
   changeAddr: Addr;
   validityRange?: ValidityRange;
   mintingScripts?: MintingAsset[];

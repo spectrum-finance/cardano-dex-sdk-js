@@ -165,7 +165,15 @@ class DefaultTxAsm implements TxAsm {
 
     for (const data of mintScripts) {
       const plutusScriptSource = this.R.PlutusScriptSource.new(this.R.PlutusScript.from_hex(data.script));
-      const redeemer = this.R.Redeemer.from_json('{"constructor":0,"fields":[]}')
+      const redeemer = this.R.Redeemer.new(
+        this.R.RedeemerTag.new_mint(),
+        this.R.BigNum.one(),
+        this.R.PlutusData.new_list(this.R.PlutusList.new()),
+        this.R.ExUnits.new(
+          this.R.BigNum.from_str(data.exUnits.mem),
+          this.R.BigNum.from_str(data.exUnits.steps)
+        )
+      )
       const mintWitness = this.R.MintWitness.new_plutus_script(plutusScriptSource, redeemer);
       const assetName = this.R.AssetName.from_hex(encodeHex(new TextEncoder().encode(data.amount.asset.name)));
       const amount = this.R.Int.from_str(data.amount.amount.toString());

@@ -1,10 +1,11 @@
 import {Addr} from "../../cardano/entities/address"
 import {TxCandidate} from "../../cardano/entities/tx"
-import {emptyValue, Value} from "../../cardano/entities/value"
+import {Value} from "../../cardano/entities/value"
 import {TxContext} from "../../cardano/wallet/entities/txContext"
-import {MintingAsset} from "../domain/models";
+import {MintingAsset} from "../domain/models"
 import {OrderKind, OrderRequest} from "../models/opRequests"
 import {AmmOutputs} from "./ammOutputs"
+import {DEFAULT_EX_UNITS_MEM, DEFAULT_EX_UNITS_STEPS} from "./refundTxBuilder/refundTxBuilder"
 
 export interface AmmActions {
   createOrder(req: OrderRequest, ctx: TxContext): TxCandidate
@@ -35,34 +36,41 @@ class DefaultAmmActions implements AmmActions {
     const outputs = orderCandidate()
     if (req.uiFee > 0n) outputs.push({value: Value(req.uiFee), addr: this.uiRewardAddr})
 
-    const [mintValue, mintAssets] = this.getMintingData(req)
+    const mintAssets = this.getMintingAssets(req)
 
     return {
-      inputs: ctx.inputs,
-      outputs: outputs,
-      valueMint: mintValue,
-      changeAddr: ctx.changeAddr,
+      inputs:         ctx.inputs,
+      outputs:        outputs,
+      changeAddr:     ctx.changeAddr,
       mintingScripts: mintAssets,
-      ttl: ctx.ttl
+      ttl:            ctx.ttl
     }
   }
 
-  private getMintingData(req: OrderRequest): [Value, MintingAsset[]] {
+  private getMintingAssets(req: OrderRequest): MintingAsset[] {
     if (req.kind === OrderKind.PoolCreation) {
 
-      const nftMintingData = {
+      const nftMintingData: MintingAsset = {
         amount: req.nft,
-        script: req.nftMintingScript
+        script: req.nftMintingScript,
+        exUnits: {
+          mem: DEFAULT_EX_UNITS_MEM,
+          steps: DEFAULT_EX_UNITS_STEPS
+        }
       }
 
-      const lqMintingData = {
+      const lqMintingData: MintingAsset = {
         amount: req.lq,
-        script: req.lqMintingScript
+        script: req.lqMintingScript,
+        exUnits: {
+          mem: '23000',
+          steps: '8300000'
+        }
       }
 
-      return [Value(0n, [req.nft, req.lq]), [nftMintingData, lqMintingData]]
+      return [nftMintingData, lqMintingData]
     } else {
-      return [emptyValue, []]
+      return []
     }
   }
 }
