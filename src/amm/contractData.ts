@@ -17,7 +17,10 @@ export function parsePoolConfig(raw: Datum, R: CardanoWasm): PoolConfig | undefi
     const y = parseAssetClass(datum.get(2))
     const lq = parseAssetClass(datum.get(3))
     const feeNum = datum.get(4).as_integer()
-    return nft && x && y && lq && feeNum ? {nft, x, y, lq, feeNum: Number(feeNum.to_str())} : undefined
+    const lqBound = datum.get(6).as_integer()
+    return nft && x && y && lq && feeNum ?
+      {nft, x, y, lq, lqBound: BigInt(lqBound?.to_str() || '0'), feeNum: Number(feeNum.to_str())} :
+      undefined
   } catch {
     return undefined;
   }
