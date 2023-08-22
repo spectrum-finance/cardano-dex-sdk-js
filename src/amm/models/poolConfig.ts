@@ -6,4 +6,5 @@ export type PoolConfig = {
   y: AssetClass
   lq: AssetClass
   feeNum: number
+  lqBound: bigint;
 }
