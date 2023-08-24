@@ -28,7 +28,7 @@ export const selectInputs = async (
       totalOrderBudget
     );
     const [, additionalAdaForChange] = getChangeOrderValue(estimatedChange, changeAddress, txMath);
-
+    console.log(additionalAdaForChange, 'additional change')
     if (!additionalAdaForChange) {
       return Promise.resolve(inputs);
     }
@@ -36,9 +36,9 @@ export const selectInputs = async (
 
     try {
       additionalInput = await inputSelector.select([AdaEntry(additionalAdaForChange)], inputs);
-      console.log(inputs, additionalInput)
+      console.log(inputs, additionalInput, 'selector input')
     } catch (e) {
-      console.log(e, inputs);
+      console.log(e, inputs, 'selector error');
       return new Error("insufficient funds")
     }
     if (additionalInput instanceof Error || !additionalInput.length) {

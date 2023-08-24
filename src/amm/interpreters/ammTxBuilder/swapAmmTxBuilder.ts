@@ -77,7 +77,7 @@ export class SwapAmmTxBuilder {
 
     const inputsOrError = await selectInputs(totalOrderBudget, changeAddress, this.inputSelector, this.txMath);
     const inputs: FullTxIn[] = inputsOrError instanceof Error ? [] : inputsOrError;
-    console.log(inputsOrError);
+    console.log(inputsOrError, 'builder');
 
     const txInfo: SwapTxInfo = {
       minExFee: extremums.minExFee,
