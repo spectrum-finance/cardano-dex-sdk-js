@@ -36,14 +36,18 @@ export const selectInputs = async (
 
     try {
       additionalInput = await inputSelector.select([AdaEntry(additionalAdaForChange)], inputs);
-      console.log(inputs, additionalInput, 'selector input')
+      console.log(additionalInput, 'selector input')
+      console.log(inputs, 'current inputs')
     } catch (e) {
-      console.log(e, inputs, 'selector error');
+      console.log(e, 'selector error');
+      console.log(inputs, 'current inputs')
       return new Error("insufficient funds")
     }
     if (additionalInput instanceof Error || !additionalInput.length) {
       return new Error("insufficient funds")
     }
+    console.log('next loop');
+    console.log('new inputs', inputs.concat(additionalInput));
     return normalizeChange(inputs.concat(additionalInput));
   }
 
