@@ -25,7 +25,7 @@ export * from "./cardano/constants"
 
 export {Prover} from "./cardano/wallet/prover"
 export {Wallet} from "./cardano/wallet/wallet"
-export {InputSelector} from "./cardano/wallet/inputSelector"
+export {InputSelector, InputCollector} from "./cardano/wallet/inputSelector"
 export {TxAsm, mkTxAsm} from "./cardano/wallet/txAsm"
 export {TxMath, mkTxMath} from "./cardano/wallet/txMath"
 
