@@ -9,7 +9,7 @@ import {TxOutCandidate} from "../../../cardano/entities/txOut"
 import {getLovelace, sum} from "../../../cardano/entities/value"
 import {Datum, HexString} from "../../../cardano/types"
 import {CollateralSelector} from "../../../cardano/wallet/collateralSelector"
-import {InputSelector} from "../../../cardano/wallet/inputSelector"
+import {InputCollector, InputSelector} from "../../../cardano/wallet/inputSelector"
 import {TxAsm} from "../../../cardano/wallet/txAsm"
 import {TxMath} from "../../../cardano/wallet/txMath"
 import {CardanoNetwork} from "../../../quickblue/cardanoNetwork"
@@ -88,6 +88,7 @@ export class RefundTxBuilder {
 
   constructor(private params: RefundTxBuilderParams,
               private inputSelector: InputSelector,
+              private inputCollector: InputCollector,
               private collateralSelector: CollateralSelector,
               private R: CardanoWasm,
               private txMath: TxMath,
@@ -274,7 +275,9 @@ export class RefundTxBuilder {
     let inputs: FullTxIn[] | Error
 
     try {
-      inputs = await this.inputSelector.select([AdaEntry(adaDiff)])
+      inputs = await this.inputCollector
+        .getInputs()
+        .then(inputs => this.inputSelector.select(inputs,[AdaEntry(adaDiff)]))
     } catch (e) {
       return Promise.reject("insufficient balance for refund")
     }
