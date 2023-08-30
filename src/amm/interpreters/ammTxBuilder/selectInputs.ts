@@ -1,7 +1,7 @@
 import {AdaEntry} from "../../../cardano/entities/assetEntry"
 import {FullTxIn} from "../../../cardano/entities/txIn"
 import {remove, sum, Value} from "../../../cardano/entities/value"
-import {InputSelector} from "../../../cardano/wallet/inputSelector"
+import {InputCollector, InputSelector} from "../../../cardano/wallet/inputSelector"
 import {TxMath} from "../../../cardano/wallet/txMath"
 import {getChangeOrderValue} from "../../../utils/getChangeOrderValue"
 
@@ -10,11 +10,13 @@ export const selectInputs = async (
   totalOrderBudget: Value,
   changeAddress: string,
   inputSelector: InputSelector,
+  inputCollector: InputCollector,
   txMath: TxMath): Promise<FullTxIn[] | Error> => {
+  const allInputs: FullTxIn[] = await inputCollector.getInputs();
   let inputs: FullTxIn[] | Error;
 
   try {
-    inputs = await inputSelector.select(totalOrderBudget);
+    inputs = inputSelector.select(allInputs, totalOrderBudget);
   } catch (e) {
     return new Error("insufficient funds");
   }
@@ -35,7 +37,7 @@ export const selectInputs = async (
     let additionalInput: FullTxIn[] | Error;
 
     try {
-      additionalInput = await inputSelector.select([AdaEntry(additionalAdaForChange)], inputs);
+      additionalInput = inputSelector.select(allInputs,[AdaEntry(additionalAdaForChange)], inputs);
     } catch (e) {
       return new Error("insufficient funds")
     }

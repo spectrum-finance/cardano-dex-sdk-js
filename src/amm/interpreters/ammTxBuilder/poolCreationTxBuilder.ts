@@ -5,7 +5,7 @@ import {TxCandidate} from "../../../cardano/entities/tx"
 import {FullTxIn} from "../../../cardano/entities/txIn"
 import {add, getLovelace, Value} from "../../../cardano/entities/value"
 import {HexString, TxHash} from "../../../cardano/types"
-import {InputSelector} from "../../../cardano/wallet/inputSelector"
+import {InputCollector, InputSelector} from "../../../cardano/wallet/inputSelector"
 import {TxMath} from "../../../cardano/wallet/txMath"
 import {AssetAmount} from "../../../domain/assetAmount"
 import {AmmTxFeeMapping} from "../../math/order"
@@ -42,7 +42,8 @@ export class PoolCreationTxBuilder {
     private txMath: TxMath,
     private ammOutputs: AmmOutputs,
     private ammActions: AmmActions,
-    private inputSelector: InputSelector
+    private inputSelector: InputSelector,
+    private inputCollector: InputCollector,
   ) {
   }
 
@@ -51,10 +52,14 @@ export class PoolCreationTxBuilder {
     const totalOrderBudget = add(orderBudget, AdaEntry(userTxFee || params.txFees.poolCreation))
 
 
-    const inputsOrError = await selectInputs(totalOrderBudget, params.changeAddress, this.inputSelector, this.txMath)
+    const inputsOrError = await selectInputs(totalOrderBudget, params.changeAddress, this.inputSelector, this.inputCollector, this.txMath)
     const inputForMinting = await this
-      .inputSelector
-      .selectById(params.mintingCreationTxHash, params.mintingCreationTxOutIdx)
+      .inputCollector
+      .getInputs()
+      .then(inputs => this
+        .inputSelector
+        .selectById(inputs, params.mintingCreationTxHash, params.mintingCreationTxOutIdx)
+      )
 
     if (inputForMinting instanceof Error) {
       throw inputForMinting

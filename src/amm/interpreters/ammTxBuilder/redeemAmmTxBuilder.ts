@@ -7,7 +7,7 @@ import {FullTxIn} from "../../../cardano/entities/txIn"
 import {TxOutCandidate} from "../../../cardano/entities/txOut"
 import {add, getLovelace, Value} from "../../../cardano/entities/value"
 import {Lovelace} from "../../../cardano/types"
-import {InputSelector} from "../../../cardano/wallet/inputSelector"
+import {InputCollector, InputSelector} from "../../../cardano/wallet/inputSelector"
 import {TxMath} from "../../../cardano/wallet/txMath"
 import {AssetAmount} from "../../../domain/assetAmount"
 import {CardanoWasm} from "../../../utils/rustLoader"
@@ -44,6 +44,7 @@ export class RedeemAmmTxBuilder {
     private ammOutputs: AmmOutputs,
     private ammActions: AmmActions,
     private inputSelector: InputSelector,
+    private inputCollector: InputCollector,
     private R: CardanoWasm
   ) {}
 
@@ -66,7 +67,7 @@ export class RedeemAmmTxBuilder {
     )
     const totalOrderBudget = add(orderValue, AdaEntry(userTxFee || txFees.redeemOrder))
 
-    const inputsOrError = await selectInputs(totalOrderBudget, changeAddress, this.inputSelector, this.txMath);
+    const inputsOrError = await selectInputs(totalOrderBudget, changeAddress, this.inputSelector, this.inputCollector, this.txMath);
     const inputs: FullTxIn[] = inputsOrError instanceof Error ? [] : inputsOrError;
 
     const txInfo: RedeemTxInfo = {

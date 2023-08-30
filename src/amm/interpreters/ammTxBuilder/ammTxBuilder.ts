@@ -1,6 +1,6 @@
 import {Transaction} from "@emurgo/cardano-serialization-lib-nodejs"
 import {TxCandidate} from "../../../cardano/entities/tx"
-import {InputSelector} from "../../../cardano/wallet/inputSelector"
+import {InputCollector, InputSelector} from "../../../cardano/wallet/inputSelector"
 import {TxAsm} from "../../../cardano/wallet/txAsm"
 import {TxMath} from "../../../cardano/wallet/txMath"
 import {CardanoWasm} from "../../../utils/rustLoader"
@@ -37,13 +37,14 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
     ammOuptuts: AmmOutputs,
     ammActions: AmmActions,
     inputSelector: InputSelector,
+    inputCollector: InputCollector,
     R: CardanoWasm,
     private txAsm: TxAsm
   ) {
-    this.swapAmmTxBuilder = new SwapAmmTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, R)
-    this.redeemAmmTxBuilder = new RedeemAmmTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, R)
-    this.depositAmmTxBuilder = new DepositAmmTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, R)
-    this.poolTxBuilder = new PoolCreationTxBuilder(txMath, ammOuptuts, ammActions, inputSelector)
+    this.swapAmmTxBuilder = new SwapAmmTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, inputCollector, R)
+    this.redeemAmmTxBuilder = new RedeemAmmTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, inputCollector, R)
+    this.depositAmmTxBuilder = new DepositAmmTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, inputCollector, R)
+    this.poolTxBuilder = new PoolCreationTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, inputCollector)
   }
 
   async swap(
