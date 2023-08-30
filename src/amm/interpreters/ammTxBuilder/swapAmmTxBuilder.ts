@@ -3,6 +3,7 @@ import {AdaEntry} from "../../../cardano/entities/assetEntry"
 import {PubKeyHash} from "../../../cardano/entities/publicKey"
 import {stakeKeyHashFromAddr} from "../../../cardano/entities/stakeKey"
 import {TxCandidate} from "../../../cardano/entities/tx"
+import {FullTxIn} from "../../../cardano/entities/txIn"
 import {TxOutCandidate} from "../../../cardano/entities/txOut"
 import {add, getLovelace, Value} from "../../../cardano/entities/value"
 import {Lovelace} from "../../../cardano/types"
@@ -18,7 +19,6 @@ import {OrderKind} from "../../models/opRequests"
 import {AmmActions} from "../ammActions"
 import {AmmOutputs} from "../ammOutputs"
 import {selectInputs} from "./selectInputs"
-import {FullTxIn} from "../../../cardano/entities/txIn"
 
 export interface SwapParams {
   readonly base: AssetAmount
@@ -121,7 +121,7 @@ export class SwapAmmTxBuilder {
     exFeePerToken: FeePerToken,
     extremums: SwapExtremums
   ): [Value, bigint] {
-    const estimatedOutput = this.ammOutputs.swap({
+    const [estimatedOutput] = this.ammOutputs.swap({
       kind: OrderKind.Swap,
       poolId: params.pool.id,
       rewardPkh: params.pk,

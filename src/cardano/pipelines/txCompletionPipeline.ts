@@ -9,6 +9,7 @@ import {TxAsm} from "../wallet/txAsm"
 export interface TxCompletionPipeline {
   complete(txc: TxCandidate): Promise<RawTx>
   completeTransaction(tx: Transaction, partial?: boolean): Promise<RawTx>
+  completeTransactionV2(tx: Transaction, partial?: boolean): Promise<Transaction>
 }
 
 export function mkTxCompletionPipeline(
@@ -59,5 +60,20 @@ class DefaultTxCompletionPipeline implements TxCompletionPipeline {
 
     const tx = this.R.Transaction.new(unsignedTx.body(), fullWits);
     return encodeHex(tx.to_bytes());
+  }
+
+
+  async completeTransactionV2(unsignedTx: Transaction, txHasScriptInputs = false): Promise<Transaction> {
+    const witsWithSignRaw = await this.prover.sign(encodeHex(unsignedTx.to_bytes()), txHasScriptInputs);
+    const witsWithSign = this.R.TransactionWitnessSet.from_bytes(decodeHex(witsWithSignRaw));
+
+
+    const fullWits = unsignedTx.witness_set();
+    const vKeys = witsWithSign.vkeys();
+    if (vKeys) {
+      fullWits.set_vkeys(vKeys);
+    }
+
+    return this.R.Transaction.new(unsignedTx.body(), fullWits);
   }
 }

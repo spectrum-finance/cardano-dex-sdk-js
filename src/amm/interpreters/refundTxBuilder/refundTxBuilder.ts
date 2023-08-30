@@ -6,7 +6,7 @@ import {ProtocolParams} from "../../../cardano/entities/env"
 import {TxCandidate} from "../../../cardano/entities/tx"
 import {FullTxIn} from "../../../cardano/entities/txIn"
 import {TxOutCandidate} from "../../../cardano/entities/txOut"
-import {emptyValue, getLovelace, sum} from "../../../cardano/entities/value"
+import {getLovelace, sum} from "../../../cardano/entities/value"
 import {Datum, HexString} from "../../../cardano/types"
 import {CollateralSelector} from "../../../cardano/wallet/collateralSelector"
 import {InputSelector} from "../../../cardano/wallet/inputSelector"
@@ -15,8 +15,8 @@ import {TxMath} from "../../../cardano/wallet/txMath"
 import {CardanoNetwork} from "../../../quickblue/cardanoNetwork"
 import {QuickblueTx, QuickblueTxOut} from "../../../quickblue/models"
 import {CardanoWasm} from "../../../utils/rustLoader"
-import {datumRewardPKHIndex, OpInRef} from "../../scripts"
 import {parseDepositConfig, parseRedeemConfig, parseSwapConfig} from "../../contractData"
+import {datumRewardPKHIndex, OpInRef} from "../../scripts"
 
 const FEE_REGEX = /fee (\d+)/
 
@@ -294,7 +294,6 @@ export class RefundTxBuilder {
     return {
       inputs:     [refundInput, ...inputs],
       outputs:    [normalizedRefundOutput],
-      valueMint:  emptyValue,
       changeAddr: rewardAddress,
       collateral: collateral,
       requiredSigner
@@ -321,7 +320,6 @@ export class RefundTxBuilder {
     return {
       inputs:     [refundInput],
       outputs:    [normalizedRefundOutput],
-      valueMint:  emptyValue,
       changeAddr: rewardAddress,
       collateral: collateral,
       requiredSigner

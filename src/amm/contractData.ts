@@ -4,7 +4,7 @@ import {AssetClass} from "../cardano/entities/assetClass"
 import {Datum, HexString} from "../cardano/types"
 import {decodeHex, encodeHex} from "../utils/hex"
 import {CardanoWasm} from "../utils/rustLoader"
-import {DepositRequest, RedeemRequest, SwapRequest} from "./models/opRequests"
+import {DepositRequest, PoolCreationRequest, RedeemRequest, SwapRequest} from "./models/opRequests"
 import {OrderAction} from "./models/orderAction"
 import {DepositConfig, RedeemConfig, SwapConfig} from "./models/orderConfig"
 import {PoolConfig} from "./models/poolConfig"
@@ -93,6 +93,17 @@ export function mkSwapDatum(conf: SwapRequest, R: CardanoWasm): PlutusData {
     ],
     R
   )
+}
+
+export function mkPoolDatum(conf: PoolCreationRequest, R: CardanoWasm): PlutusData {
+  const x = mkAssetClass(conf.x.asset, R)
+  const y = mkAssetClass(conf.y.asset, R)
+  const lq = mkAssetClass(conf.lq.asset, R)
+  const nft = mkAssetClass(conf.nft.asset, R)
+  const feeNum: PlutusData = R.PlutusData.new_integer(R.BigInt.from_str(conf.feeNum.toString()))
+  const adminPolicy: PlutusData = R.PlutusData.new_list(R.PlutusList.new());
+  const lqBound = R.PlutusData.new_integer(R.BigInt.from_str('0'))
+  return mkProductN([nft, x, y, lq, feeNum, adminPolicy, lqBound], R)
 }
 
 export function mkDepositDatum(conf: DepositRequest, R: CardanoWasm): PlutusData {
