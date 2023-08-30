@@ -7,7 +7,7 @@ import {FullTxIn} from "../../../cardano/entities/txIn"
 import {TxOutCandidate} from "../../../cardano/entities/txOut"
 import {add, getLovelace, Value} from "../../../cardano/entities/value"
 import {Lovelace} from "../../../cardano/types"
-import {InputCollector, InputSelector} from "../../../cardano/wallet/inputSelector"
+import {InputSelector} from "../../../cardano/wallet/inputSelector"
 import {TxMath} from "../../../cardano/wallet/txMath"
 import {AssetAmount} from "../../../domain/assetAmount"
 import {CardanoWasm} from "../../../utils/rustLoader"
@@ -49,11 +49,10 @@ export class SwapAmmTxBuilder {
     private ammOutputs: AmmOutputs,
     private ammActions: AmmActions,
     private inputSelector: InputSelector,
-    private inputCollector: InputCollector,
     private R: CardanoWasm
   ) {}
 
-  async build(params: SwapParams, userTxFee?: bigint): Promise<[TxCandidate, SwapTxInfo]> {
+  async build(params: SwapParams, allInputs: FullTxIn[], userTxFee?: bigint): Promise<[TxCandidate, SwapTxInfo]> {
     const {txFees, minExecutorReward, nitro, quote, base, changeAddress} = params
     const vars = swapVars(txFees, minExecutorReward, nitro, quote)
 
@@ -76,7 +75,7 @@ export class SwapAmmTxBuilder {
     )
     const totalOrderBudget = add(orderValue, AdaEntry(userTxFee || txFees.swapOrder))
 
-    const inputsOrError = await selectInputs(totalOrderBudget, changeAddress, this.inputSelector, this.inputCollector, this.txMath);
+    const inputsOrError = await selectInputs(totalOrderBudget, changeAddress, this.inputSelector, allInputs, this.txMath);
     const inputs: FullTxIn[] = inputsOrError instanceof Error ? [] : inputsOrError;
 
 

@@ -1,7 +1,7 @@
 import {AdaEntry} from "../../../cardano/entities/assetEntry"
 import {FullTxIn} from "../../../cardano/entities/txIn"
 import {remove, sum, Value} from "../../../cardano/entities/value"
-import {InputCollector, InputSelector} from "../../../cardano/wallet/inputSelector"
+import {InputSelector} from "../../../cardano/wallet/inputSelector"
 import {TxMath} from "../../../cardano/wallet/txMath"
 import {getChangeOrderValue} from "../../../utils/getChangeOrderValue"
 
@@ -10,9 +10,8 @@ export const selectInputs = async (
   totalOrderBudget: Value,
   changeAddress: string,
   inputSelector: InputSelector,
-  inputCollector: InputCollector,
+  allInputs: FullTxIn[],
   txMath: TxMath): Promise<FullTxIn[] | Error> => {
-  const allInputs: FullTxIn[] = await inputCollector.getInputs();
   let inputs: FullTxIn[] | Error;
 
   try {
