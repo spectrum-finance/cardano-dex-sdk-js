@@ -44,11 +44,9 @@ class DefaultTxAsm implements TxAsm {
     if (candidate.collateral?.length) {
       txBuilder.set_collateral(this.getCollateralBuilder(candidate.collateral))
     }
-    console.log('before mint');
     if (candidate.mintingScripts?.length) {
       txBuilder.set_mint_builder(this.getMintBuilder(candidate.mintingScripts))
     }
-    console.log('after mint');
 
     for (const i of candidate.inputs) {
       if (i.consumeScript) {
@@ -166,10 +164,7 @@ class DefaultTxAsm implements TxAsm {
     const mintBuilder = this.R.MintBuilder.new();
 
     for (const data of mintScripts) {
-      console.log('before script')
       const plutusScriptSource = this.R.PlutusScriptSource.new(this.R.PlutusScript.from_hex(data.script));
-      console.log('after script')
-      console.log('before redeemer')
       const redeemer = this.R.Redeemer.new(
         this.R.RedeemerTag.new_mint(),
         this.R.BigNum.one(),
@@ -179,15 +174,13 @@ class DefaultTxAsm implements TxAsm {
           this.R.BigNum.from_str(data.exUnits.steps)
         )
       )
-      console.log('after redeemer')
-      console.log('before wits')
       const mintWitness = this.R.MintWitness.new_plutus_script(plutusScriptSource, redeemer);
-      console.log('after wits')
       const assetName = this.R.AssetName.from_hex(data.amount.asset.nameHex);
       const amount = this.R.Int.from_str(data.amount.amount.toString());
 
       mintBuilder.add_asset(mintWitness, assetName, amount);
     }
+    console.log(mintBuilder);
     return mintBuilder;
   }
 
