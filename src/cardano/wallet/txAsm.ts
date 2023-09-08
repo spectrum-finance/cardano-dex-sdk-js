@@ -15,7 +15,7 @@ import {FullTxIn} from "../entities/txIn"
 import {TxOutCandidate} from "../entities/txOut"
 
 export interface TxAsm {
-  finalize(candidate: TxCandidate, fee?: bigint): Transaction
+  finalize(candidate: TxCandidate, coefficient?: number): Transaction
 }
 
 export function mkTxAsm(env: NetworkParams, R: CardanoWasm): TxAsm {
@@ -26,8 +26,8 @@ class DefaultTxAsm implements TxAsm {
   constructor(public readonly env: NetworkParams, public readonly R: CardanoWasm) {
   }
 
-  finalize(candidate: TxCandidate, fee?: bigint): Transaction {
-    const txBuilder = this.R.TransactionBuilder.new(this.getTxBuilderConfig(this.env.pparams))
+  finalize(candidate: TxCandidate, coefficient?: number): Transaction {
+    const txBuilder = this.R.TransactionBuilder.new(this.getTxBuilderConfig(this.env.pparams, coefficient))
 
     const userAddressKeyHash =  this.toKeyHash(candidate.changeAddr);
     if (userAddressKeyHash) {
@@ -66,10 +66,6 @@ class DefaultTxAsm implements TxAsm {
     if (candidate.ttl) txBuilder.set_ttl(candidate.ttl)
 
     txBuilder.calc_script_data_hash(this.R.TxBuilderConstants.plutus_vasil_cost_models())
-
-    if (fee) {
-      txBuilder.set_fee(this.R.BigNum.from_str(fee.toString()));
-    }
 
     return txBuilder.build_tx()
   }
@@ -124,14 +120,17 @@ class DefaultTxAsm implements TxAsm {
     return [plutusWitness, txIn, valueIn]
   }
 
-  private getTxBuilderConfig(pparams: ProtocolParams): TransactionBuilderConfig {
+  private getTxBuilderConfig(pparams: ProtocolParams, coefficient?: number): TransactionBuilderConfig {
     const [mem_price_num, mem_price_denom] = decimalToFractional(pparams.executionUnitPrices.priceMemory)
     const [step_price_num, step_price_denom] = decimalToFractional(pparams.executionUnitPrices.priceSteps)
 
     return this.R.TransactionBuilderConfigBuilder.new()
       .fee_algo(
         this.R.LinearFee.new(
-          this.R.BigNum.from_str(pparams.txFeePerByte.toString()),
+          this.R.BigNum.from_str(coefficient ?
+            (Number(pparams.txFeePerByte) * coefficient).toString() :
+            pparams.txFeePerByte.toString()
+          ),
           this.R.BigNum.from_str(pparams.txFeeFixed.toString())
         )
       )
