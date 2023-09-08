@@ -41,6 +41,7 @@ class DefaultAmmActions implements AmmActions {
     return {
       inputs:         ctx.inputs,
       outputs:        outputs,
+      collateral:     ctx.collateralInputs,
       changeAddr:     ctx.changeAddr,
       mintingScripts: mintAssets,
       ttl:            ctx.ttl

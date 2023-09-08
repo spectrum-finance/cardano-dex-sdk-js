@@ -13,6 +13,7 @@ import {OrderKind} from "../../models/opRequests"
 import {AmmActions} from "../ammActions"
 import {AmmOutputs} from "../ammOutputs"
 import {selectInputs} from "./selectInputs"
+import {CollateralSelector} from "../../../cardano/wallet/collateralSelector"
 
 export interface PoolCreationParams {
   readonly x: AssetAmount
@@ -27,6 +28,7 @@ export interface PoolCreationParams {
   readonly txFees: AmmTxFeeMapping
   readonly changeAddress: Addr
   readonly pk: PubKeyHash
+  readonly collateralAmount: bigint;
 }
 
 export interface PoolCreationTxInfo {
@@ -43,6 +45,7 @@ export class PoolCreationTxBuilder {
     private ammOutputs: AmmOutputs,
     private ammActions: AmmActions,
     private inputSelector: InputSelector,
+    private collateralSelector: CollateralSelector
   ) {
   }
 
@@ -51,6 +54,7 @@ export class PoolCreationTxBuilder {
     const totalOrderBudget = add(orderBudget, AdaEntry(userTxFee || params.txFees.poolCreation))
 
 
+    const collateralOrError = await this.collateralSelector.getCollateral(params.collateralAmount);
     const inputsOrError = await selectInputs(totalOrderBudget, params.changeAddress, this.inputSelector, allInputs, this.txMath)
     const inputForMinting = await  this
         .inputSelector
@@ -58,6 +62,9 @@ export class PoolCreationTxBuilder {
 
     if (inputForMinting instanceof Error) {
       throw inputForMinting
+    }
+    if (collateralOrError instanceof Error) {
+      throw collateralOrError;
     }
 
     const inputs: FullTxIn[] = inputsOrError instanceof Error ? [] : inputsOrError
@@ -101,7 +108,7 @@ export class PoolCreationTxBuilder {
         },
         {
           changeAddr: params.changeAddress,
-          collateralInputs: [],
+          collateralInputs: collateralOrError,
           inputs: Object.values(inputsDictionary)
         }
       ),
