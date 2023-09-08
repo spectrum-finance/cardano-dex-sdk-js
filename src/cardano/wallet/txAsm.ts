@@ -15,7 +15,7 @@ import {FullTxIn} from "../entities/txIn"
 import {TxOutCandidate} from "../entities/txOut"
 
 export interface TxAsm {
-  finalize(candidate: TxCandidate): Transaction
+  finalize(candidate: TxCandidate, coefficient?: number): Transaction
 }
 
 export function mkTxAsm(env: NetworkParams, R: CardanoWasm): TxAsm {
@@ -26,8 +26,8 @@ class DefaultTxAsm implements TxAsm {
   constructor(public readonly env: NetworkParams, public readonly R: CardanoWasm) {
   }
 
-  finalize(candidate: TxCandidate): Transaction {
-    const txBuilder = this.R.TransactionBuilder.new(this.getTxBuilderConfig(this.env.pparams))
+  finalize(candidate: TxCandidate, coefficient?: number): Transaction {
+    const txBuilder = this.R.TransactionBuilder.new(this.getTxBuilderConfig(this.env.pparams, coefficient))
 
     const userAddressKeyHash =  this.toKeyHash(candidate.changeAddr);
     if (userAddressKeyHash) {
@@ -120,14 +120,17 @@ class DefaultTxAsm implements TxAsm {
     return [plutusWitness, txIn, valueIn]
   }
 
-  private getTxBuilderConfig(pparams: ProtocolParams): TransactionBuilderConfig {
+  private getTxBuilderConfig(pparams: ProtocolParams, coefficient?: number): TransactionBuilderConfig {
     const [mem_price_num, mem_price_denom] = decimalToFractional(pparams.executionUnitPrices.priceMemory)
     const [step_price_num, step_price_denom] = decimalToFractional(pparams.executionUnitPrices.priceSteps)
 
     return this.R.TransactionBuilderConfigBuilder.new()
       .fee_algo(
         this.R.LinearFee.new(
-          this.R.BigNum.from_str(pparams.txFeePerByte.toString()),
+          this.R.BigNum.from_str(coefficient ?
+            (Number(pparams.txFeePerByte) * coefficient).toFixed(0) :
+            pparams.txFeePerByte.toString()
+          ),
           this.R.BigNum.from_str(pparams.txFeeFixed.toString())
         )
       )
@@ -163,11 +166,11 @@ class DefaultTxAsm implements TxAsm {
   private getMintBuilder(mintScripts: MintingAsset[]): MintBuilder {
     const mintBuilder = this.R.MintBuilder.new();
 
-    for (const data of mintScripts) {
-      const plutusScriptSource = this.R.PlutusScriptSource.new(this.R.PlutusScript.from_hex(data.script));
+    for (const [i, data] of mintScripts.entries()) {
+      const plutusScriptSource = this.R.PlutusScriptSource.new(this.R.PlutusScript.new_v2(decodeHex(data.script)));
       const redeemer = this.R.Redeemer.new(
         this.R.RedeemerTag.new_mint(),
-        this.R.BigNum.one(),
+        this.R.BigNum.from_str(i.toString()),
         this.R.PlutusData.new_list(this.R.PlutusList.new()),
         this.R.ExUnits.new(
           this.R.BigNum.from_str(data.exUnits.mem),
@@ -180,7 +183,7 @@ class DefaultTxAsm implements TxAsm {
 
       mintBuilder.add_asset(mintWitness, assetName, amount);
     }
-    console.log(mintBuilder);
+
     return mintBuilder;
   }
 

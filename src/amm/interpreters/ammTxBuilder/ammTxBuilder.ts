@@ -11,6 +11,7 @@ import {PoolCreationParams, PoolCreationTxBuilder, PoolCreationTxInfo} from "./p
 import {RedeemAmmTxBuilder, RedeemParams, RedeemTxInfo} from "./redeemAmmTxBuilder"
 import {SwapAmmTxBuilder, SwapParams, SwapTxInfo} from "./swapAmmTxBuilder"
 import {FullTxIn} from "../../../cardano/entities/txIn"
+import {CollateralSelector} from "../../../cardano/wallet/collateralSelector"
 
 export interface AmmTxBuilder {
   swap(params: SwapParams): Promise<[Transaction | null, TxCandidate, SwapTxInfo, Error | null]>;
@@ -39,13 +40,14 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
     ammActions: AmmActions,
     inputSelector: InputSelector,
     private inputCollector: InputCollector,
+    collateralSelector: CollateralSelector,
     R: CardanoWasm,
     private txAsm: TxAsm
   ) {
     this.swapAmmTxBuilder = new SwapAmmTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, R)
     this.redeemAmmTxBuilder = new RedeemAmmTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, R)
     this.depositAmmTxBuilder = new DepositAmmTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, R)
-    this.poolTxBuilder = new PoolCreationTxBuilder(txMath, ammOuptuts, ammActions, inputSelector)
+    this.poolTxBuilder = new PoolCreationTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, collateralSelector)
   }
 
   async swap(
@@ -177,7 +179,12 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
       const txFee = BigInt(transaction.body().fee().to_str())
 
       if (prevTxFee === txFee) {
-        return [transaction, poolCreationTxCandidate, poolCreationTxInfo, null]
+        return [
+          this.txAsm.finalize(poolCreationTxCandidate, 1.05),
+          poolCreationTxCandidate,
+          poolCreationTxInfo,
+          null
+        ]
       } else {
         const newBestTxData: Transaction | null | undefined = !!prevTxFee && txFee < prevTxFee ?
           transaction :

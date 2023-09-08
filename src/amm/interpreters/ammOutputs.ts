@@ -1,5 +1,5 @@
 import {TxOutCandidate} from "../../cardano/entities/txOut"
-import {remove, Value} from "../../cardano/entities/value";
+import {add, remove, Value} from "../../cardano/entities/value"
 import {TxMath} from "../../cardano/wallet/txMath"
 import {encodeHex} from "../../utils/hex"
 import {CardanoWasm} from "../../utils/rustLoader"
@@ -61,14 +61,13 @@ class AmmOutputsImpl implements AmmOutputs {
     const data = encodeHex(mkPoolDatum(req, this.R).to_bytes())
     const userOutputValue = Value(req.minAdaForUserOutput, calculateInitUserRewardLq(req.x, req.y, req.lq.asset))
     const poolOutput = {
-      value: remove(req.poolValue, userOutputValue),
-      addr: this.addrs.ammPool,
+      value: remove(add(add(req.poolValue, req.lq.toEntry), req.nft.toEntry), userOutputValue),
+      addr: 'addr1x94ec3t25egvhqy2n265xfhq882jxhkknurfe9ny4rl9k6dj764lvrxdayh2ux30fl0ktuh27csgmpevdu89jlxppvrst84slu',
       data
     }
     const userLqOutput = {
       value: userOutputValue,
       addr: req.userAddress,
-      data
     }
     return [poolOutput, userLqOutput]
   }

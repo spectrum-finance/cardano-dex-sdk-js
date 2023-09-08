@@ -41,6 +41,7 @@ class DefaultAmmActions implements AmmActions {
     return {
       inputs:         ctx.inputs,
       outputs:        outputs,
+      collateral:     ctx.collateralInputs,
       changeAddr:     ctx.changeAddr,
       mintingScripts: mintAssets,
       ttl:            ctx.ttl
@@ -54,8 +55,8 @@ class DefaultAmmActions implements AmmActions {
         amount: req.nft,
         script: req.nftMintingScript,
         exUnits: {
-          mem: DEFAULT_EX_UNITS_MEM,
-          steps: DEFAULT_EX_UNITS_STEPS
+          mem: '300111',
+          steps: '153808137'
         }
       }
 
@@ -63,8 +64,8 @@ class DefaultAmmActions implements AmmActions {
         amount: req.lq,
         script: req.lqMintingScript,
         exUnits: {
-          mem: '23000',
-          steps: '8300000'
+          mem: DEFAULT_EX_UNITS_MEM,
+          steps: DEFAULT_EX_UNITS_STEPS
         }
       }
 
