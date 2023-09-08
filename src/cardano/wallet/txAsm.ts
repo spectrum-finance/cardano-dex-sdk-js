@@ -69,7 +69,6 @@ class DefaultTxAsm implements TxAsm {
 
     if (fee) {
       txBuilder.set_fee(this.R.BigNum.from_str(fee.toString()));
-      txBuilder.add_change_if_needed(changeAddr);
     }
 
     return txBuilder.build_tx()
