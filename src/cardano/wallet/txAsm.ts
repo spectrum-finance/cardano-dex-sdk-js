@@ -5,7 +5,7 @@ import {
 } from "@emurgo/cardano-serialization-lib-nodejs"
 import {MintingAsset} from "../../amm/domain/models"
 import {toWasmValue} from "../../interop/serlib"
-import {decodeHex, encodeHex} from "../../utils/hex"
+import {decodeHex} from "../../utils/hex"
 import {decimalToFractional} from "../../utils/math"
 import {CardanoWasm} from "../../utils/rustLoader"
 import {Addr} from "../entities/address"
