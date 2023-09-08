@@ -68,7 +68,6 @@ class AmmOutputsImpl implements AmmOutputs {
     const userLqOutput = {
       value: userOutputValue,
       addr: req.userAddress,
-      data
     }
     return [poolOutput, userLqOutput]
   }
