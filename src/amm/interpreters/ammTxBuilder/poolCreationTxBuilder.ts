@@ -145,7 +145,7 @@ export class PoolCreationTxBuilder {
       ] :
       [
         add(poolValue, AdaEntry(requiredAdaForPoolOutput - lovelace.amount)),
-        requiredAdaForPoolOutput,
+        requiredAdaForUserLqOutput,
         requiredAdaForPoolOutput - lovelace.amount
       ]
   }
