@@ -55,8 +55,8 @@ class DefaultAmmActions implements AmmActions {
         amount: req.nft,
         script: req.nftMintingScript,
         exUnits: {
-          mem: '83000',
-          steps: '8400000'
+          mem: '300111',
+          steps: '153808137'
         }
       }
 
