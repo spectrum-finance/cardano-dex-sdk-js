@@ -64,8 +64,8 @@ class DefaultAmmActions implements AmmActions {
         amount: req.lq,
         script: req.lqMintingScript,
         exUnits: {
-          mem: '23000',
-          steps: '8300000'
+          mem: DEFAULT_EX_UNITS_MEM,
+          steps: DEFAULT_EX_UNITS_STEPS
         }
       }
 
