@@ -180,7 +180,7 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
 
       if (prevTxFee === txFee) {
         return [
-          this.txAsm.finalize(poolCreationTxCandidate, 1.01),
+          this.txAsm.finalize(poolCreationTxCandidate, 1.05),
           poolCreationTxCandidate,
           poolCreationTxInfo,
           null

@@ -128,7 +128,7 @@ class DefaultTxAsm implements TxAsm {
       .fee_algo(
         this.R.LinearFee.new(
           this.R.BigNum.from_str(coefficient ?
-            (Number(pparams.txFeePerByte) * coefficient).toString() :
+            (Number(pparams.txFeePerByte) * coefficient).toFixed(0) :
             pparams.txFeePerByte.toString()
           ),
           this.R.BigNum.from_str(pparams.txFeeFixed.toString())
