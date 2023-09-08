@@ -112,7 +112,7 @@ export class PoolCreationTxBuilder {
   private getPoolCreationBudget(
     params: PoolCreationParams
   ): [Value, bigint, bigint] {
-    const poolValue = Value(0n, [params.x, params.y, params.lq, params.nft])
+    const poolValue = Value(0n, [params.x, params.y])
     const [poolOutput, userLqOutput] = this.ammOutputs.poolCreation({
       kind:                    OrderKind.PoolCreation,
       x:                       params.x,
