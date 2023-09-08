@@ -164,7 +164,7 @@ class DefaultTxAsm implements TxAsm {
     const mintBuilder = this.R.MintBuilder.new();
 
     for (const data of mintScripts) {
-      const plutusScriptSource = this.R.PlutusScriptSource.new(this.R.PlutusScript.from_hex_with_version(data.script, this.R.Language.new_plutus_v2()));
+      const plutusScriptSource = this.R.PlutusScriptSource.new(this.R.PlutusScript.new_v2(decodeHex(data.script)));
       const redeemer = this.R.Redeemer.new(
         this.R.RedeemerTag.new_mint(),
         this.R.BigNum.one(),
