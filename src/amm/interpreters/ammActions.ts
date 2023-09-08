@@ -5,7 +5,6 @@ import {TxContext} from "../../cardano/wallet/entities/txContext"
 import {MintingAsset} from "../domain/models"
 import {OrderKind, OrderRequest} from "../models/opRequests"
 import {AmmOutputs} from "./ammOutputs"
-import {DEFAULT_EX_UNITS_MEM, DEFAULT_EX_UNITS_STEPS} from "./refundTxBuilder/refundTxBuilder"
 
 export interface AmmActions {
   createOrder(req: OrderRequest, ctx: TxContext): TxCandidate
@@ -55,8 +54,8 @@ class DefaultAmmActions implements AmmActions {
         amount: req.nft,
         script: req.nftMintingScript,
         exUnits: {
-          mem: DEFAULT_EX_UNITS_MEM,
-          steps: DEFAULT_EX_UNITS_STEPS
+          mem: '23000',
+          steps: '8300000'
         }
       }
 
@@ -64,8 +63,8 @@ class DefaultAmmActions implements AmmActions {
         amount: req.lq,
         script: req.lqMintingScript,
         exUnits: {
-          mem: DEFAULT_EX_UNITS_MEM,
-          steps: DEFAULT_EX_UNITS_STEPS
+          mem: '23000',
+          steps: '8300000'
         }
       }
 
