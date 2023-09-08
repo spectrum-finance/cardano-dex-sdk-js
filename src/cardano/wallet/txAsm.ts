@@ -169,6 +169,7 @@ class DefaultTxAsm implements TxAsm {
       console.log('before script')
       const plutusScriptSource = this.R.PlutusScriptSource.new(this.R.PlutusScript.from_hex(data.script));
       console.log('after script')
+      console.log('before redeemer')
       const redeemer = this.R.Redeemer.new(
         this.R.RedeemerTag.new_mint(),
         this.R.BigNum.one(),
@@ -178,8 +179,11 @@ class DefaultTxAsm implements TxAsm {
           this.R.BigNum.from_str(data.exUnits.steps)
         )
       )
+      console.log('after redeemer')
+      console.log('before wits')
       const mintWitness = this.R.MintWitness.new_plutus_script(plutusScriptSource, redeemer);
-      const assetName = this.R.AssetName.from_hex(encodeHex(new TextEncoder().encode(data.amount.asset.name)));
+      console.log('after wits')
+      const assetName = this.R.AssetName.from_hex(data.amount.asset.nameHex);
       const amount = this.R.Int.from_str(data.amount.amount.toString());
 
       mintBuilder.add_asset(mintWitness, assetName, amount);

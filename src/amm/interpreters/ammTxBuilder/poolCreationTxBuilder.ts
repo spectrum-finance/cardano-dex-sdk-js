@@ -74,9 +74,8 @@ export class PoolCreationTxBuilder {
         return acc
       }, {})
 
-    console.log('fees', userTxFee, params.txFees.poolCreation, userTxFee || params.txFees.poolCreation)
     const txInfo: PoolCreationTxInfo = {
-      txFee: userTxFee || params.txFees.poolCreation,
+      txFee:  userTxFee || params.txFees.poolCreation,
       refundableDeposit,
       poolOutputMinRequiredAda,
       orderBudget
