@@ -173,6 +173,7 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
     const [poolCreationTxCandidate, poolCreationTxInfo] = await this.poolTxBuilder.build(poolParams, newAllInputs, prevTxFee)
 
     try {
+      console.log('candidate', poolCreationTxCandidate);
       const transaction = this.txAsm.finalize(poolCreationTxCandidate)
       const txFee = BigInt(transaction.body().fee().to_str())
 
