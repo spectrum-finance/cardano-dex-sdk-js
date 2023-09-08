@@ -15,7 +15,7 @@ import {FullTxIn} from "../entities/txIn"
 import {TxOutCandidate} from "../entities/txOut"
 
 export interface TxAsm {
-  finalize(candidate: TxCandidate): Transaction
+  finalize(candidate: TxCandidate, fee?: bigint): Transaction
 }
 
 export function mkTxAsm(env: NetworkParams, R: CardanoWasm): TxAsm {
@@ -26,7 +26,7 @@ class DefaultTxAsm implements TxAsm {
   constructor(public readonly env: NetworkParams, public readonly R: CardanoWasm) {
   }
 
-  finalize(candidate: TxCandidate): Transaction {
+  finalize(candidate: TxCandidate, fee?: bigint): Transaction {
     const txBuilder = this.R.TransactionBuilder.new(this.getTxBuilderConfig(this.env.pparams))
 
     const userAddressKeyHash =  this.toKeyHash(candidate.changeAddr);
@@ -66,6 +66,10 @@ class DefaultTxAsm implements TxAsm {
     if (candidate.ttl) txBuilder.set_ttl(candidate.ttl)
 
     txBuilder.calc_script_data_hash(this.R.TxBuilderConstants.plutus_vasil_cost_models())
+
+    if (fee) {
+      txBuilder.set_fee(this.R.BigNum.from_str(fee.toString()));
+    }
 
     return txBuilder.build_tx()
   }

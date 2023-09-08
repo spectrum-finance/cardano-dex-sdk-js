@@ -179,7 +179,12 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
       const txFee = BigInt(transaction.body().fee().to_str())
 
       if (prevTxFee === txFee) {
-        return [transaction, poolCreationTxCandidate, poolCreationTxInfo, null]
+        return [
+          this.txAsm.finalize(poolCreationTxCandidate, BigInt((Number(txFee) * 1.01).toFixed(0))),
+          poolCreationTxCandidate,
+          poolCreationTxInfo,
+          null
+        ]
       } else {
         const newBestTxData: Transaction | null | undefined = !!prevTxFee && txFee < prevTxFee ?
           transaction :
