@@ -59,9 +59,6 @@ class DefaultTxAsm implements TxAsm {
     for (const o of candidate.outputs) {
       txBuilder.add_output(this.toTransactionOutput(o))
     }
-    if (fee) {
-      txBuilder.set_fee(this.R.BigNum.from_str(fee.toString()));
-    }
 
     const changeAddr = this.R.Address.from_bech32(candidate.changeAddr)
     txBuilder.add_change_if_needed(changeAddr)
@@ -69,6 +66,11 @@ class DefaultTxAsm implements TxAsm {
     if (candidate.ttl) txBuilder.set_ttl(candidate.ttl)
 
     txBuilder.calc_script_data_hash(this.R.TxBuilderConstants.plutus_vasil_cost_models())
+
+    if (fee) {
+      txBuilder.set_fee(this.R.BigNum.from_str(fee.toString()));
+      txBuilder.add_change_if_needed(changeAddr);
+    }
 
     return txBuilder.build_tx()
   }
