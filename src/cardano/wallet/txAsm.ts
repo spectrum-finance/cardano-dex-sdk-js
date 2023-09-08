@@ -177,7 +177,7 @@ class DefaultTxAsm implements TxAsm {
       const mintWitness = this.R.MintWitness.new_plutus_script(plutusScriptSource, redeemer);
       const assetName = this.R.AssetName.from_hex(data.amount.asset.nameHex);
       const amount = this.R.Int.from_str(data.amount.amount.toString());
-      console.log(assetName);
+
       mintBuilder.add_asset(mintWitness, assetName, amount);
     }
     console.log(mintBuilder);
