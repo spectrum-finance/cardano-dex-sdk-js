@@ -170,7 +170,7 @@ class DefaultTxAsm implements TxAsm {
       const plutusScriptSource = this.R.PlutusScriptSource.new(this.R.PlutusScript.new_v2(decodeHex(data.script)));
       const redeemer = this.R.Redeemer.new(
         this.R.RedeemerTag.new_mint(),
-        this.R.BigNum.from_str(i.toString()),
+        this.R.BigNum.from_str((mintScripts.length - 1 - i).toString()),
         this.R.PlutusData.new_constr_plutus_data(
           this.R.ConstrPlutusData.new(this.R.BigNum.zero(), this.R.PlutusList.new())
         ),
