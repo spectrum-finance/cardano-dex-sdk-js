@@ -171,7 +171,9 @@ class DefaultTxAsm implements TxAsm {
       const redeemer = this.R.Redeemer.new(
         this.R.RedeemerTag.new_mint(),
         this.R.BigNum.from_str(i.toString()),
-        this.R.PlutusData.new_list(this.R.PlutusList.new()),
+        this.R.PlutusData.new_constr_plutus_data(
+          this.R.ConstrPlutusData.new(this.R.BigNum.zero(), this.R.PlutusList.new())
+        ),
         this.R.ExUnits.new(
           this.R.BigNum.from_str(data.exUnits.mem),
           this.R.BigNum.from_str(data.exUnits.steps)
