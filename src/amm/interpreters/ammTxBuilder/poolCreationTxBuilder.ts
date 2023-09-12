@@ -100,7 +100,7 @@ export class PoolCreationTxBuilder {
           nftMintingScript: params.nftMintingScript,
           feeNum: params.feeNum,
           uiFee: 0n,
-          poolValue: totalOrderBudget,
+          poolValue: orderBudget,
           mintingCreationTxHash: params.mintingCreationTxHash,
           mintingCreationTxOutIdx: params.mintingCreationTxOutIdx,
           minAdaForUserOutput: refundableDeposit,
