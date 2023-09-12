@@ -69,6 +69,9 @@ class AmmOutputsImpl implements AmmOutputs {
       value: userOutputValue,
       addr: req.userAddress,
     }
+    console.log('userOutputValue', userOutputValue);
+    console.log('poolValue', add(add(req.poolValue, req.lq.toEntry), req.nft.toEntry));
+    console.log('poolOutputValue', remove(add(add(req.poolValue, req.lq.toEntry), req.nft.toEntry), userOutputValue))
     return [poolOutput, userLqOutput]
   }
 }

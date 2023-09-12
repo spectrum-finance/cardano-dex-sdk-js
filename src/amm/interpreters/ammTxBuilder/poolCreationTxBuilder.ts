@@ -52,7 +52,7 @@ export class PoolCreationTxBuilder {
   async build(params: PoolCreationParams, allInputs: FullTxIn[], userTxFee?: bigint): Promise<[TxCandidate, PoolCreationTxInfo]> {
     const [orderBudget, refundableDeposit, poolOutputMinRequiredAda] = this.getPoolCreationBudget(params)
     const totalOrderBudget = add(orderBudget, AdaEntry(userTxFee || params.txFees.poolCreation))
-
+    console.log('poolOutputMinRequiredAda', poolOutputMinRequiredAda);
 
     const collateralOrError = await this.collateralSelector.getCollateral(params.collateralAmount);
     const inputsOrError = await selectInputs(totalOrderBudget, params.changeAddress, this.inputSelector, allInputs, this.txMath)
@@ -139,8 +139,6 @@ export class PoolCreationTxBuilder {
     const requiredAdaForPoolOutput = this.txMath.minAdaRequiredforOutput(poolOutput)
     const requiredAdaForUserLqOutput = this.txMath.minAdaRequiredforOutput(userLqOutput)
     const lovelace = getLovelace(poolValue)
-
-    console.log(lovelace, requiredAdaForPoolOutput)
 
     return lovelace.amount >= requiredAdaForPoolOutput ?
       [
