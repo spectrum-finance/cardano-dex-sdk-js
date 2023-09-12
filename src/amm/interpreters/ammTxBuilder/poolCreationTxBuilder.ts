@@ -140,6 +140,8 @@ export class PoolCreationTxBuilder {
     const requiredAdaForUserLqOutput = this.txMath.minAdaRequiredforOutput(userLqOutput)
     const lovelace = getLovelace(poolValue)
 
+    console.log(lovelace, requiredAdaForPoolOutput)
+
     return lovelace.amount >= requiredAdaForPoolOutput ?
       [
         add(poolValue, AdaEntry(requiredAdaForUserLqOutput)),
