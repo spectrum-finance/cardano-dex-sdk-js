@@ -53,7 +53,6 @@ export class PoolCreationTxBuilder {
     const [orderBudget, refundableDeposit, poolOutputMinRequiredAda] = this.getPoolCreationBudget(params)
     const totalOrderBudget = add(orderBudget, AdaEntry(userTxFee || params.txFees.poolCreation))
 
-
     const collateralOrError = await this.collateralSelector.getCollateral(params.collateralAmount);
     const inputsOrError = await selectInputs(totalOrderBudget, params.changeAddress, this.inputSelector, allInputs, this.txMath)
     const inputForMinting = await  this
@@ -100,7 +99,7 @@ export class PoolCreationTxBuilder {
           nftMintingScript: params.nftMintingScript,
           feeNum: params.feeNum,
           uiFee: 0n,
-          poolValue: totalOrderBudget,
+          poolValue: orderBudget,
           mintingCreationTxHash: params.mintingCreationTxHash,
           mintingCreationTxOutIdx: params.mintingCreationTxOutIdx,
           minAdaForUserOutput: refundableDeposit,
