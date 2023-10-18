@@ -1,8 +1,9 @@
 import {
   BaseAddress, Ed25519KeyHash,
-  EnterpriseAddress, PlutusWitness, Transaction,
+  EnterpriseAddress, MintBuilder, PlutusWitness, Transaction,
   TransactionBuilderConfig, TransactionInput, TransactionOutput, TxInputsBuilder, Value
 } from "@emurgo/cardano-serialization-lib-nodejs"
+import {MintingAsset} from "../../amm/domain/models"
 import {toWasmValue} from "../../interop/serlib"
 import {decodeHex} from "../../utils/hex"
 import {decimalToFractional} from "../../utils/math"
@@ -14,7 +15,7 @@ import {FullTxIn} from "../entities/txIn"
 import {TxOutCandidate} from "../entities/txOut"
 
 export interface TxAsm {
-  finalize(candidate: TxCandidate): Transaction
+  finalize(candidate: TxCandidate, coefficient?: number): Transaction
 }
 
 export function mkTxAsm(env: NetworkParams, R: CardanoWasm): TxAsm {
@@ -25,8 +26,8 @@ class DefaultTxAsm implements TxAsm {
   constructor(public readonly env: NetworkParams, public readonly R: CardanoWasm) {
   }
 
-  finalize(candidate: TxCandidate): Transaction {
-    const txBuilder = this.R.TransactionBuilder.new(this.getTxBuilderConfig(this.env.pparams))
+  finalize(candidate: TxCandidate, coefficient?: number): Transaction {
+    const txBuilder = this.R.TransactionBuilder.new(this.getTxBuilderConfig(this.env.pparams, coefficient))
 
     const userAddressKeyHash =  this.toKeyHash(candidate.changeAddr);
     if (userAddressKeyHash) {
@@ -40,8 +41,11 @@ class DefaultTxAsm implements TxAsm {
       txBuilder.add_required_signer(additionalSigner);
     }
 
-    if (candidate.collateral) {
+    if (candidate.collateral?.length) {
       txBuilder.set_collateral(this.getCollateralBuilder(candidate.collateral))
+    }
+    if (candidate.mintingScripts?.length) {
+      txBuilder.set_mint_builder(this.getMintBuilder(candidate.mintingScripts))
     }
 
     for (const i of candidate.inputs) {
@@ -116,14 +120,17 @@ class DefaultTxAsm implements TxAsm {
     return [plutusWitness, txIn, valueIn]
   }
 
-  private getTxBuilderConfig(pparams: ProtocolParams): TransactionBuilderConfig {
+  private getTxBuilderConfig(pparams: ProtocolParams, coefficient?: number): TransactionBuilderConfig {
     const [mem_price_num, mem_price_denom] = decimalToFractional(pparams.executionUnitPrices.priceMemory)
     const [step_price_num, step_price_denom] = decimalToFractional(pparams.executionUnitPrices.priceSteps)
 
     return this.R.TransactionBuilderConfigBuilder.new()
       .fee_algo(
         this.R.LinearFee.new(
-          this.R.BigNum.from_str(pparams.txFeePerByte.toString()),
+          this.R.BigNum.from_str(coefficient ?
+            (Number(pparams.txFeePerByte) * coefficient).toFixed(0) :
+            pparams.txFeePerByte.toString()
+          ),
           this.R.BigNum.from_str(pparams.txFeeFixed.toString())
         )
       )
@@ -154,6 +161,32 @@ class DefaultTxAsm implements TxAsm {
 
   private toKeyHash(addr: Addr): Ed25519KeyHash | undefined {
     return this.toBaseOrEnterpriseAddress(addr).payment_cred().to_keyhash()
+  }
+
+  private getMintBuilder(mintScripts: MintingAsset[]): MintBuilder {
+    const mintBuilder = this.R.MintBuilder.new();
+
+    for (const [i, data] of mintScripts.entries()) {
+      const plutusScriptSource = this.R.PlutusScriptSource.new(this.R.PlutusScript.from_bytes_v2(decodeHex(data.script)));
+      const redeemer = this.R.Redeemer.new(
+        this.R.RedeemerTag.new_mint(),
+        this.R.BigNum.from_str((mintScripts.length - 1 - i).toString()),
+        this.R.PlutusData.new_constr_plutus_data(
+          this.R.ConstrPlutusData.new(this.R.BigNum.zero(), this.R.PlutusList.new())
+        ),
+        this.R.ExUnits.new(
+          this.R.BigNum.from_str(data.exUnits.mem),
+          this.R.BigNum.from_str(data.exUnits.steps)
+        )
+      )
+      const mintWitness = this.R.MintWitness.new_plutus_script(plutusScriptSource, redeemer);
+      const assetName = this.R.AssetName.from_hex(data.amount.asset.nameHex);
+      const amount = this.R.Int.from_str(data.amount.amount.toString());
+
+      mintBuilder.add_asset(mintWitness, assetName, amount);
+    }
+
+    return mintBuilder;
   }
 
   private getCollateralBuilder(collateral: FullTxIn[]): TxInputsBuilder {

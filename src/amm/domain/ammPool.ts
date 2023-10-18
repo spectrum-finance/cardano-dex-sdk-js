@@ -11,7 +11,8 @@ export class AmmPool {
     public readonly lp: AssetAmount,
     public readonly x: AssetAmount,
     public readonly y: AssetAmount,
-    public readonly poolFeeNum: number
+    public readonly poolFeeNum: number,
+    public readonly lqBound: bigint
   ) {
     this.feeNum = BigInt(poolFeeNum)
   }

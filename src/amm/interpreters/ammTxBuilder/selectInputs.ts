@@ -10,11 +10,12 @@ export const selectInputs = async (
   totalOrderBudget: Value,
   changeAddress: string,
   inputSelector: InputSelector,
+  allInputs: FullTxIn[],
   txMath: TxMath): Promise<FullTxIn[] | Error> => {
   let inputs: FullTxIn[] | Error;
 
   try {
-    inputs = await inputSelector.select(totalOrderBudget);
+    inputs = inputSelector.select(allInputs, totalOrderBudget);
   } catch (e) {
     return new Error("insufficient funds");
   }
@@ -35,7 +36,7 @@ export const selectInputs = async (
     let additionalInput: FullTxIn[] | Error;
 
     try {
-      additionalInput = await inputSelector.select([AdaEntry(additionalAdaForChange)], inputs);
+      additionalInput = inputSelector.select(allInputs,[AdaEntry(additionalAdaForChange)], inputs);
     } catch (e) {
       return new Error("insufficient funds")
     }

@@ -44,7 +44,8 @@ test("Parse Pool datum", async t => {
     "417946706f6f6c5f79ffd8799f426c7147706f6f6c5f6c71ff1903e3ff"
   const expected: PoolConfig = {
     ...poolTokens,
-    feeNum: poolFeeNum
+    feeNum: poolFeeNum,
+    lqBound: 0n
   }
   t.deepEqual(parsePoolConfig(sampleHex, RustModule.CardanoWasm), expected)
 })

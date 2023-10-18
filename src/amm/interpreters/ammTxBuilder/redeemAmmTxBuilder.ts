@@ -3,6 +3,7 @@ import {AdaEntry} from "../../../cardano/entities/assetEntry"
 import {PubKeyHash} from "../../../cardano/entities/publicKey"
 import {stakeKeyHashFromAddr} from "../../../cardano/entities/stakeKey"
 import {TxCandidate} from "../../../cardano/entities/tx"
+import {FullTxIn} from "../../../cardano/entities/txIn"
 import {TxOutCandidate} from "../../../cardano/entities/txOut"
 import {add, getLovelace, Value} from "../../../cardano/entities/value"
 import {Lovelace} from "../../../cardano/types"
@@ -16,7 +17,6 @@ import {OrderKind} from "../../models/opRequests"
 import {AmmActions} from "../ammActions"
 import {AmmOutputs} from "../ammOutputs"
 import {selectInputs} from "./selectInputs"
-import {FullTxIn} from "../../../cardano/entities/txIn"
 
 export interface RedeemParams {
   readonly lq: AssetAmount;
@@ -47,7 +47,7 @@ export class RedeemAmmTxBuilder {
     private R: CardanoWasm
   ) {}
 
-  async build(params: RedeemParams, userTxFee?: bigint): Promise<[TxCandidate, RedeemTxInfo]> {
+  async build(params: RedeemParams, allInputs: FullTxIn[], userTxFee?: bigint): Promise<[TxCandidate, RedeemTxInfo]> {
     const {txFees, minExecutorReward, lq, changeAddress, pool} = params
     const [x, y] = pool.shares(lq);
     const exFee = minExecutorReward + txFees.redeemOrder;
@@ -66,7 +66,7 @@ export class RedeemAmmTxBuilder {
     )
     const totalOrderBudget = add(orderValue, AdaEntry(userTxFee || txFees.redeemOrder))
 
-    const inputsOrError = await selectInputs(totalOrderBudget, changeAddress, this.inputSelector, this.txMath);
+    const inputsOrError = await selectInputs(totalOrderBudget, changeAddress, this.inputSelector, allInputs, this.txMath);
     const inputs: FullTxIn[] = inputsOrError instanceof Error ? [] : inputsOrError;
 
     const txInfo: RedeemTxInfo = {
@@ -108,7 +108,7 @@ export class RedeemAmmTxBuilder {
     exFee: bigint,
     params: RedeemParams,
   ): [Value, bigint] {
-    const estimatedOutput = this.ammOutputs.redeem({
+    const [estimatedOutput] = this.ammOutputs.redeem({
       kind: OrderKind.Redeem,
       poolId: params.pool.id,
       x: params.pool.x.asset,

@@ -6,6 +6,7 @@ export type AmmTxFeeMapping = {
   depositOrder: Lovelace
   redeemOrder: Lovelace
   swapExecution: Lovelace
+  poolCreation: Lovelace
   depositExecution: Lovelace
   redeemExecution: Lovelace
 }
@@ -19,7 +20,8 @@ export function minExFeeForOrder(
     foldOrderKind(
       () => fees.depositExecution,
       () => fees.redeemExecution,
-      () => fees.swapExecution
+      () => fees.swapExecution,
+      () => fees.poolCreation
     )(kind) + minExecutorReward
   )
 }
@@ -33,7 +35,8 @@ export function maxExFeeForOrder(
     foldOrderKind(
       () => fees.depositExecution,
       () => fees.redeemExecution,
-      () => fees.swapExecution
+      () => fees.swapExecution,
+      () => fees.poolCreation
     )(kind) + minExecutorReward
   )
 }

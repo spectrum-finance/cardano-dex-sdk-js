@@ -6,17 +6,17 @@ import {ProtocolParams} from "../../../cardano/entities/env"
 import {TxCandidate} from "../../../cardano/entities/tx"
 import {FullTxIn} from "../../../cardano/entities/txIn"
 import {TxOutCandidate} from "../../../cardano/entities/txOut"
-import {emptyValue, getLovelace, sum} from "../../../cardano/entities/value"
+import {getLovelace, sum} from "../../../cardano/entities/value"
 import {Datum, HexString} from "../../../cardano/types"
 import {CollateralSelector} from "../../../cardano/wallet/collateralSelector"
-import {InputSelector} from "../../../cardano/wallet/inputSelector"
+import {InputCollector, InputSelector} from "../../../cardano/wallet/inputSelector"
 import {TxAsm} from "../../../cardano/wallet/txAsm"
 import {TxMath} from "../../../cardano/wallet/txMath"
 import {CardanoNetwork} from "../../../quickblue/cardanoNetwork"
 import {QuickblueTx, QuickblueTxOut} from "../../../quickblue/models"
 import {CardanoWasm} from "../../../utils/rustLoader"
-import {datumRewardPKHIndex, OpInRef} from "../../scripts"
 import {parseDepositConfig, parseRedeemConfig, parseSwapConfig} from "../../contractData"
+import {datumRewardPKHIndex, OpInRef} from "../../scripts"
 
 const FEE_REGEX = /fee (\d+)/
 
@@ -88,6 +88,7 @@ export class RefundTxBuilder {
 
   constructor(private params: RefundTxBuilderParams,
               private inputSelector: InputSelector,
+              private inputCollector: InputCollector,
               private collateralSelector: CollateralSelector,
               private R: CardanoWasm,
               private txMath: TxMath,
@@ -274,7 +275,9 @@ export class RefundTxBuilder {
     let inputs: FullTxIn[] | Error
 
     try {
-      inputs = await this.inputSelector.select([AdaEntry(adaDiff)])
+      inputs = await this.inputCollector
+        .getInputs()
+        .then(inputs => this.inputSelector.select(inputs,[AdaEntry(adaDiff)]))
     } catch (e) {
       return Promise.reject("insufficient balance for refund")
     }
@@ -294,7 +297,6 @@ export class RefundTxBuilder {
     return {
       inputs:     [refundInput, ...inputs],
       outputs:    [normalizedRefundOutput],
-      valueMint:  emptyValue,
       changeAddr: rewardAddress,
       collateral: collateral,
       requiredSigner
@@ -321,7 +323,6 @@ export class RefundTxBuilder {
     return {
       inputs:     [refundInput],
       outputs:    [normalizedRefundOutput],
-      valueMint:  emptyValue,
       changeAddr: rewardAddress,
       collateral: collateral,
       requiredSigner

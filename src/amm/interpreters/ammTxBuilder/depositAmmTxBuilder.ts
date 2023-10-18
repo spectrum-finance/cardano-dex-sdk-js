@@ -49,7 +49,7 @@ export class DepositAmmTxBuilder {
     private R: CardanoWasm
   ) {}
 
-  async build(params: DepositParams, userTxFee?: bigint): Promise<[TxCandidate, DepositTxInfo]> {
+  async build(params: DepositParams, allInputs: FullTxIn[], userTxFee?: bigint): Promise<[TxCandidate, DepositTxInfo]> {
     const {txFees, minExecutorReward, x, y, changeAddress, pool} = params
     const lp = pool.rewardLP(x, y);
     const exFee = minExecutorReward + txFees.depositOrder;
@@ -70,7 +70,7 @@ export class DepositAmmTxBuilder {
     )
     const totalOrderBudget = add(orderValue, AdaEntry(userTxFee || txFees.depositOrder))
 
-    const inputsOrError = await selectInputs(totalOrderBudget, changeAddress, this.inputSelector, this.txMath);
+    const inputsOrError = await selectInputs(totalOrderBudget, changeAddress, this.inputSelector, allInputs, this.txMath);
     const inputs: FullTxIn[] = inputsOrError instanceof Error ? [] : inputsOrError;
 
     const txInfo: DepositTxInfo = {
@@ -116,7 +116,7 @@ export class DepositAmmTxBuilder {
     exFee: bigint,
     params: DepositParams,
   ): [Value, bigint] {
-    const estimatedOutput = this.ammOutputs.deposit({
+    const [estimatedOutput] = this.ammOutputs.deposit({
       kind: OrderKind.Deposit,
       poolId: params.pool.id,
       x: params.x,
