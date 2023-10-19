@@ -210,7 +210,13 @@ function mkPlutusData(members: PlutusList, R: CardanoWasm): PlutusData {
 export function mkAssetClass(ac: AssetClass, R: CardanoWasm): PlutusData {
   const assetClass = R.PlutusList.new()
   assetClass.add(mkByteStringFromHex(ac.policyId, R))
-  assetClass.add(R.PlutusData.new_bytes(new TextEncoder().encode(ac.name)))
+  console.log(
+    'new: ',
+    R.AssetName.from_hex(ac.nameHex).name(),
+    'old: ',
+    new TextEncoder().encode(ac.name)
+  )
+  assetClass.add(R.PlutusData.new_bytes(R.AssetName.from_hex(ac.nameHex).name())
   return mkPlutusData(assetClass, R)
 }
 
