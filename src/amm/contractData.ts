@@ -212,9 +212,9 @@ export function mkAssetClass(ac: AssetClass, R: CardanoWasm): PlutusData {
   assetClass.add(mkByteStringFromHex(ac.policyId, R))
   console.log(
     'new: ',
-    R.AssetName.from_hex(ac.nameHex).name(),
+    R.AssetName.from_hex('490014df1047454e5358').name(),
     'old: ',
-    new TextEncoder().encode(ac.name)
+    new TextEncoder().encode('\x00\x14�\x10GENSX')
   )
   assetClass.add(R.PlutusData.new_bytes(R.AssetName.from_hex(ac.nameHex).name()))
   return mkPlutusData(assetClass, R)
