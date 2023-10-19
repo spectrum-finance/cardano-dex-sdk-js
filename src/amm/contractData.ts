@@ -216,7 +216,7 @@ export function mkAssetClass(ac: AssetClass, R: CardanoWasm): PlutusData {
     'old: ',
     new TextEncoder().encode(ac.name)
   )
-  assetClass.add(R.PlutusData.new_bytes(R.AssetName.from_hex(ac.nameHex).name())
+  assetClass.add(R.PlutusData.new_bytes(R.AssetName.from_hex(ac.nameHex).name()))
   return mkPlutusData(assetClass, R)
 }
 
