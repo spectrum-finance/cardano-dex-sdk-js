@@ -18,10 +18,10 @@ export const selectInputs = async (
   try {
     inputs = inputSelector.select(allInputs, totalOrderBudget);
   } catch (e) {
-    return new InsufficientFundsForOrderOutput("insufficient funds");
+    return new InsufficientFundsForOrderOutput("insufficient funds for output");
   }
   if (inputs instanceof Error || !inputs.length) {
-    return new InsufficientFundsForOrderOutput("insufficient funds")
+    return new InsufficientFundsForOrderOutput("insufficient funds for output")
   }
 
   const normalizeChange = async (inputs: FullTxIn[]): Promise<FullTxIn[] | Error> => {
@@ -39,10 +39,10 @@ export const selectInputs = async (
     try {
       additionalInput = inputSelector.select(allInputs,[AdaEntry(additionalAdaForChange)], inputs);
     } catch (e) {
-      return new InsufficientFundsForChange("insufficient funds")
+      return new InsufficientFundsForChange("insufficient funds for change")
     }
     if (additionalInput instanceof Error || !additionalInput.length) {
-      return new InsufficientFundsForChange("insufficient funds")
+      return new InsufficientFundsForChange("insufficient funds for change")
     }
     return normalizeChange(inputs.concat(additionalInput));
   }

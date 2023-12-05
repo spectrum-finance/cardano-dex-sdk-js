@@ -66,8 +66,12 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
     const newAllInputs = await (allInputs ? Promise.resolve(allInputs) : this.inputCollector.getInputs());
     const [swapTxCandidate, swapTxInfo, error] = await this.swapAmmTxBuilder.build(swapParams, newAllInputs, prevTxFee)
 
+    if (error) {
+      console.log(e)
+      return [null, swapTxCandidate, {...swapTxInfo, txFee: undefined}, e]
+    }
+
     try {
-      console.log(error);
       const transaction = this.txAsm.finalize(swapTxCandidate)
       const txFee = BigInt(transaction.body().fee().to_str())
 
