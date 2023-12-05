@@ -52,7 +52,7 @@ export class SwapAmmTxBuilder {
     private R: CardanoWasm
   ) {}
 
-  async build(params: SwapParams, allInputs: FullTxIn[], userTxFee?: bigint): Promise<[TxCandidate, SwapTxInfo]> {
+  async build(params: SwapParams, allInputs: FullTxIn[], userTxFee?: bigint): Promise<[TxCandidate, SwapTxInfo, Error | undefined]> {
     const {txFees, minExecutorReward, nitro, quote, base, changeAddress} = params
     const vars = swapVars(txFees, minExecutorReward, nitro, quote)
 
@@ -78,7 +78,7 @@ export class SwapAmmTxBuilder {
     const inputsOrError = await selectInputs(totalOrderBudget, changeAddress, this.inputSelector, allInputs, this.txMath);
     const inputs: FullTxIn[] = inputsOrError instanceof Error ? [] : inputsOrError;
 
-
+    console.log(inputsOrError);
     const txInfo: SwapTxInfo = {
       minExFee: extremums.minExFee,
       maxExFee: extremums.maxExFee,
@@ -111,7 +111,8 @@ export class SwapAmmTxBuilder {
           inputs: inputs
         }
       ),
-      txInfo
+      txInfo,
+      inputsOrError instanceof Error ? inputsOrError : undefined
     ]
   }
 

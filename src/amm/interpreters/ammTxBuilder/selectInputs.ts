@@ -4,6 +4,7 @@ import {remove, sum, Value} from "../../../cardano/entities/value"
 import {InputSelector} from "../../../cardano/wallet/inputSelector"
 import {TxMath} from "../../../cardano/wallet/txMath"
 import {getChangeOrderValue} from "../../../utils/getChangeOrderValue"
+import {InsufficientFundsForChange, InsufficientFundsForOrderOutput} from "./utils/errors"
 
 
 export const selectInputs = async (
@@ -17,10 +18,10 @@ export const selectInputs = async (
   try {
     inputs = inputSelector.select(allInputs, totalOrderBudget);
   } catch (e) {
-    return new Error("insufficient funds");
+    return new InsufficientFundsForOrderOutput("insufficient funds");
   }
   if (inputs instanceof Error || !inputs.length) {
-    return new Error("insufficient funds")
+    return new InsufficientFundsForOrderOutput("insufficient funds")
   }
 
   const normalizeChange = async (inputs: FullTxIn[]): Promise<FullTxIn[] | Error> => {
@@ -38,10 +39,10 @@ export const selectInputs = async (
     try {
       additionalInput = inputSelector.select(allInputs,[AdaEntry(additionalAdaForChange)], inputs);
     } catch (e) {
-      return new Error("insufficient funds")
+      return new InsufficientFundsForChange("insufficient funds")
     }
     if (additionalInput instanceof Error || !additionalInput.length) {
-      return new Error("insufficient funds")
+      return new InsufficientFundsForChange("insufficient funds")
     }
     return normalizeChange(inputs.concat(additionalInput));
   }
