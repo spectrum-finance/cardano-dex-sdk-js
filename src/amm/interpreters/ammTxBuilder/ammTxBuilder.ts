@@ -67,8 +67,8 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
     const [swapTxCandidate, swapTxInfo, error] = await this.swapAmmTxBuilder.build(swapParams, newAllInputs, prevTxFee)
 
     if (error) {
-      console.log(e)
-      return [null, swapTxCandidate, {...swapTxInfo, txFee: undefined}, e]
+      console.log(error)
+      return [null, swapTxCandidate, {...swapTxInfo, txFee: undefined}, error]
     }
 
     try {
