@@ -174,7 +174,9 @@ export class RefundTxBuilder {
       return Promise.reject(`No AMM orders found in the given Tx{id=${params.txId}`)
     }
 
-    let outputToRefund = tx?.outputs.find(o => this.addressesToRefund.includes(o.addr))
+    let outputToRefund = tx
+      ?.outputs
+      .find(o => this.addressesToRefund.includes(o.addr) && !o.spentByTxHash)
     if (!outputToRefund) {
       return Promise.reject(`No refundable outputs in Tx{id=${params.txId}`)
     }
