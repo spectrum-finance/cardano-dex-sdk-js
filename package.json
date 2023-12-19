@@ -1,6 +1,6 @@
 {
   "name": "@spectrumlabs/cardano-dex-sdk",
-  "version": "0.1.235-beta.1",
+  "version": "0.2.0",
   "description": "ErgoDEX SDK for Cardano",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
