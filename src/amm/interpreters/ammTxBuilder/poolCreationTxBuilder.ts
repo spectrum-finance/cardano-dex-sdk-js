@@ -20,7 +20,8 @@ export interface PoolCreationParams {
   readonly y: AssetAmount
   readonly nft: AssetAmount
   readonly lq: AssetAmount
-  readonly feeNum: bigint
+  readonly feeNumX: bigint
+  readonly feeNumY: bigint
   readonly nftMintingScript: HexString
   readonly lqMintingScript: HexString
   readonly mintingCreationTxHash: TxHash
@@ -53,17 +54,17 @@ export class PoolCreationTxBuilder {
     const [orderBudget, refundableDeposit, poolOutputMinRequiredAda] = this.getPoolCreationBudget(params)
     const totalOrderBudget = add(orderBudget, AdaEntry(userTxFee || params.txFees.poolCreation))
 
-    const collateralOrError = await this.collateralSelector.getCollateral(params.collateralAmount);
+    const collateralOrError = await this.collateralSelector.getCollateral(params.collateralAmount)
     const inputsOrError = await selectInputs(totalOrderBudget, params.changeAddress, this.inputSelector, allInputs, this.txMath)
-    const inputForMinting = await  this
-        .inputSelector
-        .selectById(allInputs, params.mintingCreationTxHash, params.mintingCreationTxOutIdx)
+    const inputForMinting = await this
+      .inputSelector
+      .selectById(allInputs, params.mintingCreationTxHash, params.mintingCreationTxOutIdx)
 
     if (inputForMinting instanceof Error) {
       throw inputForMinting
     }
     if (collateralOrError instanceof Error) {
-      throw collateralOrError;
+      throw collateralOrError
     }
 
     const inputs: FullTxIn[] = inputsOrError instanceof Error ? [] : inputsOrError
@@ -81,7 +82,7 @@ export class PoolCreationTxBuilder {
       }, {})
 
     const txInfo: PoolCreationTxInfo = {
-      txFee:  userTxFee || params.txFees.poolCreation,
+      txFee: userTxFee || params.txFees.poolCreation,
       refundableDeposit,
       poolOutputMinRequiredAda,
       orderBudget
@@ -90,25 +91,26 @@ export class PoolCreationTxBuilder {
     return [
       this.ammActions.createOrder(
         {
-          kind: OrderKind.PoolCreation,
-          x: params.x,
-          y: params.y,
-          lq: params.lq,
-          lqMintingScript: params.lqMintingScript,
-          nft: params.nft,
-          nftMintingScript: params.nftMintingScript,
-          feeNum: params.feeNum,
-          uiFee: 0n,
-          poolValue: orderBudget,
-          mintingCreationTxHash: params.mintingCreationTxHash,
+          kind:                    OrderKind.PoolCreation,
+          x:                       params.x,
+          y:                       params.y,
+          lq:                      params.lq,
+          lqMintingScript:         params.lqMintingScript,
+          nft:                     params.nft,
+          nftMintingScript:        params.nftMintingScript,
+          feeNumX:                 params.feeNumX,
+          feeNumY:                 params.feeNumY,
+          uiFee:                   0n,
+          poolValue:               orderBudget,
+          mintingCreationTxHash:   params.mintingCreationTxHash,
           mintingCreationTxOutIdx: params.mintingCreationTxOutIdx,
-          minAdaForUserOutput: refundableDeposit,
-          userAddress: params.changeAddress
+          minAdaForUserOutput:     refundableDeposit,
+          userAddress:             params.changeAddress
         },
         {
-          changeAddr: params.changeAddress,
+          changeAddr:       params.changeAddress,
           collateralInputs: collateralOrError,
-          inputs: Object.values(inputsDictionary)
+          inputs:           Object.values(inputsDictionary)
         }
       ),
       txInfo
@@ -125,7 +127,8 @@ export class PoolCreationTxBuilder {
       y:                       params.y,
       lq:                      params.lq,
       nft:                     params.nft,
-      feeNum:                  params.feeNum,
+      feeNumX:                 params.feeNumX,
+      feeNumY:                 params.feeNumY,
       poolValue:               poolValue,
       uiFee:                   0n,
       minAdaForUserOutput:     0n,

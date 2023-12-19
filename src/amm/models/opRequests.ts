@@ -91,7 +91,8 @@ export type PoolCreationRequest = {
   readonly lqMintingScript: HexString
   readonly nft: AssetAmount
   readonly nftMintingScript: HexString
-  readonly feeNum: bigint
+  readonly feeNumX: bigint
+  readonly feeNumY: bigint
   readonly uiFee: Lovelace
   readonly poolValue: Value
   readonly mintingCreationTxHash: TxHash
