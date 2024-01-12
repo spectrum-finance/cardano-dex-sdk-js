@@ -105,9 +105,7 @@ export function mkPoolDatum(conf: PoolCreationRequest, R: CardanoWasm): PlutusDa
   const treasuryFee: PlutusData = R.PlutusData.new_integer(R.BigInt.from_str('1'))
   const treasuryX: PlutusData = R.PlutusData.new_integer(R.BigInt.from_str('0'))
   const treasuryY: PlutusData = R.PlutusData.new_integer(R.BigInt.from_str('0'))
-  const treasuryAddress: PlutusData =  R
-    .PlutusData
-    .new_bytes(decodeHex('addr1q9cehmjzf2tmtzeae2y0uhdxl6kxf992wgn0ja0n2pk9kftcgmmtkpl4k2p93p0y2qn8ne5eknnq5rzxpxjxhs652nxsqwq3mt'))
+  const treasuryAddress: PlutusData =  R.PlutusData.new_bytes(decodeHex('1e5b525041f0d70ad830f1d7dbd2ed7012c1d89788b4385d7bdd0c37'))
 
   const adminPolicy: PlutusData = R.PlutusData.new_list(R.PlutusList.new());
   const lqBound = R.PlutusData.new_integer(R.BigInt.from_str('10000000000'))
