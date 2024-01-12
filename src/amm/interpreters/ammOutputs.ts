@@ -62,7 +62,7 @@ class AmmOutputsImpl implements AmmOutputs {
     const userOutputValue = Value(req.minAdaForUserOutput, calculateInitUserRewardLq(req.x, req.y, req.lq.asset))
     const poolOutput = {
       value: remove(add(add(req.poolValue, req.lq.toEntry), req.nft.toEntry), userOutputValue),
-      addr: 'addr1w9h9hxmlhatfppukqmh4vfq992dqpnumx4qaqkw8cc25vxcfn9439',
+      addr: 'addr_test1wph9hxmlhatfppukqmh4vfq992dqpnumx4qaqkw8cc25vxcjm3f7q',
       data
     }
     const userLqOutput = {
