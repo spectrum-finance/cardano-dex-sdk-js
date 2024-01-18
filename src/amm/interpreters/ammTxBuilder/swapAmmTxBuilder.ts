@@ -97,7 +97,7 @@ export class SwapAmmTxBuilder {
           poolId: params.pool.id,
           rewardPkh: params.pk,
           stakePkh: stakeKeyHashFromAddr(params.changeAddress, this.R),
-          poolFeeNum: params.pool.poolFeeNum,
+          poolFeeNum: Number(`9${params.pool.poolFeeNum}`),
           baseInput: params.base,
           quoteAsset: params.quote.asset,
           minQuoteOutput: extremums.minOutput.amount,
