@@ -10,8 +10,8 @@ export type OrderAddrs = {
 export const OrderAddrsV1Testnet: OrderAddrs = {
   ammDeposit: "addr_test1wqr4uz0tp75fu8wrg6gm83t20aphuc9vt6n8kvu09ctkugq6ch8kj",
   ammRedeem: "addr_test1wzpa5704x8qel88ympf4natfdzn59nc9esj7609y3sczmmsxcd9lz",
-  ammSwap: "addr_test1wqnp362vmvr8jtc946d3a3utqgclfdl5y9d3kn849e359hst7hkqk",
-  ammPool: "addr_test1wph9hxmlhatfppukqmh4vfq992dqpnumx4qaqkw8cc25vxcjm3f7q"
+  ammSwap: "addr_test1wqr4vthfnz4nj9gp4zp40scwp05yv3hd04rraj5m8q5xwwctxveup",
+  ammPool: "addr_test1wpmfxqgg5t2jsfelc8dnmttp73syeh9mg6kvhza7lc2halqg6rtuz"
 }
 
 export const OrderAddrsV1Mainnet: OrderAddrs = {

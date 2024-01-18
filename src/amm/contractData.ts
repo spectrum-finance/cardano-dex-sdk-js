@@ -101,7 +101,7 @@ export function mkPoolDatum(conf: PoolCreationRequest, R: CardanoWasm): PlutusDa
   const lq = mkAssetClass(conf.lq.asset, R)
   const nft = mkAssetClass(conf.nft.asset, R)
   const feeNumX: PlutusData = R.PlutusData.new_integer(R.BigInt.from_str(conf.feeNumX.toString()))
-  const feeNumY: PlutusData = R.PlutusData.new_integer(R.BigInt.from_str(conf.feeNumY.toString()))
+  // const feeNumY: PlutusData = R.PlutusData.new_integer(R.BigInt.from_str(conf.feeNumY.toString()))
   const treasuryFee: PlutusData = R.PlutusData.new_integer(R.BigInt.from_str('1'))
   const treasuryX: PlutusData = R.PlutusData.new_integer(R.BigInt.from_str('0'))
   const treasuryY: PlutusData = R.PlutusData.new_integer(R.BigInt.from_str('0'))
@@ -109,7 +109,7 @@ export function mkPoolDatum(conf: PoolCreationRequest, R: CardanoWasm): PlutusDa
 
   const adminPolicy: PlutusData = R.PlutusData.new_list(R.PlutusList.new());
   const lqBound = R.PlutusData.new_integer(R.BigInt.from_str('10000000000'))
-  return mkProductN([nft, x, y, lq, feeNumX, feeNumY, treasuryFee, treasuryX, treasuryY, adminPolicy, lqBound, treasuryAddress], R)
+  return mkProductN([nft, x, y, lq, feeNumX, treasuryFee, treasuryX, treasuryY, adminPolicy, lqBound, treasuryAddress], R)
 }
 
 export function mkDepositDatum(conf: DepositRequest, R: CardanoWasm): PlutusData {
