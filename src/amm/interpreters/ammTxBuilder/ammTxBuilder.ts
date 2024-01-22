@@ -57,6 +57,7 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
     prevTxFee?: bigint,
     allInputs?: FullTxIn[],
   ): Promise<[Transaction | null, TxCandidate, SwapTxInfo, Error | null]> {
+    console.log(swapParams);
     if (currentTry >= MAX_TRANSACTION_BUILDING_TRY_COUNT && bestTransaction && allInputs) {
       const [swapTxCandidate, swapTxInfo] = await this
         .swapAmmTxBuilder

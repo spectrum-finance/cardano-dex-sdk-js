@@ -55,7 +55,9 @@ export class SwapAmmTxBuilder {
   ) {}
 
   async build(params: SwapParams, allInputs: FullTxIn[], userTxFee?: bigint): Promise<[TxCandidate, SwapTxInfo, Error | undefined]> {
+    console.log(params);
     const {txFees, minExecutorReward, nitro, quote, pureQuote, base, changeAddress} = params
+    console.log(pureQuote)
     const vars = swapVars(txFees, minExecutorReward, nitro, quote, pureQuote)
 
     if (!vars) {
