@@ -23,6 +23,7 @@ import {selectInputs} from "./selectInputs"
 export interface SwapParams {
   readonly base: AssetAmount
   readonly quote: AssetAmount
+  readonly pureQuote: AssetAmount
   readonly pool: AmmPool
   readonly slippage: number
   readonly nitro: number
@@ -54,8 +55,8 @@ export class SwapAmmTxBuilder {
   ) {}
 
   async build(params: SwapParams, allInputs: FullTxIn[], userTxFee?: bigint): Promise<[TxCandidate, SwapTxInfo, Error | undefined]> {
-    const {txFees, minExecutorReward, nitro, quote, base, changeAddress} = params
-    const vars = swapVars(txFees, minExecutorReward, nitro, quote)
+    const {txFees, minExecutorReward, nitro, quote, pureQuote, base, changeAddress} = params
+    const vars = swapVars(txFees, minExecutorReward, nitro, quote, pureQuote)
 
     if (!vars) {
       throw new Error("amount is equals zero")
