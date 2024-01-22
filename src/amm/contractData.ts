@@ -102,7 +102,7 @@ export function mkPoolDatum(conf: PoolCreationRequest, R: CardanoWasm): PlutusDa
   const nft = mkAssetClass(conf.nft.asset, R)
   const feeNum: PlutusData = R.PlutusData.new_integer(R.BigInt.from_str(conf.feeNum.toString()))
   const adminPolicy: PlutusData = R.PlutusData.new_list(R.PlutusList.new());
-  const lqBound = R.PlutusData.new_integer(R.BigInt.from_str('10000000000'))
+  const lqBound = R.PlutusData.new_integer(R.BigInt.from_str('0'))
   return mkProductN([nft, x, y, lq, feeNum, adminPolicy, lqBound], R)
 }
 
