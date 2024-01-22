@@ -42,7 +42,6 @@ export function swapVars(
   minOutput: AssetAmount,
   pureOutput: AssetAmount
 ): [FeePerToken, SwapExtremums, number] | undefined {
-  console.log(minOutput, pureOutput);
   if (minOutput.amount > 0 && pureOutput.amount > 0) {
     const minExFee = minExFeeForOrder(OrderKind.Swap, txFees, minExecutorReward);
     let exFeePerToken = Number(minExFee) / Number(pureOutput.amount)
