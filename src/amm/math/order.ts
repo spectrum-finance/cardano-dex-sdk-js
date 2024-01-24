@@ -3,6 +3,7 @@ import {foldOrderKind, OrderKind} from "../models/opRequests"
 
 export type AmmTxFeeMapping = {
   swapOrder: Lovelace
+  lockOrder: Lovelace
   depositOrder: Lovelace
   redeemOrder: Lovelace
   swapExecution: Lovelace
@@ -21,6 +22,7 @@ export function minExFeeForOrder(
       () => fees.depositExecution,
       () => fees.redeemExecution,
       () => fees.swapExecution,
+      () => fees.poolCreation,
       () => fees.poolCreation
     )(kind) + minExecutorReward
   )
@@ -36,6 +38,7 @@ export function maxExFeeForOrder(
       () => fees.depositExecution,
       () => fees.redeemExecution,
       () => fees.swapExecution,
+      () => fees.poolCreation,
       () => fees.poolCreation
     )(kind) + minExecutorReward
   )

@@ -4,7 +4,13 @@ import {AssetClass} from "../cardano/entities/assetClass"
 import {Datum, HexString} from "../cardano/types"
 import {decodeHex, encodeHex} from "../utils/hex"
 import {CardanoWasm} from "../utils/rustLoader"
-import {DepositRequest, PoolCreationRequest, RedeemRequest, SwapRequest} from "./models/opRequests"
+import {
+  DepositRequest,
+  LockLiquidityRequest,
+  PoolCreationRequest,
+  RedeemRequest,
+  SwapRequest
+} from "./models/opRequests"
 import {OrderAction} from "./models/orderAction"
 import {DepositConfig, RedeemConfig, SwapConfig} from "./models/orderConfig"
 import {PoolConfig} from "./models/poolConfig"
@@ -104,6 +110,13 @@ export function mkPoolDatum(conf: PoolCreationRequest, R: CardanoWasm): PlutusDa
   const adminPolicy: PlutusData = R.PlutusData.new_list(R.PlutusList.new());
   const lqBound = R.PlutusData.new_integer(R.BigInt.from_str('0'))
   return mkProductN([nft, x, y, lq, feeNum, adminPolicy, lqBound], R)
+}
+
+export function mkLockLiquidityDatum(conf: LockLiquidityRequest, R: CardanoWasm): PlutusData {
+  const lockedUntil = R.PlutusData.new_integer(R.BigInt.from_str(conf.lockedUntil.toString()));
+  const redeemer = R.PlutusData.new_bytes(decodeHex(conf.redeemer));
+
+  return mkProductN([lockedUntil, redeemer], R);
 }
 
 export function mkDepositDatum(conf: DepositRequest, R: CardanoWasm): PlutusData {
