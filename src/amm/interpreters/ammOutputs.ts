@@ -12,7 +12,7 @@ import {
   RedeemRequest,
   SwapRequest
 } from "../models/opRequests"
-import {OrderAddrs} from "../scripts"
+import {OrderAddrs, ScriptCredsV1} from "../scripts"
 
 export interface AmmOutputs {
   deposit(req: DepositRequest): TxOutCandidate[]
@@ -81,10 +81,19 @@ class AmmOutputsImpl implements AmmOutputs {
   }
 
   lockLiquidity(req: LockLiquidityRequest): TxOutCandidate[] {
+    console.log(req);
+    const addrWithStake = req.stake ?
+      this.R.BaseAddress.new(
+        1,
+        this.R.StakeCredential.from_scripthash(this.R.ScriptHash.from_hex(ScriptCredsV1.ammLock)),
+        req.stake
+      ).to_address().to_bech32() :
+      this.addrs.ammLock
+    console.log(addrWithStake, );
     const data = encodeHex(mkLockLiquidityDatum(req, this.R).to_bytes())
     return [{
       value: req.orderValue,
-      addr: this.addrs.ammLock,
+      addr: addrWithStake,
       data
     }]
   }

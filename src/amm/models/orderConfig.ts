@@ -3,6 +3,11 @@ import {PubKeyHash} from "../../cardano/entities/publicKey"
 import {FeePerToken} from "../domain/models"
 import {PoolId} from "../domain/types"
 
+export type LockConfig = {
+  lockedUntil: number;
+  redeemer: PubKeyHash;
+}
+
 export type SwapConfig = {
   base: AssetClass
   quote: AssetClass

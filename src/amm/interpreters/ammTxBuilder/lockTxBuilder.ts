@@ -12,6 +12,7 @@ import {OrderKind} from "../../models/opRequests"
 import {AmmActions} from "../ammActions"
 import {AmmOutputs} from "../ammOutputs"
 import {selectInputs} from "./selectInputs"
+import {CardanoWasm} from "../../../utils/rustLoader"
 
 
 export interface LockParams {
@@ -36,6 +37,7 @@ export class LockTxBuilder {
     private ammOutputs: AmmOutputs,
     private ammActions: AmmActions,
     private inputSelector: InputSelector,
+    private R: CardanoWasm
   ) {
   }
 
@@ -59,6 +61,7 @@ export class LockTxBuilder {
           kind:        OrderKind.Lock,
           lockedUntil: params.lockedUntil,
           redeemer:    params.pk,
+          stake: this.R.BaseAddress.from_address(this.R.Address.from_bech32(params.changeAddress))?.stake_cred(),
           orderValue:  orderValue,
           uiFee:       0n
         },
@@ -83,6 +86,7 @@ export class LockTxBuilder {
       kind:        OrderKind.Lock,
       lockedUntil: params.lockedUntil,
       redeemer:    params.pk,
+      stake:       this.R.BaseAddress.from_address(this.R.Address.from_bech32(params.changeAddress))?.stake_cred(),
       orderValue,
       uiFee:       0n
     })
