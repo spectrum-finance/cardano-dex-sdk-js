@@ -47,6 +47,7 @@ export type OpInRef = {
 
 export type OpInRefs = {
   ammSwap: OpInRef;
+  ammLock: OpInRef;
   ammDeposit: OpInRef;
   ammRedeem: OpInRef;
 }
@@ -90,5 +91,9 @@ export const OpInRefsMainnetV1: OpInRefs = {
   ammRedeem: {
     opInRefHash: 'fc9e99fd12a13a137725da61e57a410e36747d513b965993d92c32c67df9259a',
     opInRefIndex: 1
+  },
+  ammLock: {
+    opInRefHash: 'fc9e99fd12a13a137725da61e57a410e36747d513b965993d92c32c67df9259a',
+    opInRefIndex: 0
   }
 }
