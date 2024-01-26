@@ -61,6 +61,7 @@ export class LockTxBuilder {
           kind:        OrderKind.Lock,
           lockedUntil: params.lockedUntil,
           redeemer:    params.pk,
+          stake: this.R.BaseAddress.from_address(this.R.Address.from_bech32(params.changeAddress))?.stake_cred(),
           orderValue:  orderValue,
           uiFee:       0n
         },
