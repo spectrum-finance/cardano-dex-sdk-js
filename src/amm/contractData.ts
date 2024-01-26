@@ -12,7 +12,7 @@ import {
   SwapRequest
 } from "./models/opRequests"
 import {OrderAction} from "./models/orderAction"
-import {DepositConfig, RedeemConfig, SwapConfig} from "./models/orderConfig"
+import {DepositConfig, LockConfig, RedeemConfig, SwapConfig} from "./models/orderConfig"
 import {PoolConfig} from "./models/poolConfig"
 
 export function parsePoolConfig(raw: Datum, R: CardanoWasm): PoolConfig | undefined {
@@ -31,6 +31,19 @@ export function parsePoolConfig(raw: Datum, R: CardanoWasm): PoolConfig | undefi
     return undefined;
   }
 }
+
+export function parseLockLiquidityDatum(raw: Datum, R: CardanoWasm): LockConfig | undefined {
+  const constr = parseConstrData(raw, R);
+
+  if (constr) {
+    return {
+      lockedUntil: Number(parseInteger(constr.get(0))),
+      redeemer: paseByteString(constr.get(1))!
+    }
+  }
+  return undefined;
+}
+
 
 export function parseSwapConfig(raw: Datum, R: CardanoWasm): SwapConfig | undefined {
   const constr = parseConstrData(raw, R)
@@ -182,7 +195,7 @@ export function parseRedeemConfig(raw: Datum, R: CardanoWasm): RedeemConfig | un
   }
 }
 
-function mkProductN(members: PlutusData[], R: CardanoWasm): PlutusData {
+export function mkProductN(members: PlutusData[], R: CardanoWasm): PlutusData {
   const bf = R.PlutusList.new()
   for (const m of members) bf.add(m)
   return mkPlutusData(bf, R)

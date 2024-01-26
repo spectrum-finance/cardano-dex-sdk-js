@@ -144,7 +144,7 @@ class DefaultTxAsm implements TxAsm {
           this.R.BigNum.from_str(step_price_denom.toString())
         )
       ))
-      .coins_per_utxo_word(this.R.BigNum.from_str(pparams.utxoCostPerWord.toString()))
+      .coins_per_utxo_byte(this.R.BigNum.from_str(pparams.coinsPerUtxoByte.toString()))
       .pool_deposit(this.R.BigNum.from_str(pparams.stakePoolDeposit.toString()))
       .key_deposit(this.R.BigNum.from_str(pparams.stakeAddressDeposit.toString()))
       .max_value_size(pparams.maxValueSize)
