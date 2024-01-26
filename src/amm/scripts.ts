@@ -5,20 +5,23 @@ export type OrderAddrs = {
   ammRedeem: HexString
   ammSwap: HexString
   ammPool: HexString
+  ammLock: HexString
 }
 
 export const OrderAddrsV1Testnet: OrderAddrs = {
   ammDeposit: "addr_test1wqr4uz0tp75fu8wrg6gm83t20aphuc9vt6n8kvu09ctkugq6ch8kj",
   ammRedeem: "addr_test1wzpa5704x8qel88ympf4natfdzn59nc9esj7609y3sczmmsxcd9lz",
   ammSwap: "addr_test1wqr4vthfnz4nj9gp4zp40scwp05yv3hd04rraj5m8q5xwwctxveup",
-  ammPool: "addr_test1wpmfxqgg5t2jsfelc8dnmttp73syeh9mg6kvhza7lc2halqg6rtuz"
+  ammPool: "addr_test1wpmfxqgg5t2jsfelc8dnmttp73syeh9mg6kvhza7lc2halqg6rtuz",
+  ammLock: "addr_test1wrwma0rzvdexhnqrty6t8dcur7c5ffu2rjau2ayec3d3azg0g4dmr"
 }
 
 export const OrderAddrsV1Mainnet: OrderAddrs = {
   ammDeposit: "addr1wyr4uz0tp75fu8wrg6gm83t20aphuc9vt6n8kvu09ctkugqpsrmeh",
   ammRedeem: "addr1wxpa5704x8qel88ympf4natfdzn59nc9esj7609y3sczmmsasees8",
   ammSwap: "addr1wynp362vmvr8jtc946d3a3utqgclfdl5y9d3kn849e359hsskr20n",
-  ammPool: "addr1wx3937ykmlcaqxkf4z7stxpsfwfn4re7ncy48yu8vutcpxgg67me2"
+  ammPool: "addr1wx3937ykmlcaqxkf4z7stxpsfwfn4re7ncy48yu8vutcpxgg67me2",
+  ammLock: "addr1w8wma0rzvdexhnqrty6t8dcur7c5ffu2rjau2ayec3d3azg5qp35x"
 }
 
 export type ScriptCreds = {
@@ -26,13 +29,15 @@ export type ScriptCreds = {
   ammDeposit: HexString
   ammRedeem: HexString
   ammSwap: HexString
+  ammLock: HexString
 }
 
 export const ScriptCredsV1: ScriptCreds = {
   ammPool: "6e5b9b7fbf5690879606ef5624052a9a00cf9b3541d059c7c615461b",
   ammDeposit: "075e09eb0fa89e1dc34691b3c56a7f437e60ac5ea67b338f2e176e20",
   ammRedeem: "83da79f531c19f9ce4d85359f56968a742cf05cc25ed3ca48c302dee",
-  ammSwap: "2618e94cdb06792f05ae9b1ec78b0231f4b7f4215b1b4cf52e6342de"
+  ammSwap: "2618e94cdb06792f05ae9b1ec78b0231f4b7f4215b1b4cf52e6342de",
+  ammLock: "ddbebc6263726bcc035934b3b71c1fb144a78a1cbbc57499c45b1e89"
 }
 
 export type OpInRef = {

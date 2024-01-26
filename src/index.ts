@@ -66,6 +66,7 @@ export {PoolId} from "./amm/domain/types"
 export {AmmPool} from "./amm/domain/ammPool"
 export {AmmTxBuilder} from "./amm/interpreters/ammTxBuilder/ammTxBuilder";
 export {SwapParams, SwapAmmTxBuilder, SwapTxInfo} from "./amm/interpreters/ammTxBuilder/swapAmmTxBuilder";
+export {LockTxInfo, LockTxBuilder, LockParams} from "./amm/interpreters/ammTxBuilder/lockTxBuilder";
 export {RedeemParams, RedeemAmmTxBuilder, RedeemTxInfo} from "./amm/interpreters/ammTxBuilder/redeemAmmTxBuilder";
 export {PoolCreationParams, PoolCreationTxInfo, PoolCreationTxBuilder} from "./amm/interpreters/ammTxBuilder/poolCreationTxBuilder";
 export {FeePerToken} from "./amm/domain/models"

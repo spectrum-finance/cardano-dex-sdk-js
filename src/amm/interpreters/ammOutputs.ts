@@ -3,9 +3,15 @@ import {add, remove, Value} from "../../cardano/entities/value"
 import {TxMath} from "../../cardano/wallet/txMath"
 import {encodeHex} from "../../utils/hex"
 import {CardanoWasm} from "../../utils/rustLoader"
-import {mkDepositDatum, mkPoolDatum, mkRedeemDatum, mkSwapDatum} from "../contractData"
+import {mkDepositDatum, mkLockLiquidityDatum, mkPoolDatum, mkRedeemDatum, mkSwapDatum} from "../contractData"
 import {calculateInitUserRewardLq} from "../math/pool";
-import {DepositRequest, PoolCreationRequest, RedeemRequest, SwapRequest} from "../models/opRequests"
+import {
+  DepositRequest,
+  LockLiquidityRequest,
+  PoolCreationRequest,
+  RedeemRequest,
+  SwapRequest
+} from "../models/opRequests"
 import {OrderAddrs} from "../scripts"
 
 export interface AmmOutputs {
@@ -16,6 +22,8 @@ export interface AmmOutputs {
   swap(req: SwapRequest): TxOutCandidate[]
 
   poolCreation(req: PoolCreationRequest): TxOutCandidate[]
+
+  lockLiquidity(req: LockLiquidityRequest): TxOutCandidate[]
 }
 
 export function mkAmmOutputs(addrs: OrderAddrs, txMath: TxMath, R: CardanoWasm): AmmOutputsImpl {
@@ -70,5 +78,14 @@ class AmmOutputsImpl implements AmmOutputs {
       addr: req.userAddress,
     }
     return [poolOutput, userLqOutput]
+  }
+
+  lockLiquidity(req: LockLiquidityRequest): TxOutCandidate[] {
+    const data = encodeHex(mkLockLiquidityDatum(req, this.R).to_bytes())
+    return [{
+      value: req.orderValue,
+      addr: this.addrs.ammLock,
+      data
+    }]
   }
 }

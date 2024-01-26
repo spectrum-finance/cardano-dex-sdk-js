@@ -41,6 +41,7 @@ export interface SwapTxInfo {
   readonly maxOutput: AssetAmount
   readonly orderBudget: Value
   readonly orderValue: Value
+  readonly exFeePerToken: FeePerToken;
 }
 
 export class SwapAmmTxBuilder {
@@ -53,9 +54,9 @@ export class SwapAmmTxBuilder {
   ) {}
 
   async build(params: SwapParams, allInputs: FullTxIn[], userTxFee?: bigint): Promise<[TxCandidate, SwapTxInfo, Error | undefined]> {
-    const {txFees, minExecutorReward, nitro, quote, base, changeAddress} = params
-    const vars = swapVars(txFees, minExecutorReward, nitro, quote)
-
+    const {txFees, minExecutorReward, nitro, quote, pool, base, changeAddress} = params
+    const vars = swapVars(txFees, minExecutorReward, nitro, quote, pool.outputAmount(base))
+    console.log('vars:', pool, pool.outputAmount(base))
     if (!vars) {
       throw new Error("amount is equals zero")
     }
@@ -87,7 +88,8 @@ export class SwapAmmTxBuilder {
       orderValue: orderValue,
       orderBudget: totalOrderBudget,
       refundableDeposit: refundableValuePart + refundableBugdetPart,
-      txFee: userTxFee || txFees.swapOrder
+      txFee: userTxFee || txFees.swapOrder,
+      exFeePerToken: exFeePerToken
     }
 
     return [

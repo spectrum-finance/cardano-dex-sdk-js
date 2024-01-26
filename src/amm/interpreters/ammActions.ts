@@ -30,6 +30,8 @@ class DefaultAmmActions implements AmmActions {
           return this.outputs.swap(req)
         case OrderKind.PoolCreation:
           return this.outputs.poolCreation(req)
+        case OrderKind.Lock:
+          return this.outputs.lockLiquidity(req)
       }
     }
 

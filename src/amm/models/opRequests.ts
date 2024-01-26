@@ -19,14 +19,16 @@ export enum OrderKind {
   Deposit,
   Redeem,
   Swap,
-  PoolCreation = 3
+  PoolCreation = 3,
+  Lock
 }
 
 export function foldOrderKind<A>(
   onDeposit: () => A,
   onRedeem: () => A,
   onSwap: () => A,
-  onPoolCreation: () => A
+  onPoolCreation: () => A,
+  onLockCreation: () => A,
 ): (kind: OrderKind) => A {
   return (kind: OrderKind) => {
     switch (kind) {
@@ -38,6 +40,8 @@ export function foldOrderKind<A>(
         return onSwap()
       case OrderKind.PoolCreation:
         return onPoolCreation()
+      case OrderKind.Lock:
+        return onLockCreation()
     }
   }
 }
@@ -101,4 +105,12 @@ export type PoolCreationRequest = {
   readonly minAdaForUserOutput: bigint;
 }
 
-export type OrderRequest = DepositRequest | RedeemRequest | SwapRequest | PoolCreationRequest
+export type LockLiquidityRequest = {
+  readonly kind: OrderKind.Lock
+  readonly lockedUntil: number;
+  readonly redeemer: PubKeyHash;
+  readonly orderValue: Value;
+  readonly uiFee: Lovelace;
+}
+
+export type OrderRequest = DepositRequest | RedeemRequest | SwapRequest | PoolCreationRequest | LockLiquidityRequest
