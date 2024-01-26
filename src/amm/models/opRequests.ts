@@ -6,6 +6,7 @@ import {HexString, Lovelace, TxHash} from "../../cardano/types"
 import {AssetAmount} from "../../domain/assetAmount"
 import {FeePerToken} from "../domain/models"
 import {PoolId} from "../domain/types"
+import {StakeCredential} from "@emurgo/cardano-serialization-lib-browser"
 
 export type CreateRequest = {
   readonly x: AssetAmount
@@ -108,6 +109,7 @@ export type LockLiquidityRequest = {
   readonly kind: OrderKind.Lock
   readonly lockedUntil: number;
   readonly redeemer: PubKeyHash;
+  readonly stake?: StakeCredential;
   readonly orderValue: Value;
   readonly uiFee: Lovelace;
 }

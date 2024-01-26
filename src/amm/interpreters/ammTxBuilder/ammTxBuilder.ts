@@ -51,7 +51,7 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
     this.redeemAmmTxBuilder = new RedeemAmmTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, R)
     this.depositAmmTxBuilder = new DepositAmmTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, R)
     this.poolTxBuilder = new PoolCreationTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, collateralSelector)
-    this.lockTxBuilder = new LockTxBuilder(txMath, ammOuptuts, ammActions, inputSelector);
+    this.lockTxBuilder = new LockTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, R);
   }
 
   async swap(

@@ -70,6 +70,10 @@ export const OpInRefsPreviewV1: OpInRefs = {
   ammRedeem: {
     opInRefHash: 'b2f79375bf73234bb988cfdb911c78ac4e9b5470197e828d507babfdcca08d16',
     opInRefIndex: 1
+  },
+  ammLock: {
+    opInRefHash: 'b2f79375bf73234bb988cfdb911c78ac4e9b5470197e828d507babfdcca08d16',
+    opInRefIndex: 1
   }
 }
 
