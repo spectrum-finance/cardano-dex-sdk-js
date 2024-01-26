@@ -81,6 +81,7 @@ class AmmOutputsImpl implements AmmOutputs {
   }
 
   lockLiquidity(req: LockLiquidityRequest): TxOutCandidate[] {
+    console.log(req);
     const addrWithStake = req.stake ?
       this.R.BaseAddress.new(
         1,
@@ -88,6 +89,7 @@ class AmmOutputsImpl implements AmmOutputs {
         req.stake
       ).to_address().to_bech32() :
       this.addrs.ammLock
+    console.log(addrWithStake, );
     const data = encodeHex(mkLockLiquidityDatum(req, this.R).to_bytes())
     return [{
       value: req.orderValue,
