@@ -109,7 +109,10 @@ export class UnlockTxBuilder {
       {
         inputs,
         outputs:        [{
-          value: boxToUnlock.value,
+          value: boxToUnlock.value.map(item => ({
+            ...item,
+            nameHex: this.R.AssetName.new(new TextEncoder().encode(item.name)).to_hex()
+          })),
           addr:  rewardAddress
         }],
         changeAddr:     rewardAddress,
