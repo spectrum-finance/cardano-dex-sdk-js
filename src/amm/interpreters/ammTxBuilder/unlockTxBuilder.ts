@@ -30,6 +30,7 @@ export class UnlockTxBuilder {
     private scripts: ScriptCreds,
     private R: CardanoWasm
   ) {
+    console.log(this.addrs);
   }
 
   async build(params: UnlockParams, userTxFee?: bigint): Promise<[TxCandidate, UnlockTxInfo, Error | undefined]> {
@@ -43,7 +44,7 @@ export class UnlockTxBuilder {
       return Promise.reject([null as any, {txFee: undefined}, new Error(`Too many collateral inputs`)])
     }
 
-    const [txId, boxIndex] = params.boxId.split("#")
+    const [txId, boxIndex] = params.boxId.split(":")
 
     if (!txId || boxIndex === null || boxIndex === undefined) {
       return Promise.resolve([null as any, {txFee: undefined}, new Error(`lock for ${params.boxId} not found`)])
@@ -58,9 +59,9 @@ export class UnlockTxBuilder {
     if (!boxToUnlock) {
       return Promise.resolve([null as any, {txFee: undefined}, new Error(`lock for ${params.boxId} not found`)])
     }
-    if (boxToUnlock.addr !== this.addrs.ammLock) {
-      return Promise.resolve([null as any, {txFee: undefined}, new Error(`lock for ${params.boxId} not valid`)])
-    }
+    // if (boxToUnlock.addr !== this.addrs.ammLock) {
+    //   return Promise.resolve([null as any, {txFee: undefined}, new Error(`lock for ${params.boxId} not valid`)])
+    // }
 
     const inputs: FullTxIn[] = [{
       txOut:         boxToUnlock,
