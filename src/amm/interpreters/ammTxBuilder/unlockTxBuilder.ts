@@ -85,8 +85,8 @@ export class UnlockTxBuilder {
         datum:     boxToUnlock.dataBin,
         validator: this.scripts.ammLock,
         redeemer:  this.R.PlutusData.new_integer(this.R.BigInt.from_str("0")).to_hex(),
-        mem:       "140000",
-        steps:     "60000000"
+        mem:       "160000",
+        steps:     "80000000"
       }
     }, ...inputsOrError]
     const rewardPKH = params.redeemer
