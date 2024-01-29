@@ -2,12 +2,16 @@ import {Addr, extractPaymentCred} from "../../../cardano/entities/address"
 import {ProtocolParams} from "../../../cardano/entities/env"
 import {TxCandidate} from "../../../cardano/entities/tx"
 import {FullTxIn} from "../../../cardano/entities/txIn"
+import {Value} from "../../../cardano/entities/value"
 import {HexString} from "../../../cardano/types"
 import {CollateralSelector} from "../../../cardano/wallet/collateralSelector"
+import {InputSelector} from "../../../cardano/wallet/inputSelector"
+import {TxMath} from "../../../cardano/wallet/txMath"
 import {CardanoNetwork} from "../../../quickblue/cardanoNetwork"
 import {CardanoWasm} from "../../../utils/rustLoader"
 import {AmmTxFeeMapping} from "../../math/order"
 import {OpInRefsMainnetV1, OrderAddrs, ScriptCreds} from "../../scripts"
+import {selectInputs} from "./selectInputs"
 
 export interface UnlockParams {
   readonly changeAddress: Addr;
@@ -24,16 +28,18 @@ export interface UnlockTxInfo {
 export class UnlockTxBuilder {
   constructor(
     private collateralSelector: CollateralSelector,
+    private inputSelector: InputSelector,
     private pparams: ProtocolParams,
     private network: CardanoNetwork,
     private addrs: OrderAddrs,
     private scripts: ScriptCreds,
+    private txMath: TxMath,
     private R: CardanoWasm
   ) {
     console.log(this.addrs);
   }
 
-  async build(params: UnlockParams, userTxFee?: bigint): Promise<[TxCandidate, UnlockTxInfo, Error | undefined]> {
+  async build(params: UnlockParams,  allInputs: FullTxIn[], userTxFee?: bigint): Promise<[TxCandidate, UnlockTxInfo, Error | undefined]> {
     const collateral = await this
       .collateralSelector
       .getCollateral(params.collateralAmount)
@@ -59,9 +65,11 @@ export class UnlockTxBuilder {
     if (!boxToUnlock) {
       return Promise.resolve([null as any, {txFee: undefined}, new Error(`lock for ${params.boxId} not found`)])
     }
-    // if (boxToUnlock.addr !== this.addrs.ammLock) {
-    //   return Promise.resolve([null as any, {txFee: undefined}, new Error(`lock for ${params.boxId} not valid`)])
-    // }
+
+    const inputsOrError = await selectInputs(Value(userTxFee || params.txFees.lockOrder), params.changeAddress, this.inputSelector, allInputs, this.txMath)
+    if (inputsOrError instanceof Error) {
+      return Promise.resolve([null as any, {txFee: undefined}, inputsOrError])
+    }
 
     const inputs: FullTxIn[] = [{
       txOut:         boxToUnlock,
@@ -73,7 +81,7 @@ export class UnlockTxBuilder {
         mem:       "140000",
         steps:     "60000000"
       }
-    }]
+    }, ...inputsOrError]
     const rewardPKH = params.redeemer
     let rewardAddress: string
 

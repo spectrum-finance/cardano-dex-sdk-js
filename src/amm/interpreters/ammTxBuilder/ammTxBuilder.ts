@@ -62,7 +62,7 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
     this.depositAmmTxBuilder = new DepositAmmTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, R)
     this.poolTxBuilder = new PoolCreationTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, collateralSelector)
     this.lockTxBuilder = new LockTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, R);
-    this.unlockTxBuilder = new UnlockTxBuilder(collateralSelector, pparams, network, addrs, scripts, R);
+    this.unlockTxBuilder = new UnlockTxBuilder(collateralSelector, inputSelector, pparams, network, addrs, scripts, txMath, R);
   }
 
   async swap(
@@ -265,15 +265,17 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
     currentTry = 0,
     bestTransaction?: Transaction | null,
     prevTxFee?: bigint,
+    allInputs?: FullTxIn[],
   ): Promise<[Transaction | null, TxCandidate, UnlockTxInfo, Error | null]> {
-    if (currentTry >= MAX_TRANSACTION_BUILDING_TRY_COUNT && bestTransaction) {
+    if (currentTry >= MAX_TRANSACTION_BUILDING_TRY_COUNT && bestTransaction && allInputs) {
       const [unlockTxCandidate, unlockTxInfo] = await this
         .unlockTxBuilder
-        .build(unlockParams, BigInt(bestTransaction.body().fee().to_str()))
+        .build(unlockParams, allInputs, BigInt(bestTransaction.body().fee().to_str()))
       return [bestTransaction, unlockTxCandidate, unlockTxInfo, null]
     }
 
-    const [unlockTxCandidate, unlockTxInfo, error] = await this.unlockTxBuilder.build(unlockParams, prevTxFee)
+    const newAllInputs = await (allInputs ? Promise.resolve(allInputs) : this.inputCollector.getInputs());
+    const [unlockTxCandidate, unlockTxInfo, error] = await this.unlockTxBuilder.build(unlockParams, newAllInputs, prevTxFee)
 
     if (error) {
       console.log(error)
@@ -296,7 +298,7 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
           transaction :
           bestTransaction
 
-        return this.unlock(unlockParams, currentTry + 1, newBestTxData, txFee)
+        return this.unlock(unlockParams, currentTry + 1, newBestTxData, txFee, newAllInputs)
       }
     } catch (e) {
       console.log(e)
