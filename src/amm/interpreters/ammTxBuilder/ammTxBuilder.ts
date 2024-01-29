@@ -288,7 +288,7 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
 
       if (prevTxFee === txFee) {
         return [
-          this.txAsm.finalize(unlockTxCandidate, 1.05),
+          this.txAsm.finalize(unlockTxCandidate, 1.5),
           unlockTxCandidate,
           unlockTxInfo,
           null
