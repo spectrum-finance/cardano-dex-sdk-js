@@ -61,9 +61,16 @@ export class UnlockTxBuilder {
       return Promise.resolve([null as any, {txFee: undefined}, new Error(`lock for ${params.boxId} not found`)])
     }
 
-    const boxToUnlock = tx.outputs.find(out => out.index === Number(boxIndex))
+    let boxToUnlock = tx.outputs.find(out => out.index === Number(boxIndex))
     if (!boxToUnlock) {
       return Promise.resolve([null as any, {txFee: undefined}, new Error(`lock for ${params.boxId} not found`)])
+    }
+    boxToUnlock = {
+      ...boxToUnlock,
+      value: boxToUnlock.value.map(item => ({
+        ...item,
+        nameHex: this.R.AssetName.new(new TextEncoder().encode(item.name)).to_hex()
+      }))
     }
 
     const inputsOrError = await selectInputs(Value(userTxFee || params.txFees.lockOrder), params.changeAddress, this.inputSelector, allInputs, this.txMath)
@@ -72,13 +79,7 @@ export class UnlockTxBuilder {
     }
 
     const inputs: FullTxIn[] = [{
-      txOut:         {
-        ...boxToUnlock,
-        value: boxToUnlock.value.map(item => ({
-          ...item,
-          nameHex: this.R.AssetName.new(new TextEncoder().encode(item.name)).to_hex()
-        }))
-      },
+      txOut:         boxToUnlock,
       consumeScript: {
         opInRef:   OpInRefsMainnetV1.ammLock,
         datum:     boxToUnlock.dataBin,
@@ -109,11 +110,8 @@ export class UnlockTxBuilder {
       {
         inputs,
         outputs:        [{
-          value: boxToUnlock.value.map(item => ({
-            ...item,
-            nameHex: this.R.AssetName.new(new TextEncoder().encode(item.name)).to_hex()
-          })),
-          addr:  rewardAddress
+          value: boxToUnlock.value,
+          addr:  rewardAddress,
         }],
         changeAddr:     rewardAddress,
         collateral:     collateral,
