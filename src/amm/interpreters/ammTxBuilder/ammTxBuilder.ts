@@ -13,6 +13,10 @@ import {SwapAmmTxBuilder, SwapParams, SwapTxInfo} from "./swapAmmTxBuilder"
 import {FullTxIn} from "../../../cardano/entities/txIn"
 import {CollateralSelector} from "../../../cardano/wallet/collateralSelector"
 import {LockParams, LockTxBuilder, LockTxInfo} from "./lockTxBuilder"
+import {UnlockParams, UnlockTxBuilder, UnlockTxInfo} from "./unlockTxBuilder"
+import {OrderAddrs, ScriptCreds} from "../../scripts"
+import {ProtocolParams} from "../../../cardano/entities/env"
+import {CardanoNetwork} from "../../../quickblue/cardanoNetwork"
 
 export interface AmmTxBuilder {
   swap(params: SwapParams): Promise<[Transaction | null, TxCandidate, SwapTxInfo, Error | null]>;
@@ -37,6 +41,8 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
 
   private lockTxBuilder: LockTxBuilder
 
+  private unlockTxBuilder: UnlockTxBuilder
+
   constructor(
     txMath: TxMath,
     ammOuptuts: AmmOutputs,
@@ -45,13 +51,18 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
     private inputCollector: InputCollector,
     collateralSelector: CollateralSelector,
     R: CardanoWasm,
-    private txAsm: TxAsm
+    private txAsm: TxAsm,
+    addrs: OrderAddrs,
+    scripts: ScriptCreds,
+    pparams: ProtocolParams,
+    network: CardanoNetwork,
   ) {
     this.swapAmmTxBuilder = new SwapAmmTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, R)
     this.redeemAmmTxBuilder = new RedeemAmmTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, R)
     this.depositAmmTxBuilder = new DepositAmmTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, R)
     this.poolTxBuilder = new PoolCreationTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, collateralSelector)
     this.lockTxBuilder = new LockTxBuilder(txMath, ammOuptuts, ammActions, inputSelector, R);
+    this.unlockTxBuilder = new UnlockTxBuilder(collateralSelector, pparams, network, addrs, scripts, R);
   }
 
   async swap(
@@ -246,6 +257,50 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
     } catch (e) {
       console.log(e)
       return [null, lockTxCandidate, {...lockTxInfo, txFee: undefined}, e]
+    }
+  }
+
+  async unlock(
+    unlockParams: UnlockParams,
+    currentTry = 0,
+    bestTransaction?: Transaction | null,
+    prevTxFee?: bigint,
+  ): Promise<[Transaction | null, TxCandidate, UnlockTxInfo, Error | null]> {
+    if (currentTry >= MAX_TRANSACTION_BUILDING_TRY_COUNT && bestTransaction) {
+      const [unlockTxCandidate, unlockTxInfo] = await this
+        .unlockTxBuilder
+        .build(unlockParams, BigInt(bestTransaction.body().fee().to_str()))
+      return [bestTransaction, unlockTxCandidate, unlockTxInfo, null]
+    }
+
+    const [unlockTxCandidate, unlockTxInfo, error] = await this.unlockTxBuilder.build(unlockParams, prevTxFee)
+
+    if (error) {
+      console.log(error)
+      return [null, unlockTxCandidate, {...unlockTxInfo, txFee: undefined}, error]
+    }
+
+    try {
+      const transaction = this.txAsm.finalize(unlockTxCandidate)
+      const txFee = BigInt(transaction.body().fee().to_str())
+
+      if (prevTxFee === txFee) {
+        return [
+          this.txAsm.finalize(unlockTxCandidate, 1.05),
+          unlockTxCandidate,
+          unlockTxInfo,
+          null
+        ]
+      } else {
+        const newBestTxData: Transaction | null | undefined = !!prevTxFee && txFee < prevTxFee ?
+          transaction :
+          bestTransaction
+
+        return this.unlock(unlockParams, currentTry + 1, newBestTxData, txFee)
+      }
+    } catch (e) {
+      console.log(e)
+      return [null, unlockTxCandidate, {...unlockTxInfo, txFee: undefined}, e]
     }
   }
 }
