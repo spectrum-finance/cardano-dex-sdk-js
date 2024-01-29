@@ -61,7 +61,7 @@ export class UnlockTxBuilder {
       return Promise.resolve([null as any, {txFee: undefined}, new Error(`lock for ${params.boxId} not found`)])
     }
 
-    const boxToUnlock = tx.outputs[Number(boxIndex)]
+    const boxToUnlock = tx.outputs.find(out => out.index === Number(boxIndex))
     if (!boxToUnlock) {
       return Promise.resolve([null as any, {txFee: undefined}, new Error(`lock for ${params.boxId} not found`)])
     }
