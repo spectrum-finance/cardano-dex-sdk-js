@@ -97,7 +97,7 @@ export const OpInRefsMainnetV1: OpInRefs = {
     opInRefIndex: 1
   },
   ammLock: {
-    opInRefHash: '913f72de4c2c0aee05aba8d09d058225a11eb8ce625041274f417f4e72f151b6',
+    opInRefHash: '27cd7f14a124e2078de83e99a97cc52855b457845c4fc2cad365b931908f7e42',
     opInRefIndex: 0
   }
 }

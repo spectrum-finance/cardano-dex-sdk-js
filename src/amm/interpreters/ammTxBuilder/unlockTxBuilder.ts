@@ -81,7 +81,7 @@ export class UnlockTxBuilder {
     const inputs: FullTxIn[] = [{
       txOut:         boxToUnlock,
       consumeScript: {
-        opInRef:   OpInRefsMainnetV1.ammSwap,
+        opInRef:   OpInRefsMainnetV1.ammLock,
         datum:     boxToUnlock.dataBin,
         validator: this.scripts.ammLock,
         redeemer:  this.R.PlutusData.new_integer(this.R.BigInt.from_str("0")).to_hex(),
