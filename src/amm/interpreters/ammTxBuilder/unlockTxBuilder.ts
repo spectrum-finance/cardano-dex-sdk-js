@@ -72,7 +72,13 @@ export class UnlockTxBuilder {
     }
 
     const inputs: FullTxIn[] = [{
-      txOut:         boxToUnlock,
+      txOut:         {
+        ...boxToUnlock,
+        value: boxToUnlock.value.map(item => ({
+          ...item,
+          nameHex: this.R.AssetName.new(new TextEncoder().encode(item.name)).to_hex()
+        }))
+      },
       consumeScript: {
         opInRef:   OpInRefsMainnetV1.ammLock,
         datum:     boxToUnlock.dataBin,
