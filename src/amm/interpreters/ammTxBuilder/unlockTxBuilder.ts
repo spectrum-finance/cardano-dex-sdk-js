@@ -12,6 +12,7 @@ import {CardanoWasm} from "../../../utils/rustLoader"
 import {AmmTxFeeMapping} from "../../math/order"
 import {OpInRefsMainnetV1, OrderAddrs, ScriptCreds} from "../../scripts"
 import {selectInputs} from "./selectInputs"
+import {DEFAULT_EX_UNITS_MEM, DEFAULT_EX_UNITS_STEPS} from "../refundTxBuilder/refundTxBuilder"
 
 export interface UnlockParams {
   readonly changeAddress: Addr;
@@ -85,8 +86,8 @@ export class UnlockTxBuilder {
         datum:     boxToUnlock.dataBin,
         validator: this.scripts.ammLock,
         redeemer:  this.R.PlutusData.new_integer(this.R.BigInt.from_str("0")).to_hex(),
-        mem:       "200000",
-        steps:     "70000000"
+        mem:       DEFAULT_EX_UNITS_MEM,
+        steps:     DEFAULT_EX_UNITS_STEPS
       }
     }, ...inputsOrError]
     const rewardPKH = params.redeemer
