@@ -54,9 +54,9 @@ export class SwapAmmTxBuilder {
   ) {}
 
   async build(params: SwapParams, allInputs: FullTxIn[], userTxFee?: bigint): Promise<[TxCandidate, SwapTxInfo, Error | undefined]> {
-    const {txFees, minExecutorReward, nitro, quote, pool, base, changeAddress} = params
-    const vars = swapVars(txFees, minExecutorReward, nitro, quote, pool.outputAmount(base))
-    console.log('vars:', pool, pool.outputAmount(base))
+    const {txFees, minExecutorReward, nitro, quote, base, changeAddress} = params
+    const vars = swapVars(txFees, minExecutorReward, nitro, quote, quote)
+
     if (!vars) {
       throw new Error("amount is equals zero")
     }
