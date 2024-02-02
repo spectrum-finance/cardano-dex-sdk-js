@@ -116,7 +116,7 @@ export class UnlockTxBuilder {
         }],
         changeAddr:     rewardAddress,
         collateral:     collateral,
-        requiredSigner: rewardPKH
+        // requiredSigner: rewardPKH
       },
       {
         txFee: userTxFee || params.txFees.lockOrder
