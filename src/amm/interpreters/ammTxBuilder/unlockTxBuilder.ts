@@ -107,7 +107,7 @@ export class UnlockTxBuilder {
 
       rewardAddress = addr.to_address().to_bech32()
     }
-
+    console.log(collateral);
     return [
       {
         inputs,
