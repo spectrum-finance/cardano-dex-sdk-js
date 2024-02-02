@@ -70,7 +70,8 @@ export class UnlockTxBuilder {
       ...boxToUnlock,
       value: boxToUnlock.value.map(item => ({
         ...item,
-        nameHex: this.R.AssetName.new(new TextEncoder().encode(item.name)).to_hex()
+        nameHex: this.R.AssetName.new(new TextEncoder().encode(item.name)).to_hex(),
+        quantity: BigInt(item.quantity)
       }))
     }
 
@@ -116,7 +117,7 @@ export class UnlockTxBuilder {
         }],
         changeAddr:     rewardAddress,
         collateral:     collateral,
-        // requiredSigner: rewardPKH
+        requiredSigner: rewardPKH
       },
       {
         txFee: userTxFee || params.txFees.lockOrder
