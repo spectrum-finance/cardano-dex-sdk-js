@@ -284,11 +284,11 @@ export class DefaultAmmTxCandidateBuilder implements AmmTxBuilder {
 
     try {
       const transaction = this.txAsm.finalize(unlockTxCandidate)
-      const txFee =  BigInt(Math.floor(Number(transaction.body().fee().to_str()) * 1.5))
+      const txFee =  BigInt(Math.floor(Number(transaction.body().fee().to_str())))
 
       if (prevTxFee === txFee) {
         return [
-          this.txAsm.finalize(unlockTxCandidate, 1.5),
+          this.txAsm.finalize(unlockTxCandidate),
           unlockTxCandidate,
           unlockTxInfo,
           null
