@@ -91,7 +91,7 @@ export class UnlockTxBuilder {
         steps:     DEFAULT_EX_UNITS_STEPS
       }
     }, ...inputsOrError]
-    const rewardPKH = params.redeemer
+    const rewardPKH = boxToUnlock.data?.fields[1].bytes
     let rewardAddress: string
 
     if (rewardPKH === extractPaymentCred(params.changeAddress, this.R)) {
@@ -107,7 +107,7 @@ export class UnlockTxBuilder {
 
       rewardAddress = addr.to_address().to_bech32()
     }
-    console.log(collateral);
+
     return [
       {
         inputs,
@@ -116,8 +116,8 @@ export class UnlockTxBuilder {
           addr:  rewardAddress,
         }],
         changeAddr:     rewardAddress,
-        collateral:     [],
-        requiredSigner: rewardPKH,
+        collateral:     collateral,
+        requiredSigner: rewardPKH
       },
       {
         txFee: userTxFee || params.txFees.lockOrder
