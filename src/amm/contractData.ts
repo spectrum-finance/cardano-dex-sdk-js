@@ -195,7 +195,7 @@ export function parseRedeemConfig(raw: Datum, R: CardanoWasm): RedeemConfig | un
   }
 }
 
-function mkProductN(members: PlutusData[], R: CardanoWasm): PlutusData {
+export function mkProductN(members: PlutusData[], R: CardanoWasm): PlutusData {
   const bf = R.PlutusList.new()
   for (const m of members) bf.add(m)
   return mkPlutusData(bf, R)

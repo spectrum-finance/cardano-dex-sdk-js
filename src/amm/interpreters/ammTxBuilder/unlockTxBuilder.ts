@@ -13,6 +13,7 @@ import {AmmTxFeeMapping} from "../../math/order"
 import {OpInRefsMainnetV1, OrderAddrs, ScriptCreds} from "../../scripts"
 import {selectInputs} from "./selectInputs"
 import {DEFAULT_EX_UNITS_MEM, DEFAULT_EX_UNITS_STEPS} from "../refundTxBuilder/refundTxBuilder"
+import {mkProductN} from "../../contractData"
 
 export interface UnlockParams {
   readonly changeAddress: Addr;
@@ -85,7 +86,7 @@ export class UnlockTxBuilder {
         opInRef:   OpInRefsMainnetV1.ammLock,
         datum:     boxToUnlock.dataBin,
         validator: this.scripts.ammLock,
-        redeemer:  this.R.PlutusData.new_integer(this.R.BigInt.from_str("0")).to_hex(),
+        redeemer:  mkProductN([this.R.PlutusData.new_integer(this.R.BigInt.from_str("0"))], this.R).to_hex(),
         mem:       DEFAULT_EX_UNITS_MEM,
         steps:     DEFAULT_EX_UNITS_STEPS
       }
