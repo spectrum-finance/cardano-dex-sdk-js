@@ -85,7 +85,7 @@ export class UnlockTxBuilder {
         opInRef:   OpInRefsMainnetV1.ammLock,
         datum:     boxToUnlock.dataBin,
         validator: this.scripts.ammLock,
-        redeemer:  this.R.PlutusData.new_integer(this.R.BigInt.from_str("1")).to_hex(),
+        redeemer:  this.R.PlutusData.new_integer(this.R.BigInt.from_str("0")).to_hex(),
         mem:       DEFAULT_EX_UNITS_MEM,
         steps:     DEFAULT_EX_UNITS_STEPS
       }
