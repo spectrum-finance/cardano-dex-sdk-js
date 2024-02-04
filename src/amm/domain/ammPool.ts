@@ -11,18 +11,24 @@ export enum AmmPoolType {
 }
 
 export class AmmPool {
+  public x: AssetAmount;
+
+  public y: AssetAmount;
   constructor(
     public readonly id: PoolId,
     public readonly lp: AssetAmount,
-    public readonly x: AssetAmount,
-    public readonly y: AssetAmount,
+    public readonly totalX: AssetAmount,
+    public readonly totalY: AssetAmount,
     public readonly poolFeeNum: number,
     public readonly lqBound: bigint,
     public readonly type: AmmPoolType = AmmPoolType.DEFAULT,
     public readonly treasuryX: bigint = 0n,
     public readonly treasuryY: bigint = 0n,
+    public readonly treasuryFee: bigint = 0n
   ) {
     this.feeNum = BigInt(poolFeeNum)
+    this.x = this.totalX.withAmount(this.totalX.amount - (treasuryX || 0n));
+    this.y = this.totalY.withAmount(this.totalY.amount - (treasuryY || 0n));
   }
 
   readonly feeDenom: bigint = this.type === AmmPoolType.DEFAULT ?  1000n : 10000n
