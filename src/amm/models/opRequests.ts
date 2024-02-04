@@ -1,12 +1,13 @@
+import {StakeCredential} from "@emurgo/cardano-serialization-lib-browser"
 import {Addr} from "../../cardano/entities/address";
 import {AssetClass} from "../../cardano/entities/assetClass"
 import {PubKeyHash} from "../../cardano/entities/publicKey"
 import {Value} from "../../cardano/entities/value"
 import {HexString, Lovelace, TxHash} from "../../cardano/types"
 import {AssetAmount} from "../../domain/assetAmount"
+import {AmmPoolType} from "../domain/ammPool"
 import {FeePerToken} from "../domain/models"
 import {PoolId} from "../domain/types"
-import {StakeCredential} from "@emurgo/cardano-serialization-lib-browser"
 
 export type CreateRequest = {
   readonly x: AssetAmount
@@ -86,6 +87,7 @@ export type SwapRequest = {
   readonly exFeePerToken: FeePerToken
   readonly uiFee: Lovelace
   readonly orderValue: Value
+  readonly type: AmmPoolType;
 }
 
 export type PoolCreationRequest = {
@@ -103,6 +105,7 @@ export type PoolCreationRequest = {
   readonly mintingCreationTxOutIdx: number
   readonly userAddress: Addr
   readonly minAdaForUserOutput: bigint;
+  readonly type: AmmPoolType;
 }
 
 export type LockLiquidityRequest = {

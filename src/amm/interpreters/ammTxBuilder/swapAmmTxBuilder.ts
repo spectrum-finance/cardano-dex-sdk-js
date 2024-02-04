@@ -15,7 +15,7 @@ import {AmmPool} from "../../domain/ammPool"
 import {FeePerToken} from "../../domain/models"
 import {AmmTxFeeMapping} from "../../math/order"
 import {SwapExtremums, swapVars} from "../../math/swap"
-import {OrderKind} from "../../models/opRequests"
+import {OrderKind, SwapRequest} from "../../models/opRequests"
 import {AmmActions} from "../ammActions"
 import {AmmOutputs} from "../ammOutputs"
 import {selectInputs} from "./selectInputs"
@@ -55,7 +55,7 @@ export class SwapAmmTxBuilder {
 
   async build(params: SwapParams, allInputs: FullTxIn[], userTxFee?: bigint): Promise<[TxCandidate, SwapTxInfo, Error | undefined]> {
     const {txFees, minExecutorReward, nitro, quote, pool, base, changeAddress} = params
-    const vars = swapVars(txFees, minExecutorReward, nitro, quote, pool.outputAmount(base))
+    const vars = swapVars(txFees, minExecutorReward, nitro, quote, quote)
     console.log('vars:', pool, pool.outputAmount(base))
     if (!vars) {
       throw new Error("amount is equals zero")
@@ -72,7 +72,8 @@ export class SwapAmmTxBuilder {
       rawOrderValue,
       params,
       exFeePerToken,
-      extremums
+      extremums,
+      pool.type
     )
     const totalOrderBudget = add(orderValue, AdaEntry(userTxFee || txFees.swapOrder))
 
@@ -105,7 +106,8 @@ export class SwapAmmTxBuilder {
           minQuoteOutput: extremums.minOutput.amount,
           uiFee: 0n,
           exFeePerToken: exFeePerToken,
-          orderValue: orderValue
+          orderValue: orderValue,
+          type: pool.type
         },
         {
           changeAddr: params.changeAddress,
@@ -122,7 +124,8 @@ export class SwapAmmTxBuilder {
     orderValue: Value,
     params: SwapParams,
     exFeePerToken: FeePerToken,
-    extremums: SwapExtremums
+    extremums: SwapExtremums,
+    type: SwapRequest['type']
   ): [Value, bigint] {
     const [estimatedOutput] = this.ammOutputs.swap({
       kind: OrderKind.Swap,
@@ -135,7 +138,8 @@ export class SwapAmmTxBuilder {
       minQuoteOutput: extremums.minOutput.amount,
       uiFee: 0n,
       exFeePerToken: exFeePerToken,
-      orderValue: orderValue
+      orderValue: orderValue,
+      type
     })
     const requiredAdaForOutput = this.txMath.minAdaRequiredforOutput(estimatedOutput)
     const lovelace = getLovelace(orderValue)

@@ -19,7 +19,7 @@ class DefaultOrdersParser implements OrdersParser {
   }
 
   parseOrder(out: FullTxOut): AmmOrderInfo | undefined {
-    if (extractPaymentCred(out.addr, this.R) === this.creds.ammSwap && out.dataBin) {
+    if ([this.creds.ammSwapDefault, this.creds.ammSwapDefault].includes(extractPaymentCred(out.addr, this.R))  && out.dataBin) {
       const swap = parseSwapConfig(out.dataBin, this.R);
       if (swap) {
         const from = new AssetAmount(swap.base, swap.baseAmount)

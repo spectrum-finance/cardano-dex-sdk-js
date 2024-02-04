@@ -46,7 +46,7 @@ class NetworkPoolsV1 implements Pools {
   }
 
   async getAll(paging: Paging): Promise<[AmmPool[], number]> {
-    const [boxes, totalBoxes] = await this.network.getUtxosByPaymentCred(this.scripts.ammPool, paging)
+    const [boxes, totalBoxes] = await this.network.getUtxosByPaymentCred(this.scripts.ammPoolDefault, paging)
     const pools = this.parser.parseBatch(boxes)
     const invalid = boxes.length - pools.length
     const total = totalBoxes - invalid
@@ -54,12 +54,12 @@ class NetworkPoolsV1 implements Pools {
   }
 
   async getByTokens(tokens: AssetRef[], paging: Paging): Promise<[AmmPool[], number]> {
-    const req: UtxoSearch = {paymentCred: this.scripts.ammPool, containsAllOf: tokens}
+    const req: UtxoSearch = {paymentCred: this.scripts.ammPoolDefault, containsAllOf: tokens}
     return this.searchPools(req, paging)
   }
 
   async getByTokensUnion(tokens: AssetRef[], paging: Paging): Promise<[AmmPool[], number]> {
-    const req: UtxoSearch = {paymentCred: this.scripts.ammPool, containsAnyOf: tokens}
+    const req: UtxoSearch = {paymentCred: this.scripts.ammPoolDefault, containsAnyOf: tokens}
     return this.searchPools(req, paging)
   }
 

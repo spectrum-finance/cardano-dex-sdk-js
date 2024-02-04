@@ -22,32 +22,38 @@ export interface Refunds {
 
 const AddressesToRefund = [
   OrderAddrsV1Testnet.ammDeposit,
-  OrderAddrsV1Testnet.ammSwap,
+  OrderAddrsV1Testnet.ammSwapDefault,
+  OrderAddrsV1Testnet.ammSwapFeeSwitch,
   OrderAddrsV1Testnet.ammRedeem,
 
   OrderAddrsV1Mainnet.ammDeposit,
-  OrderAddrsV1Mainnet.ammSwap,
-  OrderAddrsV1Mainnet.ammRedeem,
+  OrderAddrsV1Mainnet.ammSwapDefault,
+  OrderAddrsV1Mainnet.ammSwapFeeSwitch,
+  OrderAddrsV1Mainnet.ammRedeem
 ]
 
 const mapRefundAddressToScript = {
-  [OrderAddrsV1Testnet.ammDeposit]: ScriptCredsV1.ammDeposit,
-  [OrderAddrsV1Testnet.ammSwap]:    ScriptCredsV1.ammSwap,
-  [OrderAddrsV1Testnet.ammRedeem]:  ScriptCredsV1.ammRedeem,
+  [OrderAddrsV1Testnet.ammDeposit]:       ScriptCredsV1.ammDeposit,
+  [OrderAddrsV1Testnet.ammSwapDefault]:   ScriptCredsV1.ammSwapDefault,
+  [OrderAddrsV1Testnet.ammSwapFeeSwitch]: ScriptCredsV1.ammSwapFeeSwitch,
+  [OrderAddrsV1Testnet.ammRedeem]:        ScriptCredsV1.ammRedeem,
 
-  [OrderAddrsV1Mainnet.ammDeposit]: ScriptCredsV1.ammDeposit,
-  [OrderAddrsV1Mainnet.ammSwap]:    ScriptCredsV1.ammSwap,
-  [OrderAddrsV1Mainnet.ammRedeem]:  ScriptCredsV1.ammRedeem
+  [OrderAddrsV1Mainnet.ammDeposit]:       ScriptCredsV1.ammDeposit,
+  [OrderAddrsV1Mainnet.ammSwapDefault]:   ScriptCredsV1.ammSwapDefault,
+  [OrderAddrsV1Mainnet.ammSwapFeeSwitch]: ScriptCredsV1.ammSwapFeeSwitch,
+  [OrderAddrsV1Mainnet.ammRedeem]:        ScriptCredsV1.ammRedeem
 }
 
 const mapRefundAddressToOpInRef = {
-  [OrderAddrsV1Testnet.ammDeposit]: OpInRefsPreviewV1.ammDeposit,
-  [OrderAddrsV1Testnet.ammSwap]:    OpInRefsPreviewV1.ammSwap,
-  [OrderAddrsV1Testnet.ammRedeem]:  OpInRefsPreviewV1.ammRedeem,
+  [OrderAddrsV1Testnet.ammDeposit]:       OpInRefsPreviewV1.ammDeposit,
+  [OrderAddrsV1Testnet.ammSwapDefault]:   OpInRefsPreviewV1.ammSwapDefault,
+  [OrderAddrsV1Testnet.ammSwapFeeSwitch]: OpInRefsPreviewV1.ammSwapFeeSwitch,
+  [OrderAddrsV1Testnet.ammRedeem]:        OpInRefsPreviewV1.ammRedeem,
 
-  [OrderAddrsV1Mainnet.ammDeposit]: OpInRefsMainnetV1.ammDeposit,
-  [OrderAddrsV1Mainnet.ammSwap]:    OpInRefsMainnetV1.ammSwap,
-  [OrderAddrsV1Mainnet.ammRedeem]:  OpInRefsMainnetV1.ammRedeem
+  [OrderAddrsV1Mainnet.ammDeposit]:       OpInRefsMainnetV1.ammDeposit,
+  [OrderAddrsV1Mainnet.ammSwapDefault]:   OpInRefsMainnetV1.ammSwapDefault,
+  [OrderAddrsV1Mainnet.ammSwapFeeSwitch]: OpInRefsMainnetV1.ammSwapFeeSwitch,
+  [OrderAddrsV1Mainnet.ammRedeem]:        OpInRefsMainnetV1.ammRedeem
 }
 
 export class AmmOrderRefunds implements Refunds {
@@ -66,8 +72,8 @@ export class AmmOrderRefunds implements Refunds {
           redeemer:  "d8799f00000001ff",
           datum:     outputToRefund.dataBin,
           opInRef:   mapRefundAddressToOpInRef[outputToRefund.addr],
-          mem: DEFAULT_EX_UNITS_MEM,
-          steps: DEFAULT_EX_UNITS_STEPS
+          mem:       DEFAULT_EX_UNITS_MEM,
+          steps:     DEFAULT_EX_UNITS_STEPS
         }
       }
 

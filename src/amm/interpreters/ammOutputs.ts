@@ -4,7 +4,8 @@ import {TxMath} from "../../cardano/wallet/txMath"
 import {encodeHex} from "../../utils/hex"
 import {CardanoWasm} from "../../utils/rustLoader"
 import {mkDepositDatum, mkLockLiquidityDatum, mkPoolDatum, mkRedeemDatum, mkSwapDatum} from "../contractData"
-import {calculateInitUserRewardLq} from "../math/pool";
+import {AmmPoolType} from "../domain/ammPool"
+import {calculateInitUserRewardLq} from "../math/pool"
 import {
   DepositRequest,
   LockLiquidityRequest,
@@ -42,7 +43,7 @@ class AmmOutputsImpl implements AmmOutputs {
     const data = encodeHex(mkDepositDatum(req, this.R).to_bytes())
     return [{
       value: req.orderValue,
-      addr: this.addrs.ammDeposit,
+      addr:  this.addrs.ammDeposit,
       data
     }]
   }
@@ -51,7 +52,7 @@ class AmmOutputsImpl implements AmmOutputs {
     const data = encodeHex(mkRedeemDatum(req, this.R).to_bytes())
     return [{
       value: req.orderValue,
-      addr: this.addrs.ammRedeem,
+      addr:  this.addrs.ammRedeem,
       data
     }]
   }
@@ -60,7 +61,9 @@ class AmmOutputsImpl implements AmmOutputs {
     const data = encodeHex(mkSwapDatum(req, this.R).to_bytes())
     return [{
       value: req.orderValue,
-      addr: this.addrs.ammSwap,
+      addr:  req.type === AmmPoolType.DEFAULT ?
+               this.addrs.ammSwapDefault :
+               this.addrs.ammSwapFeeSwitch,
       data
     }]
   }
@@ -70,18 +73,18 @@ class AmmOutputsImpl implements AmmOutputs {
     const userOutputValue = Value(req.minAdaForUserOutput, calculateInitUserRewardLq(req.x, req.y, req.lq.asset))
     const poolOutput = {
       value: remove(add(add(req.poolValue, req.lq.toEntry), req.nft.toEntry), userOutputValue),
-      addr: 'addr1x94ec3t25egvhqy2n265xfhq882jxhkknurfe9ny4rl9k6dj764lvrxdayh2ux30fl0ktuh27csgmpevdu89jlxppvrst84slu',
+      addr:  req.type === AmmPoolType.DEFAULT ? this.addrs.ammPoolDefault : this.addrs.ammPoolFeeSwitch,
       data
     }
     const userLqOutput = {
       value: userOutputValue,
-      addr: req.userAddress,
+      addr:  req.userAddress
     }
     return [poolOutput, userLqOutput]
   }
 
   lockLiquidity(req: LockLiquidityRequest): TxOutCandidate[] {
-    console.log(req);
+    console.log(req)
     const addrWithStake = req.stake ?
       this.R.BaseAddress.new(
         1,
@@ -89,11 +92,11 @@ class AmmOutputsImpl implements AmmOutputs {
         req.stake
       ).to_address().to_bech32() :
       this.addrs.ammLock
-    console.log(addrWithStake, );
+    console.log(addrWithStake)
     const data = encodeHex(mkLockLiquidityDatum(req, this.R).to_bytes())
     return [{
       value: req.orderValue,
-      addr: addrWithStake,
+      addr:  addrWithStake,
       data
     }]
   }

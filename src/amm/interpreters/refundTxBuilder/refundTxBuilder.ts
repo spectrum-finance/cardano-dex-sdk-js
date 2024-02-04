@@ -29,7 +29,8 @@ interface RefundTxBuilderParamsItem {
 }
 
 export interface RefundTxBuilderParams {
-  readonly swap: RefundTxBuilderParamsItem;
+  readonly swapDefault: RefundTxBuilderParamsItem;
+  readonly swapFeeSwitch: RefundTxBuilderParamsItem;
   readonly deposit: RefundTxBuilderParamsItem;
   readonly redeem: RefundTxBuilderParamsItem;
   readonly defaultCollateralAmount: bigint;
@@ -50,21 +51,21 @@ export interface ExUnitsCalculator {
 export type PKHParser = (datum: Datum, R: CardanoWasm) => [HexString, HexString | undefined] | undefined
 
 export const depositParser: PKHParser = (datum, R: CardanoWasm) => {
-  const parsedDatum = parseDepositConfig(datum, R);
+  const parsedDatum = parseDepositConfig(datum, R)
 
-  return parsedDatum ? [parsedDatum.rewardPkh, parsedDatum.stakePkh] : undefined;
+  return parsedDatum ? [parsedDatum.rewardPkh, parsedDatum.stakePkh] : undefined
 }
 
 export const swapParser: PKHParser = (datum, R: CardanoWasm) => {
-  const parsedDatum = parseSwapConfig(datum, R);
+  const parsedDatum = parseSwapConfig(datum, R)
 
-  return parsedDatum ? [parsedDatum.rewardPkh, parsedDatum.stakePkh] : undefined;
+  return parsedDatum ? [parsedDatum.rewardPkh, parsedDatum.stakePkh] : undefined
 }
 
 export const redeemParser: PKHParser = (datum, R: CardanoWasm) => {
-  const parsedDatum = parseRedeemConfig(datum, R);
+  const parsedDatum = parseRedeemConfig(datum, R)
 
-  return parsedDatum ? [parsedDatum.rewardPkh, parsedDatum.stakePkh] : undefined;
+  return parsedDatum ? [parsedDatum.rewardPkh, parsedDatum.stakePkh] : undefined
 }
 
 export interface RefundParams {
@@ -98,28 +99,33 @@ export class RefundTxBuilder {
               private exUnitsCalculator: ExUnitsCalculator) {
     this.addressesToRefund = [
       this.params.deposit.address,
-      this.params.swap.address,
+      this.params.swapDefault.address,
+      this.params.swapFeeSwitch.address,
       this.params.redeem.address
     ]
     this.mapRefundAddressToScript = {
-      [this.params.deposit.address]: this.params.deposit.script,
-      [this.params.swap.address]:    this.params.swap.script,
-      [this.params.redeem.address]:  this.params.redeem.script
+      [this.params.deposit.address]:       this.params.deposit.script,
+      [this.params.swapDefault.address]:   this.params.swapDefault.script,
+      [this.params.swapFeeSwitch.address]: this.params.swapFeeSwitch.script,
+      [this.params.redeem.address]:        this.params.redeem.script
     }
     this.mapRefundAddressToOpInRef = {
-      [this.params.deposit.address]: this.params.deposit.opInRef,
-      [this.params.swap.address]:    this.params.swap.opInRef,
-      [this.params.redeem.address]:  this.params.redeem.opInRef
+      [this.params.deposit.address]:       this.params.deposit.opInRef,
+      [this.params.swapDefault.address]:   this.params.swapDefault.opInRef,
+      [this.params.swapFeeSwitch.address]: this.params.swapFeeSwitch.opInRef,
+      [this.params.redeem.address]:        this.params.redeem.opInRef
     }
     this.mapRefundAddressToDatumRewardPKHIdex = {
-      [this.params.deposit.address]: datumRewardPKHIndex.ammDeposit,
-      [this.params.swap.address]:    datumRewardPKHIndex.ammSwap,
-      [this.params.redeem.address]:  datumRewardPKHIndex.ammRedeem
+      [this.params.deposit.address]:       datumRewardPKHIndex.ammDeposit,
+      [this.params.swapDefault.address]:   datumRewardPKHIndex.ammSwapDefault,
+      [this.params.swapFeeSwitch.address]: datumRewardPKHIndex.ammSwapFeeSwitch,
+      [this.params.redeem.address]:        datumRewardPKHIndex.ammRedeem
     }
     this.mapRefundAddressToDatumPkhParser = {
-      [this.params.deposit.address]: depositParser,
-      [this.params.swap.address]:    swapParser,
-      [this.params.redeem.address]:  redeemParser
+      [this.params.deposit.address]:       depositParser,
+      [this.params.swapDefault.address]:   swapParser,
+      [this.params.swapFeeSwitch.address]: swapParser,
+      [this.params.redeem.address]:        redeemParser
     }
   }
 
@@ -226,21 +232,21 @@ export class RefundTxBuilder {
     if (rewardPKH === extractPaymentCred(params.recipientAddress, this.R)) {
       rewardAddress = params.recipientAddress
     } else {
-      const rewardAddrData = this.mapRefundAddressToDatumPkhParser[outputToRefund.addr](outputToRefund.dataBin!, this.R);
+      const rewardAddrData = this.mapRefundAddressToDatumPkhParser[outputToRefund.addr](outputToRefund.dataBin!, this.R)
 
       if (!rewardAddrData) {
-        throw new Error('no valid reward data');
+        throw new Error("no valid reward data")
       }
       const paymentCredential = this.R.StakeCredential
-        .from_keyhash(this.R.Ed25519KeyHash.from_hex(rewardAddrData[0]));
-      const stakeCredential =  rewardAddrData[1] ?
+        .from_keyhash(this.R.Ed25519KeyHash.from_hex(rewardAddrData[0]))
+      const stakeCredential = rewardAddrData[1] ?
         this.R.StakeCredential.from_keyhash(this.R.Ed25519KeyHash.from_hex(rewardAddrData[1])) :
-        undefined;
+        undefined
       const addr = stakeCredential ?
         this.R.BaseAddress.new(this.R.NetworkIdKind.Mainnet, paymentCredential, stakeCredential) :
-        this.R.EnterpriseAddress.new(this.R.NetworkIdKind.Mainnet, paymentCredential);
+        this.R.EnterpriseAddress.new(this.R.NetworkIdKind.Mainnet, paymentCredential)
 
-      rewardAddress = addr.to_address().to_bech32();
+      rewardAddress = addr.to_address().to_bech32()
     }
 
     const refundOut: TxOutCandidate = {
@@ -279,7 +285,7 @@ export class RefundTxBuilder {
     try {
       inputs = await this.inputCollector
         .getInputs()
-        .then(inputs => this.inputSelector.select(inputs,[AdaEntry(adaDiff)]))
+        .then(inputs => this.inputSelector.select(inputs, [AdaEntry(adaDiff)]))
     } catch (e) {
       return Promise.reject("insufficient balance for refund")
     }
