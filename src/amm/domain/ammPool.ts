@@ -5,6 +5,11 @@ import {math} from "../../utils/math"
 import {EmissionLP} from "../constants"
 import {PoolId} from "./types"
 
+export enum AmmPoolType {
+  DEFAULT,
+  FEE_SWITCH
+}
+
 export class AmmPool {
   constructor(
     public readonly id: PoolId,
@@ -12,12 +17,15 @@ export class AmmPool {
     public readonly x: AssetAmount,
     public readonly y: AssetAmount,
     public readonly poolFeeNum: number,
-    public readonly lqBound: bigint
+    public readonly lqBound: bigint,
+    public readonly type: AmmPoolType = AmmPoolType.DEFAULT,
+    public readonly treasuryX: bigint = 0n,
+    public readonly treasuryY: bigint = 0n,
   ) {
     this.feeNum = BigInt(poolFeeNum)
   }
 
-  readonly feeDenom: bigint = 1000n
+  readonly feeDenom: bigint = this.type === AmmPoolType.DEFAULT ?  1000n : 10000n
   readonly feeNum: bigint
 
   get supplyLP(): bigint {
