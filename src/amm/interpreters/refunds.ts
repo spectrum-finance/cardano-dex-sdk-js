@@ -21,39 +21,39 @@ export interface Refunds {
 }
 
 const AddressesToRefund = [
-  OrderAddrsV1Testnet.ammDeposit,
+  OrderAddrsV1Testnet.ammDepositDefault,
   OrderAddrsV1Testnet.ammSwapDefault,
   OrderAddrsV1Testnet.ammSwapFeeSwitch,
-  OrderAddrsV1Testnet.ammRedeem,
+  OrderAddrsV1Testnet.ammRedeemDefault,
 
-  OrderAddrsV1Mainnet.ammDeposit,
+  OrderAddrsV1Mainnet.ammDepositDefault,
   OrderAddrsV1Mainnet.ammSwapDefault,
   OrderAddrsV1Mainnet.ammSwapFeeSwitch,
-  OrderAddrsV1Mainnet.ammRedeem
+  OrderAddrsV1Mainnet.ammRedeemDefault
 ]
 
 const mapRefundAddressToScript = {
-  [OrderAddrsV1Testnet.ammDeposit]:       ScriptCredsV1.ammDeposit,
-  [OrderAddrsV1Testnet.ammSwapDefault]:   ScriptCredsV1.ammSwapDefault,
-  [OrderAddrsV1Testnet.ammSwapFeeSwitch]: ScriptCredsV1.ammSwapFeeSwitch,
-  [OrderAddrsV1Testnet.ammRedeem]:        ScriptCredsV1.ammRedeem,
+  [OrderAddrsV1Testnet.ammDepositDefault]: ScriptCredsV1.ammDepositDefault,
+  [OrderAddrsV1Testnet.ammSwapDefault]:    ScriptCredsV1.ammSwapDefault,
+  [OrderAddrsV1Testnet.ammSwapFeeSwitch]:  ScriptCredsV1.ammSwapFeeSwitch,
+  [OrderAddrsV1Testnet.ammRedeemDefault]:  ScriptCredsV1.ammRedeemDefault,
 
-  [OrderAddrsV1Mainnet.ammDeposit]:       ScriptCredsV1.ammDeposit,
-  [OrderAddrsV1Mainnet.ammSwapDefault]:   ScriptCredsV1.ammSwapDefault,
-  [OrderAddrsV1Mainnet.ammSwapFeeSwitch]: ScriptCredsV1.ammSwapFeeSwitch,
-  [OrderAddrsV1Mainnet.ammRedeem]:        ScriptCredsV1.ammRedeem
+  [OrderAddrsV1Mainnet.ammDepositDefault]: ScriptCredsV1.ammDepositDefault,
+  [OrderAddrsV1Mainnet.ammSwapDefault]:    ScriptCredsV1.ammSwapDefault,
+  [OrderAddrsV1Mainnet.ammSwapFeeSwitch]:  ScriptCredsV1.ammSwapFeeSwitch,
+  [OrderAddrsV1Mainnet.ammRedeemDefault]:  ScriptCredsV1.ammRedeemDefault
 }
 
 const mapRefundAddressToOpInRef = {
-  [OrderAddrsV1Testnet.ammDeposit]:       OpInRefsPreviewV1.ammDeposit,
-  [OrderAddrsV1Testnet.ammSwapDefault]:   OpInRefsPreviewV1.ammSwapDefault,
-  [OrderAddrsV1Testnet.ammSwapFeeSwitch]: OpInRefsPreviewV1.ammSwapFeeSwitch,
-  [OrderAddrsV1Testnet.ammRedeem]:        OpInRefsPreviewV1.ammRedeem,
+  [OrderAddrsV1Testnet.ammDepositDefault]: OpInRefsPreviewV1.ammDepositDefault,
+  [OrderAddrsV1Testnet.ammSwapDefault]:    OpInRefsPreviewV1.ammSwapDefault,
+  [OrderAddrsV1Testnet.ammSwapFeeSwitch]:  OpInRefsPreviewV1.ammSwapFeeSwitch,
+  [OrderAddrsV1Testnet.ammRedeemDefault]:  OpInRefsPreviewV1.ammRedeemDefault,
 
-  [OrderAddrsV1Mainnet.ammDeposit]:       OpInRefsMainnetV1.ammDeposit,
-  [OrderAddrsV1Mainnet.ammSwapDefault]:   OpInRefsMainnetV1.ammSwapDefault,
-  [OrderAddrsV1Mainnet.ammSwapFeeSwitch]: OpInRefsMainnetV1.ammSwapFeeSwitch,
-  [OrderAddrsV1Mainnet.ammRedeem]:        OpInRefsMainnetV1.ammRedeem
+  [OrderAddrsV1Mainnet.ammDepositDefault]: OpInRefsMainnetV1.ammDepositDefault,
+  [OrderAddrsV1Mainnet.ammSwapDefault]:    OpInRefsMainnetV1.ammSwapDefault,
+  [OrderAddrsV1Mainnet.ammSwapFeeSwitch]:  OpInRefsMainnetV1.ammSwapFeeSwitch,
+  [OrderAddrsV1Mainnet.ammRedeemDefault]:  OpInRefsMainnetV1.ammRedeemDefault
 }
 
 export class AmmOrderRefunds implements Refunds {

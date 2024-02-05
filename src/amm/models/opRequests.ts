@@ -60,6 +60,7 @@ export type DepositRequest = {
   readonly uiFee: Lovelace
   readonly collateralAda: Lovelace
   readonly orderValue: Value
+  readonly type: AmmPoolType;
 }
 
 export type RedeemRequest = {
@@ -73,6 +74,7 @@ export type RedeemRequest = {
   readonly exFee: Lovelace
   readonly uiFee: Lovelace
   readonly orderValue: Value
+  readonly type: AmmPoolType;
 }
 
 export type SwapRequest = {

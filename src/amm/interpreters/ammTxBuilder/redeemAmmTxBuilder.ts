@@ -92,6 +92,7 @@ export class RedeemAmmTxBuilder {
           exFee: exFee,
           uiFee: 0n,
           orderValue: orderValue,
+          type: params.pool.type,
         },
         {
           changeAddr: params.changeAddress,
@@ -119,6 +120,7 @@ export class RedeemAmmTxBuilder {
       exFee: exFee,
       uiFee: 0n,
       orderValue: orderValue,
+      type: params.pool.type
     })
     const requiredAdaForOutput = this.txMath.minAdaRequiredforOutput(estimatedOutput)
     const lovelace = getLovelace(orderValue)

@@ -9,8 +9,8 @@ test.before(async () => {
 
 test("Refine Testnet Addrs", async t => {
   t.deepEqual(Addr(OrderAddrsV1Testnet.ammSwapDefault, RustModule.CardanoWasm), OrderAddrsV1Testnet.ammSwapDefault)
-  t.deepEqual(Addr(OrderAddrsV1Testnet.ammDeposit, RustModule.CardanoWasm), OrderAddrsV1Testnet.ammDeposit)
-  t.deepEqual(Addr(OrderAddrsV1Testnet.ammRedeem, RustModule.CardanoWasm), OrderAddrsV1Testnet.ammRedeem)
+  t.deepEqual(Addr(OrderAddrsV1Testnet.ammDepositDefault, RustModule.CardanoWasm), OrderAddrsV1Testnet.ammDepositDefault)
+  t.deepEqual(Addr(OrderAddrsV1Testnet.ammRedeemDefault, RustModule.CardanoWasm), OrderAddrsV1Testnet.ammRedeemDefault)
 })
 
 const CARDANO_TESTNET_ADDRESS =

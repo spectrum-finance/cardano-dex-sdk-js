@@ -27,7 +27,7 @@ class DefaultOrdersParser implements OrdersParser {
       } else {
         return undefined
       }
-    } else if (extractPaymentCred(out.addr, this.R) === this.creds.ammDeposit && out.dataBin) {
+    } else if (extractPaymentCred(out.addr, this.R) === this.creds.ammDepositDefault && out.dataBin) {
       const deposit = parseDepositConfig(out.dataBin, this.R)
       if (deposit) {
         const inXAmount = out.value.find(
@@ -46,7 +46,7 @@ class DefaultOrdersParser implements OrdersParser {
       } else {
         return undefined
       }
-    } else if (extractPaymentCred(out.addr, this.R) === this.creds.ammRedeem && out.dataBin) {
+    } else if (extractPaymentCred(out.addr, this.R) === this.creds.ammRedeemDefault && out.dataBin) {
       const redeem = parseRedeemConfig(out.dataBin, this.R)
       if (redeem) {
         const inLqAmount = out.value.find(

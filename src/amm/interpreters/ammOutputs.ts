@@ -43,7 +43,9 @@ class AmmOutputsImpl implements AmmOutputs {
     const data = encodeHex(mkDepositDatum(req, this.R).to_bytes())
     return [{
       value: req.orderValue,
-      addr:  this.addrs.ammDeposit,
+      addr:  req.type === AmmPoolType.DEFAULT ?
+               this.addrs.ammDepositDefault :
+               this.addrs.ammDepositFeeSwitch,
       data
     }]
   }
@@ -52,7 +54,9 @@ class AmmOutputsImpl implements AmmOutputs {
     const data = encodeHex(mkRedeemDatum(req, this.R).to_bytes())
     return [{
       value: req.orderValue,
-      addr:  this.addrs.ammRedeem,
+      addr:  req.type === AmmPoolType.DEFAULT ?
+               this.addrs.ammRedeemDefault :
+               this.addrs.ammRedeemFeeSwitch,
       data
     }]
   }

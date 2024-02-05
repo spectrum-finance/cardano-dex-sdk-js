@@ -31,8 +31,10 @@ interface RefundTxBuilderParamsItem {
 export interface RefundTxBuilderParams {
   readonly swapDefault: RefundTxBuilderParamsItem;
   readonly swapFeeSwitch: RefundTxBuilderParamsItem;
-  readonly deposit: RefundTxBuilderParamsItem;
-  readonly redeem: RefundTxBuilderParamsItem;
+  readonly depositDefault: RefundTxBuilderParamsItem;
+  readonly depositFeeSwitch: RefundTxBuilderParamsItem;
+  readonly redeemDefault: RefundTxBuilderParamsItem;
+  readonly redeemFeeSwitch: RefundTxBuilderParamsItem;
   readonly defaultCollateralAmount: bigint;
 }
 
@@ -98,34 +100,44 @@ export class RefundTxBuilder {
               private network: CardanoNetwork,
               private exUnitsCalculator: ExUnitsCalculator) {
     this.addressesToRefund = [
-      this.params.deposit.address,
+      this.params.depositDefault.address,
+      this.params.depositFeeSwitch.address,
       this.params.swapDefault.address,
       this.params.swapFeeSwitch.address,
-      this.params.redeem.address
+      this.params.redeemDefault.address,
+      this.params.redeemFeeSwitch.address
     ]
     this.mapRefundAddressToScript = {
-      [this.params.deposit.address]:       this.params.deposit.script,
-      [this.params.swapDefault.address]:   this.params.swapDefault.script,
-      [this.params.swapFeeSwitch.address]: this.params.swapFeeSwitch.script,
-      [this.params.redeem.address]:        this.params.redeem.script
+      [this.params.depositDefault.address]:   this.params.depositDefault.script,
+      [this.params.depositFeeSwitch.address]: this.params.depositFeeSwitch.script,
+      [this.params.swapDefault.address]:      this.params.swapDefault.script,
+      [this.params.swapFeeSwitch.address]:    this.params.swapFeeSwitch.script,
+      [this.params.redeemDefault.address]:    this.params.redeemDefault.script,
+      [this.params.redeemFeeSwitch.address]:  this.params.redeemFeeSwitch.script
     }
     this.mapRefundAddressToOpInRef = {
-      [this.params.deposit.address]:       this.params.deposit.opInRef,
-      [this.params.swapDefault.address]:   this.params.swapDefault.opInRef,
-      [this.params.swapFeeSwitch.address]: this.params.swapFeeSwitch.opInRef,
-      [this.params.redeem.address]:        this.params.redeem.opInRef
+      [this.params.depositDefault.address]:   this.params.depositDefault.opInRef,
+      [this.params.depositFeeSwitch.address]: this.params.depositFeeSwitch.opInRef,
+      [this.params.swapDefault.address]:      this.params.swapDefault.opInRef,
+      [this.params.swapFeeSwitch.address]:    this.params.swapFeeSwitch.opInRef,
+      [this.params.redeemDefault.address]:    this.params.redeemDefault.opInRef,
+      [this.params.redeemFeeSwitch.address]:  this.params.redeemFeeSwitch.opInRef
     }
     this.mapRefundAddressToDatumRewardPKHIdex = {
-      [this.params.deposit.address]:       datumRewardPKHIndex.ammDeposit,
-      [this.params.swapDefault.address]:   datumRewardPKHIndex.ammSwapDefault,
-      [this.params.swapFeeSwitch.address]: datumRewardPKHIndex.ammSwapFeeSwitch,
-      [this.params.redeem.address]:        datumRewardPKHIndex.ammRedeem
+      [this.params.depositDefault.address]:   datumRewardPKHIndex.ammDepositDefault,
+      [this.params.depositFeeSwitch.address]: datumRewardPKHIndex.ammDepositFeeSwitch,
+      [this.params.swapDefault.address]:      datumRewardPKHIndex.ammSwapDefault,
+      [this.params.swapFeeSwitch.address]:    datumRewardPKHIndex.ammSwapFeeSwitch,
+      [this.params.redeemDefault.address]:    datumRewardPKHIndex.ammRedeemDefault,
+      [this.params.redeemFeeSwitch.address]:  datumRewardPKHIndex.ammRedeemFeeSwitch
     }
     this.mapRefundAddressToDatumPkhParser = {
-      [this.params.deposit.address]:       depositParser,
-      [this.params.swapDefault.address]:   swapParser,
-      [this.params.swapFeeSwitch.address]: swapParser,
-      [this.params.redeem.address]:        redeemParser
+      [this.params.depositDefault.address]:   depositParser,
+      [this.params.depositFeeSwitch.address]: depositParser,
+      [this.params.swapDefault.address]:      swapParser,
+      [this.params.swapFeeSwitch.address]:    swapParser,
+      [this.params.redeemDefault.address]:    redeemParser,
+      [this.params.redeemFeeSwitch.address]:  redeemParser
     }
   }
 
