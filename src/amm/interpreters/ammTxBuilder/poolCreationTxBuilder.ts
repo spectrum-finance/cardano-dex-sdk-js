@@ -5,15 +5,16 @@ import {TxCandidate} from "../../../cardano/entities/tx"
 import {FullTxIn} from "../../../cardano/entities/txIn"
 import {add, getLovelace, Value} from "../../../cardano/entities/value"
 import {HexString, TxHash} from "../../../cardano/types"
+import {CollateralSelector} from "../../../cardano/wallet/collateralSelector"
 import {InputSelector} from "../../../cardano/wallet/inputSelector"
 import {TxMath} from "../../../cardano/wallet/txMath"
 import {AssetAmount} from "../../../domain/assetAmount"
+import {AmmPoolType} from "../../domain/ammPool"
 import {AmmTxFeeMapping} from "../../math/order"
 import {OrderKind} from "../../models/opRequests"
 import {AmmActions} from "../ammActions"
 import {AmmOutputs} from "../ammOutputs"
 import {selectInputs} from "./selectInputs"
-import {CollateralSelector} from "../../../cardano/wallet/collateralSelector"
 
 export interface PoolCreationParams {
   readonly x: AssetAmount
@@ -29,6 +30,7 @@ export interface PoolCreationParams {
   readonly changeAddress: Addr
   readonly pk: PubKeyHash
   readonly collateralAmount: bigint;
+  readonly type: AmmPoolType;
 }
 
 export interface PoolCreationTxInfo {
@@ -103,7 +105,8 @@ export class PoolCreationTxBuilder {
           mintingCreationTxHash: params.mintingCreationTxHash,
           mintingCreationTxOutIdx: params.mintingCreationTxOutIdx,
           minAdaForUserOutput: refundableDeposit,
-          userAddress: params.changeAddress
+          userAddress: params.changeAddress,
+          type: params.type
         },
         {
           changeAddr: params.changeAddress,
@@ -133,7 +136,8 @@ export class PoolCreationTxBuilder {
       nftMintingScript:        params.nftMintingScript,
       mintingCreationTxHash:   params.mintingCreationTxHash,
       mintingCreationTxOutIdx: params.mintingCreationTxOutIdx,
-      userAddress:             params.changeAddress
+      userAddress:             params.changeAddress,
+      type: params.type
     })
     const requiredAdaForPoolOutput = this.txMath.minAdaRequiredforOutput(poolOutput)
     const requiredAdaForUserLqOutput = this.txMath.minAdaRequiredforOutput(userLqOutput)

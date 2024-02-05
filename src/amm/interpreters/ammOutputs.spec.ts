@@ -6,6 +6,7 @@ import {RustModule} from "../../utils/rustLoader"
 import {mkDepositDatum, mkRedeemDatum, mkSwapDatum, parsePoolConfig} from "../contractData"
 import {DepositRequest, OrderKind, RedeemRequest, SwapRequest} from "../models/opRequests"
 import {PoolConfig} from "../models/poolConfig"
+import {AmmPoolType} from "../domain/ammPool"
 
 test.before(async () => {
   await RustModule.load(true)
@@ -66,7 +67,8 @@ test("Construct valid Swap datum", async t => {
     minQuoteOutput: 1n,
     exFeePerToken: {numerator: 2500000n, denominator: 1n},
     uiFee: 100n,
-    orderValue: emptyValue
+    orderValue: emptyValue,
+    type: AmmPoolType.DEFAULT
   }
   const datum = mkSwapDatum(swapReq, RustModule.CardanoWasm)
   const datumHex = encodeHex(datum.to_bytes())
