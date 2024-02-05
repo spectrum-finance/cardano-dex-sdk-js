@@ -91,7 +91,8 @@ test("Construct valid Deposit datum", async t => {
     exFee: 2n,
     uiFee: 100n,
     collateralAda: 1n,
-    orderValue: emptyValue
+    orderValue: emptyValue,
+    type: AmmPoolType.DEFAULT
   }
   const datum = mkDepositDatum(depositReq, RustModule.CardanoWasm)
   const datumHex = encodeHex(datum.to_bytes())
@@ -114,7 +115,8 @@ test("Construct valid Redeem datum", async t => {
     stakePkh: rewardPkh,
     exFee: 2n,
     uiFee: 100n,
-    orderValue: emptyValue
+    orderValue: emptyValue,
+    type: AmmPoolType.DEFAULT
   }
   const datum = mkRedeemDatum(redeemReq, RustModule.CardanoWasm)
   const datumHex = encodeHex(datum.to_bytes())
