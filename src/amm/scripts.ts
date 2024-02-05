@@ -49,12 +49,12 @@ export type ScriptCreds = {
 }
 
 export const ScriptCredsV1: ScriptCreds = {
-  ammPoolDefault:      "e628bfd68c07a7a38fcd7d8df650812a9dfdbee54b1ed4c25c87ffbf",
-  ammPoolFeeSwitch:    "e628bfd68c07a7a38fcd7d8df650812a9dfdbee54b1ed4c25c87ffbf",
+  ammPoolDefault:      "6e5b9b7fbf5690879606ef5624052a9a00cf9b3541d059c7c615461b",
+  ammPoolFeeSwitch:    "76930108a2d528273fc1db3dad61f4604cdcbb46accb8bbefe157efc",
   ammDepositDefault:   "075e09eb0fa89e1dc34691b3c56a7f437e60ac5ea67b338f2e176e20",
-  ammDepositFeeSwitch: "075e09eb0fa89e1dc34691b3c56a7f437e60ac5ea67b338f2e176e20",
+  ammDepositFeeSwitch: "59153a6a2927dcdbd8d81deb3520247c4195605fe044bf60d514e78c",
   ammRedeemDefault:    "83da79f531c19f9ce4d85359f56968a742cf05cc25ed3ca48c302dee",
-  ammRedeemFeeSwitch:  "83da79f531c19f9ce4d85359f56968a742cf05cc25ed3ca48c302dee",
+  ammRedeemFeeSwitch:  "46a81d17db9f751bf2c9deb3ae5814ee040b9938b1f172dc3b6eb683",
   ammSwapDefault:      "2618e94cdb06792f05ae9b1ec78b0231f4b7f4215b1b4cf52e6342de",
   ammSwapFeeSwitch:    "07562ee998ab391501a88357c30e0be84646ed7d463eca9b3828673b",
   ammLock:             "ddbebc6263726bcc035934b3b71c1fb144a78a1cbbc57499c45b1e89"
