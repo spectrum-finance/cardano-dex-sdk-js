@@ -14,9 +14,9 @@ export type OrderAddrs = {
 
 export const OrderAddrsV1Testnet: OrderAddrs = {
   ammDepositDefault:   "addr_test1wqr4uz0tp75fu8wrg6gm83t20aphuc9vt6n8kvu09ctkugq6ch8kj",
-  ammDepositFeeSwitch: "addr_test1wqr4uz0tp75fu8wrg6gm83t20aphuc9vt6n8kvu09ctkugq6ch8kj",
+  ammDepositFeeSwitch: "addr_test1wpv32wn29ynaek7cmqw7kdfqy37yr9tqtlsyf0mq652w0rqe2vpt",
   ammRedeemDefault:    "addr_test1wzpa5704x8qel88ympf4natfdzn59nc9esj7609y3sczmmsxcd9lz",
-  ammRedeemFeeSwitch:  "addr_test1wzpa5704x8qel88ympf4natfdzn59nc9esj7609y3sczmmsxcd9lz",
+  ammRedeemFeeSwitch:  "addr_test1wpr2s8ghmw0h2xlje80t8tjcznhqgzue8zclzuku8dhtdqc8cmsp2",
   ammSwapDefault:      "addr_test1wqnp362vmvr8jtc946d3a3utqgclfdl5y9d3kn849e359hst7hkqk",
   ammSwapFeeSwitch:    "addr_test1wqr4vthfnz4nj9gp4zp40scwp05yv3hd04rraj5m8q5xwwctxveup",
   ammPoolDefault:      "addr_test1wp4ec3t25egvhqy2n265xfhq882jxhkknurfe9ny4rl9k6g5eefd8",
