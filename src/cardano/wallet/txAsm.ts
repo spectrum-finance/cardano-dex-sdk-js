@@ -74,34 +74,7 @@ class DefaultTxAsm implements TxAsm {
 
     txBuilder.calc_script_data_hash(this.R.TxBuilderConstants.plutus_vasil_cost_models())
 
-    return this.normalizeRedeemers(txBuilder.build_tx(), candidate);
-  }
-
-  private normalizeRedeemers (tx: Transaction, candidate: TxCandidate): Transaction {
-    if (!tx.witness_set().redeemers()) {
-      return tx;
-    }
-    console.log(candidate);
-    console.log('old redeemers:', tx.witness_set().redeemers());
-
-    const newRedeemers = this.R.Redeemers.new();
-    for (let i = 0; i < tx.witness_set().redeemers()!.len(); i++) {
-      const oldRedeemer = tx.witness_set().redeemers()?.get(i)!;
-      newRedeemers
-        .add(this.R.Redeemer.new(
-          oldRedeemer.tag(),
-          this.R.BigNum.zero(),
-          oldRedeemer.data(),
-          oldRedeemer.ex_units()
-        ))
-    }
-    console.log(newRedeemers);
-
-    const newWs = this.R.TransactionWitnessSet.new();
-    newWs.set_redeemers(newRedeemers);
-    console.log('new redeemers:', tx.witness_set().redeemers(), newWs);
-    console.log('newTx', this.R.Transaction.new(tx.body(), newWs))
-    return this.R.Transaction.new(tx.body(), newWs);
+    return txBuilder.build_tx();
   }
 
   private toTransactionOutput(o: TxOutCandidate): TransactionOutput {
