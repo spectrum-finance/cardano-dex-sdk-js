@@ -13,7 +13,6 @@ import {NetworkParams, ProtocolParams} from "../entities/env"
 import {TxCandidate} from "../entities/tx"
 import {FullTxIn} from "../entities/txIn"
 import {TxOutCandidate} from "../entities/txOut"
-import {AdaAssetName, AdaPolicyId} from "../constants"
 
 export interface TxAsm {
   finalize(candidate: TxCandidate, coefficient?: number): Transaction
@@ -197,7 +196,7 @@ class DefaultTxAsm implements TxAsm {
 
   private getCollateralReturn(collateral: FullTxIn[], changeAddress: string): TransactionOutput {
     const coins = collateral
-      .map(c => c.txOut.value.find(e => e.policyId === AdaPolicyId && e.name === AdaAssetName)?.quantity ?? 0n)
+      .map(c => c.txOut.value.find(e => e.policyId === '' && e.name === '')?.quantity ?? 0n)
       .reduce((acc, item) => acc + item, 0n);
 
 
