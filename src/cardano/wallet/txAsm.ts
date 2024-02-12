@@ -74,7 +74,32 @@ class DefaultTxAsm implements TxAsm {
 
     txBuilder.calc_script_data_hash(this.R.TxBuilderConstants.plutus_vasil_cost_models())
 
-    return txBuilder.build_tx()
+    return this.normalizeRedeemers(txBuilder.build_tx(), candidate);
+  }
+
+  private normalizeRedeemers (tx: Transaction, candidate: TxCandidate): Transaction {
+    if (!tx.witness_set().redeemers()) {
+      return tx;
+    }
+    console.log(candidate);
+    console.log('old redeemers:', tx.witness_set().redeemers());
+
+    const newRedeemers = this.R.Redeemers.new();
+    for (let i = 0; i < tx.witness_set().redeemers()!.len(); i++) {
+      const oldRedeemer = tx.witness_set().redeemers()?.get(i)!;
+      newRedeemers
+        .add(this.R.Redeemer.new(
+          oldRedeemer.tag(),
+          this.R.BigNum.zero(),
+          oldRedeemer.data(),
+          oldRedeemer.ex_units()
+        ))
+    }
+    tx.witness_set().set_redeemers(newRedeemers);
+
+    console.log('new redeemers:', tx.witness_set().redeemers());
+
+    return tx;
   }
 
   private toTransactionOutput(o: TxOutCandidate): TransactionOutput {
@@ -115,7 +140,7 @@ class DefaultTxAsm implements TxAsm {
       this.R.DatumSource.new_ref_input(txIn),
       this.R.Redeemer.new(
         this.R.RedeemerTag.new_spend(),
-        this.R.BigNum.from_str('0'),
+        this.R.BigNum.zero(),
         this.R.PlutusData.from_hex(consumeScript.redeemer),
         this.R.ExUnits.new(
           this.R.BigNum.from_str(consumeScript.mem),
