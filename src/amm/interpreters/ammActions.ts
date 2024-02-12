@@ -41,12 +41,13 @@ class DefaultAmmActions implements AmmActions {
     const mintAssets = this.getMintingAssets(req)
 
     return {
-      inputs:         ctx.inputs,
-      outputs:        outputs,
-      collateral:     ctx.collateralInputs,
-      changeAddr:     ctx.changeAddr,
-      mintingScripts: mintAssets,
-      ttl:            ctx.ttl
+      inputs:          ctx.inputs,
+      outputs:         outputs,
+      collateral:      ctx.collateralInputs,
+      totalCollateral: ctx.totalCollateral,
+      changeAddr:      ctx.changeAddr,
+      mintingScripts:  mintAssets,
+      ttl:             ctx.ttl
     }
   }
 
@@ -54,19 +55,19 @@ class DefaultAmmActions implements AmmActions {
     if (req.kind === OrderKind.PoolCreation) {
 
       const nftMintingData: MintingAsset = {
-        amount: req.nft,
-        script: req.nftMintingScript,
+        amount:  req.nft,
+        script:  req.nftMintingScript,
         exUnits: {
-          mem: '300111',
-          steps: '153808137'
+          mem:   "300111",
+          steps: "153808137"
         }
       }
 
       const lqMintingData: MintingAsset = {
-        amount: req.lq,
-        script: req.lqMintingScript,
+        amount:  req.lq,
+        script:  req.lqMintingScript,
         exUnits: {
-          mem: DEFAULT_EX_UNITS_MEM,
+          mem:   DEFAULT_EX_UNITS_MEM,
           steps: DEFAULT_EX_UNITS_STEPS
         }
       }
