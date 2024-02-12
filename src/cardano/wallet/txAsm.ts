@@ -13,7 +13,6 @@ import {NetworkParams, ProtocolParams} from "../entities/env"
 import {TxCandidate} from "../entities/tx"
 import {FullTxIn} from "../entities/txIn"
 import {TxOutCandidate} from "../entities/txOut"
-import {sum} from "../entities/value"
 
 export interface TxAsm {
   finalize(candidate: TxCandidate, coefficient?: number): Transaction
@@ -44,9 +43,9 @@ class DefaultTxAsm implements TxAsm {
 
     if (candidate.collateral?.length) {
       txBuilder.set_collateral(this.getCollateralBuilder(candidate.collateral))
-      const collateralReturn = this.getCollateralReturn(candidate.collateral, candidate.changeAddr);
-      txBuilder.set_collateral_return(collateralReturn)
-      txBuilder.set_total_collateral(collateralReturn.amount().coin());
+      // const collateralReturn = this.getCollateralReturn(candidate.collateral, candidate.changeAddr);
+      // txBuilder.set_collateral_return(collateralReturn)
+      // txBuilder.set_total_collateral(collateralReturn.amount().coin());
     }
     if (candidate.mintingScripts?.length) {
       txBuilder.set_mint_builder(this.getMintBuilder(candidate.mintingScripts))
@@ -195,13 +194,13 @@ class DefaultTxAsm implements TxAsm {
     return mintBuilder;
   }
 
-  private getCollateralReturn(collateral: FullTxIn[], changeAddress: string): TransactionOutput {
-    return TransactionOutput
-      .new(
-        this.R.Address.from_bech32(changeAddress),
-        toWasmValue(sum(collateral.map(c => c.txOut.value)), this.R)
-      );
-  }
+  // private getCollateralReturn(collateral: FullTxIn[], changeAddress: string): TransactionOutput {
+  //   return TransactionOutput
+  //     .new(
+  //       this.R.Address.from_bech32(changeAddress),
+  //       toWasmValue(sum(collateral.map(c => c.txOut.value)), this.R)
+  //     );
+  // }
 
   private getCollateralBuilder(collateral: FullTxIn[]): TxInputsBuilder {
     const collateralTxInputsBuilder = this.R.TxInputsBuilder.new()
