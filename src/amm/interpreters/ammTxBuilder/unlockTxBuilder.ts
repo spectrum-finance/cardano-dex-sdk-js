@@ -20,6 +20,7 @@ export interface UnlockParams {
   readonly boxId: HexString;
   readonly redeemer: HexString;
   readonly collateralAmount: bigint;
+  readonly slotNo: bigint;
 }
 
 export interface UnlockTxInfo {
@@ -108,6 +109,8 @@ export class UnlockTxBuilder {
       rewardAddress = addr.to_address().to_bech32()
     }
 
+    // const currentSlot = this.network.get
+
     return [
       {
         inputs,
@@ -117,7 +120,8 @@ export class UnlockTxBuilder {
         }],
         changeAddr:     rewardAddress,
         collateral:     collateral,
-        requiredSigner: rewardPKH
+        requiredSigner: rewardPKH,
+        validityRange: [params.slotNo, params.slotNo]
       },
       {
         txFee: userTxFee || params.txFees.lockOrder
