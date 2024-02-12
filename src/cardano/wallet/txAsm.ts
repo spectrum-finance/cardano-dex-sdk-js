@@ -115,7 +115,7 @@ class DefaultTxAsm implements TxAsm {
       this.R.DatumSource.new_ref_input(txIn),
       this.R.Redeemer.new(
         this.R.RedeemerTag.new_spend(),
-        this.R.BigNum.zero(),
+        this.R.BigNum.from_str('0'),
         this.R.PlutusData.from_hex(consumeScript.redeemer),
         this.R.ExUnits.new(
           this.R.BigNum.from_str(consumeScript.mem),
