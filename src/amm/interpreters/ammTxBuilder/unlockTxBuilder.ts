@@ -76,7 +76,9 @@ export class UnlockTxBuilder {
       }))
     }
 
-    const inputsOrError = await selectInputs(Value(userTxFee || params.txFees.lockOrder), params.changeAddress, this.inputSelector, allInputs, this.txMath)
+    const inputsOrError = await selectInputs(
+      Value(userTxFee || params.txFees.lockOrder), params.changeAddress, this.inputSelector, allInputs, this.txMath, collateral
+    )
     if (inputsOrError instanceof Error) {
       return Promise.resolve([null as any, {txFee: undefined}, inputsOrError])
     }

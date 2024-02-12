@@ -12,11 +12,13 @@ export const selectInputs = async (
   changeAddress: string,
   inputSelector: InputSelector,
   allInputs: FullTxIn[],
-  txMath: TxMath): Promise<FullTxIn[] | Error> => {
+  txMath: TxMath,
+  excludedInputs?: FullTxIn[]
+): Promise<FullTxIn[] | Error> => {
   let inputs: FullTxIn[] | Error;
 
   try {
-    inputs = inputSelector.select(allInputs, totalOrderBudget);
+    inputs = inputSelector.select(allInputs, totalOrderBudget, excludedInputs);
   } catch (e) {
     return new InsufficientFundsForOrderOutput("insufficient funds for output");
   }
@@ -37,7 +39,7 @@ export const selectInputs = async (
     let additionalInput: FullTxIn[] | Error;
 
     try {
-      additionalInput = inputSelector.select(allInputs,[AdaEntry(additionalAdaForChange)], inputs);
+      additionalInput = inputSelector.select(allInputs,[AdaEntry(additionalAdaForChange)], inputs.concat(excludedInputs || []));
     } catch (e) {
       return new InsufficientFundsForChange("insufficient funds for change")
     }
