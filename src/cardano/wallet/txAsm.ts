@@ -95,10 +95,12 @@ class DefaultTxAsm implements TxAsm {
           oldRedeemer.ex_units()
         ))
     }
-    tx.witness_set().set_redeemers(newRedeemers);
+    console.log(newRedeemers);
 
-    console.log('new redeemers:', tx.witness_set().redeemers());
-
+    const newWs = this.R.TransactionWitnessSet.new();
+    newWs.set_redeemers(newRedeemers);
+    console.log('new redeemers:', tx.witness_set().redeemers(), newWs);
+    console.log('newTx', this.R.Transaction.new(tx.body(), newWs))
     return tx;
   }
 
