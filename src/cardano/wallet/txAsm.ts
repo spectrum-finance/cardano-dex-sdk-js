@@ -101,7 +101,7 @@ class DefaultTxAsm implements TxAsm {
     newWs.set_redeemers(newRedeemers);
     console.log('new redeemers:', tx.witness_set().redeemers(), newWs);
     console.log('newTx', this.R.Transaction.new(tx.body(), newWs))
-    return tx;
+    return this.R.Transaction.new(tx.body(), newWs);
   }
 
   private toTransactionOutput(o: TxOutCandidate): TransactionOutput {
