@@ -13,6 +13,7 @@ import {NetworkParams, ProtocolParams} from "../entities/env"
 import {TxCandidate} from "../entities/tx"
 import {FullTxIn} from "../entities/txIn"
 import {TxOutCandidate} from "../entities/txOut"
+import {sum} from "../entities/value"
 
 export interface TxAsm {
   finalize(candidate: TxCandidate, coefficient?: number): Transaction
@@ -195,15 +196,10 @@ class DefaultTxAsm implements TxAsm {
   }
 
   private getCollateralReturn(collateral: FullTxIn[], changeAddress: string): TransactionOutput {
-    const coins = collateral
-      .map(c => c.txOut.value.find(e => e.policyId === '' && e.name === '')?.quantity ?? 0n)
-      .reduce((acc, item) => acc + item, 0n);
-
-
-    return TransactionOutput
+    return this.R.TransactionOutput
       .new(
         this.R.Address.from_bech32(changeAddress),
-        this.R.Value.new(this.R.BigNum.from_str(coins.toString()))
+        toWasmValue(sum(collateral.map(c => c.txOut.value)), this.R)
       );
   }
 
