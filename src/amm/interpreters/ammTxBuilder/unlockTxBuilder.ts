@@ -122,6 +122,7 @@ export class UnlockTxBuilder {
         }],
         changeAddr:     rewardAddress,
         collateral:     collateral,
+        totalCollateral: params.collateralAmount,
         requiredSigner: rewardPKH,
         validityRange: [params.slotNo, params.slotNo]
       },

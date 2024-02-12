@@ -19,6 +19,7 @@ export type TxCandidate = {
   validityRange?: ValidityRange;
   mintingScripts?: MintingAsset[];
   collateral?: FullTxIn[];
+  totalCollateral?: bigint;
   ttl?: number;
   requiredSigner?: string;
 }

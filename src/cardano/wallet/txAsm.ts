@@ -45,7 +45,7 @@ class DefaultTxAsm implements TxAsm {
 
     if (candidate.collateral?.length) {
       txBuilder.set_collateral(this.getCollateralBuilder(candidate.collateral))
-      const totalColalteral = 1000000n;
+      const totalColalteral = candidate.totalCollateral || 1000000n;
       txBuilder.set_collateral_return(this.getCollateralReturn(candidate.collateral, candidate.changeAddr, totalColalteral))
       txBuilder.set_total_collateral(this.R.BigNum.from_str(totalColalteral.toString()));
     }
