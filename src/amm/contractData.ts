@@ -15,6 +15,7 @@ import {OrderAction} from "./models/orderAction"
 import {DepositConfig, LockConfig, RedeemConfig, SwapConfig} from "./models/orderConfig"
 import {PoolConfig} from "./models/poolConfig"
 import {AmmPoolType} from "./domain/ammPool"
+import {ScriptCredsV1} from "./scripts"
 
 export function parsePoolConfig(raw: Datum, R: CardanoWasm): PoolConfig | undefined {
   try {
@@ -127,10 +128,10 @@ export function mkPoolDatum(conf: PoolCreationRequest, R: CardanoWasm): PlutusDa
   if (conf.type === AmmPoolType.DEFAULT) {
     return mkProductN([nft, x, y, lq, feeNum, adminPolicy, lqBound], R)
   }
-  const treasuryFee: PlutusData = R.PlutusData.new_integer(R.BigInt.from_str('1'))
+  const treasuryFee: PlutusData = R.PlutusData.new_integer(R.BigInt.from_str('1000'))
   const treasuryX: PlutusData = R.PlutusData.new_integer(R.BigInt.from_str('0'))
   const treasuryY: PlutusData = R.PlutusData.new_integer(R.BigInt.from_str('0'))
-  const treasuryAddress: PlutusData =  R.PlutusData.new_bytes(decodeHex('2618e94cdb06792f05ae9b1ec78b0231f4b7f4215b1b4cf52e6342de'))
+  const treasuryAddress: PlutusData =  R.PlutusData.new_bytes(decodeHex(ScriptCredsV1.ammLock))
   const daoPolicyList = R.PlutusList.new();
   if (conf.daoPolicy) {
     daoPolicyList.add(R.PlutusData.new_bytes(decodeHex(conf.daoPolicy)));
