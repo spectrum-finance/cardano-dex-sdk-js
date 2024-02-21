@@ -108,6 +108,7 @@ export type PoolCreationRequest = {
   readonly userAddress: Addr
   readonly minAdaForUserOutput: bigint;
   readonly type: AmmPoolType;
+  readonly daoPolicy?: string;
 }
 
 export type LockLiquidityRequest = {

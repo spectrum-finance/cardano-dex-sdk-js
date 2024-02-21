@@ -31,6 +31,7 @@ export interface PoolCreationParams {
   readonly pk: PubKeyHash
   readonly collateralAmount: bigint;
   readonly type: AmmPoolType;
+  readonly daoPolicy?: string;
 }
 
 export interface PoolCreationTxInfo {
@@ -106,7 +107,8 @@ export class PoolCreationTxBuilder {
           mintingCreationTxOutIdx: params.mintingCreationTxOutIdx,
           minAdaForUserOutput:     refundableDeposit,
           userAddress:             params.changeAddress,
-          type:                    params.type
+          type:                    params.type,
+          daoPolicy:               params.daoPolicy
         },
         {
           changeAddr:       params.changeAddress,
@@ -138,7 +140,8 @@ export class PoolCreationTxBuilder {
       mintingCreationTxHash:   params.mintingCreationTxHash,
       mintingCreationTxOutIdx: params.mintingCreationTxOutIdx,
       userAddress:             params.changeAddress,
-      type:                    params.type
+      type:                    params.type,
+      daoPolicy:               params.daoPolicy
     })
     const requiredAdaForPoolOutput = this.txMath.minAdaRequiredforOutput(poolOutput)
     const requiredAdaForUserLqOutput = this.txMath.minAdaRequiredforOutput(userLqOutput)

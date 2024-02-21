@@ -131,9 +131,13 @@ export function mkPoolDatum(conf: PoolCreationRequest, R: CardanoWasm): PlutusDa
   const treasuryX: PlutusData = R.PlutusData.new_integer(R.BigInt.from_str('0'))
   const treasuryY: PlutusData = R.PlutusData.new_integer(R.BigInt.from_str('0'))
   const treasuryAddress: PlutusData =  R.PlutusData.new_bytes(decodeHex('2618e94cdb06792f05ae9b1ec78b0231f4b7f4215b1b4cf52e6342de'))
+  const daoPolicyList = R.PlutusList.new();
+  if (conf.daoPolicy) {
+    daoPolicyList.add(R.PlutusData.new_bytes(decodeHex(conf.daoPolicy)));
+  }
+  const daoPolicy = R.PlutusData.new_list(daoPolicyList);
 
-
-  return mkProductN([nft, x, y, lq, feeNum, treasuryFee, treasuryX, treasuryY, adminPolicy, lqBound, treasuryAddress], R)
+  return mkProductN([nft, x, y, lq, feeNum, treasuryFee, treasuryX, treasuryY, daoPolicy, lqBound, treasuryAddress], R)
 }
 
 export function mkLockLiquidityDatum(conf: LockLiquidityRequest, R: CardanoWasm): PlutusData {
