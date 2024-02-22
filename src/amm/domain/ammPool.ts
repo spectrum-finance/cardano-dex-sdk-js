@@ -34,6 +34,16 @@ export class AmmPool {
   readonly feeDenom: bigint = this.type === AmmPoolType.DEFAULT ?  1000n : 10000n
   readonly feeNum: bigint
 
+  get totalFeeNum (): bigint {
+    if (this.type === AmmPoolType.DEFAULT) {
+      return this.feeNum;
+    }
+    if (!this.treasuryFee) {
+      return this.feeNum;
+    }
+    return this.feeDenom - (this.feeDenom - this.feeNum + this.treasuryFee)
+  }
+
   get supplyLP(): bigint {
     return EmissionLP - this.lp.amount
   }
@@ -96,7 +106,7 @@ export class AmmPool {
       return this.y.withAmount(
         BigInt(
           math
-            .evaluate!(`(${this.y.amount} * ${output.amount} * ${this.feeDenom} * (${10000n} + ${slippage})) / (${10000n} * (${this.x.amount} - ${output.amount}) * ${this.feeNum})`)
+            .evaluate!(`(${this.y.amount} * ${output.amount} * ${this.feeDenom} * (${10000n} + ${slippage})) / (${10000n} * (${this.x.amount} - ${output.amount}) * ${this.totalFeeNum})`)
             .toFixed(0)
         )
       )
@@ -108,7 +118,7 @@ export class AmmPool {
       return this.x.withAmount(
         BigInt(
           math
-            .evaluate!(`(${this.x.amount} * ${output.amount} * ${this.feeDenom} * (${10000n} + ${slippage})) / (${10000n} * (${this.y.amount} - ${output.amount}) * ${this.feeNum})`)
+            .evaluate!(`(${this.x.amount} * ${output.amount} * ${this.feeDenom} * (${10000n} + ${slippage})) / (${10000n} * (${this.y.amount} - ${output.amount}) * ${this.totalFeeNum})`)
             .toFixed(0)
         )
       )
@@ -127,7 +137,7 @@ export class AmmPool {
       return this.y.withAmount(
         BigInt(
           math
-            .evaluate!(`(${this.y.amount} * ${input.amount} * ${this.feeNum}) / ((${this.x.amount} + (${this.x.amount} * ${slippage}) / ${10000n}) * ${this.feeDenom} + ${input.amount} * ${this.feeNum})`)
+            .evaluate!(`(${this.y.amount} * ${input.amount} * ${this.totalFeeNum}) / ((${this.x.amount} + (${this.x.amount} * ${slippage}) / ${10000n}) * ${this.feeDenom} + ${input.amount} * ${this.totalFeeNum})`)
             .toFixed(0)
         )
       )
@@ -135,7 +145,7 @@ export class AmmPool {
       return this.x.withAmount(
         BigInt(
           math
-            .evaluate!(`(${this.x.amount} * ${input.amount} * ${this.feeNum}) / ((${this.y.amount} + (${this.y.amount} * ${slippage}) / ${10000n}) * ${this.feeDenom} + ${input.amount} * ${this.feeNum})`)
+            .evaluate!(`(${this.x.amount} * ${input.amount} * ${this.totalFeeNum}) / ((${this.y.amount} + (${this.y.amount} * ${slippage}) / ${10000n}) * ${this.feeDenom} + ${input.amount} * ${this.totalFeeNum})`)
             .toFixed(0)
         )
       )

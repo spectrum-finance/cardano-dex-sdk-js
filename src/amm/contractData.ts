@@ -128,7 +128,7 @@ export function mkPoolDatum(conf: PoolCreationRequest, R: CardanoWasm): PlutusDa
   if (conf.type === AmmPoolType.DEFAULT) {
     return mkProductN([nft, x, y, lq, feeNum, adminPolicy, lqBound], R)
   }
-  const treasuryFee: PlutusData = R.PlutusData.new_integer(R.BigInt.from_str('1000'))
+  const treasuryFee: PlutusData = R.PlutusData.new_integer(R.BigInt.from_str('5'))
   const treasuryX: PlutusData = R.PlutusData.new_integer(R.BigInt.from_str('0'))
   const treasuryY: PlutusData = R.PlutusData.new_integer(R.BigInt.from_str('0'))
   const treasuryAddress: PlutusData =  R.PlutusData.new_bytes(decodeHex(ScriptCredsV1.ammLock))
