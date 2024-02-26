@@ -31,7 +31,7 @@ export class AmmPool {
     this.y = this.totalY.withAmount(this.totalY.amount - (treasuryY || 0n));
   }
 
-  readonly feeDenom: bigint = this.type === AmmPoolType.DEFAULT ?  1000n : 10000n
+  readonly feeDenom: bigint = this.type === AmmPoolType.DEFAULT ?  1000n : 100000n
   readonly feeNum: bigint
 
   get totalFeeNum (): bigint {

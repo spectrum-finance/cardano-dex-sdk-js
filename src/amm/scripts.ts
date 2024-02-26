@@ -20,7 +20,7 @@ export const OrderAddrsV1Testnet: OrderAddrs = {
   ammSwapDefault:      "addr_test1wqnp362vmvr8jtc946d3a3utqgclfdl5y9d3kn849e359hst7hkqk",
   ammSwapFeeSwitch:    "addr_test1wqr4vthfnz4nj9gp4zp40scwp05yv3hd04rraj5m8q5xwwctxveup",
   ammPoolDefault:      "addr_test1wp4ec3t25egvhqy2n265xfhq882jxhkknurfe9ny4rl9k6g5eefd8",
-  ammPoolFeeSwitch:    "addr_test1wp48ge0ce3pg8wm87dzeng0rfwffq4gxe087z4k9tcyywdqzqm3pe",
+  ammPoolFeeSwitch:    "addr_test1wrj4uuacrrdhkm0rpdgl42fjfy9vaegqv05s4rzp6mczx6sfzvxjz",
   ammLock:             "addr_test1wrwma0rzvdexhnqrty6t8dcur7c5ffu2rjau2ayec3d3azg0g4dmr"
 }
 
@@ -50,7 +50,7 @@ export type ScriptCreds = {
 
 export const ScriptCredsV1: ScriptCreds = {
   ammPoolDefault:      "6b9c456aa650cb808a9ab54326e039d5235ed69f069c9664a8fe5b69",
-  ammPoolFeeSwitch:    "6a7465f8cc4283bb67f34599a1e34b92905506cbcfe156c55e084734",
+  ammPoolFeeSwitch:    "e55e73b818db7b6de30b51faa932490acee50063e90a8c41d6f0236a",
   ammDepositDefault:   "075e09eb0fa89e1dc34691b3c56a7f437e60ac5ea67b338f2e176e20",
   ammDepositFeeSwitch: "59153a6a2927dcdbd8d81deb3520247c4195605fe044bf60d514e78c",
   ammRedeemDefault:    "83da79f531c19f9ce4d85359f56968a742cf05cc25ed3ca48c302dee",

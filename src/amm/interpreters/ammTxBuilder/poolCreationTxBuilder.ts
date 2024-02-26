@@ -22,6 +22,7 @@ export interface PoolCreationParams {
   readonly nft: AssetAmount
   readonly lq: AssetAmount
   readonly feeNum: bigint
+  readonly daoFeeNum: bigint
   readonly nftMintingScript: HexString
   readonly lqMintingScript: HexString
   readonly mintingCreationTxHash: TxHash
@@ -101,6 +102,7 @@ export class PoolCreationTxBuilder {
           nft:                     params.nft,
           nftMintingScript:        params.nftMintingScript,
           feeNum:                  params.feeNum,
+          daoFeeNum:               params.daoFeeNum,
           uiFee:                   0n,
           poolValue:               orderBudget,
           mintingCreationTxHash:   params.mintingCreationTxHash,
@@ -132,6 +134,7 @@ export class PoolCreationTxBuilder {
       lq:                      params.lq,
       nft:                     params.nft,
       feeNum:                  params.feeNum,
+      daoFeeNum:               params.daoFeeNum,
       poolValue:               poolValue,
       uiFee:                   0n,
       minAdaForUserOutput:     0n,

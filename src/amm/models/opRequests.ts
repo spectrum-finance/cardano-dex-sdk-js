@@ -101,6 +101,7 @@ export type PoolCreationRequest = {
   readonly nft: AssetAmount
   readonly nftMintingScript: HexString
   readonly feeNum: bigint
+  readonly daoFeeNum: bigint
   readonly uiFee: Lovelace
   readonly poolValue: Value
   readonly mintingCreationTxHash: TxHash
