@@ -26,13 +26,13 @@ export const OrderAddrsV1Testnet: OrderAddrs = {
 
 export const OrderAddrsV1Mainnet: OrderAddrs = {
   ammDepositDefault:   "addr1wyr4uz0tp75fu8wrg6gm83t20aphuc9vt6n8kvu09ctkugqpsrmeh",
-  ammDepositFeeSwitch: "addr1wyr4uz0tp75fu8wrg6gm83t20aphuc9vt6n8kvu09ctkugqpsrmeh",
+  ammDepositFeeSwitch: "addr1w9v32wn29ynaek7cmqw7kdfqy37yr9tqtlsyf0mq652w0rqzzcayy",
   ammRedeemDefault:    "addr1wxpa5704x8qel88ympf4natfdzn59nc9esj7609y3sczmmsasees8",
-  ammRedeemFeeSwitch:  "addr1wxpa5704x8qel88ympf4natfdzn59nc9esj7609y3sczmmsasees8",
+  ammRedeemFeeSwitch:  "addr1w9r2s8ghmw0h2xlje80t8tjcznhqgzue8zclzuku8dhtdqcus0vw0",
   ammSwapDefault:      "addr1wynp362vmvr8jtc946d3a3utqgclfdl5y9d3kn849e359hsskr20n",
-  ammSwapFeeSwitch:    "addr1wynp362vmvr8jtc946d3a3utqgclfdl5y9d3kn849e359hsskr20n",
+  ammSwapFeeSwitch:    "addr1wxyfvhggzm5pslx7fe6qnnt2kv2gclngls50wz4s3z0xergl2mv25",
   ammPoolDefault:      "addr1x94ec3t25egvhqy2n265xfhq882jxhkknurfe9ny4rl9k6dj764lvrxdayh2ux30fl0ktuh27csgmpevdu89jlxppvrst84slu",
-  ammPoolFeeSwitch:    "addr1w948ge0ce3pg8wm87dzeng0rfwffq4gxe087z4k9tcyywdqeg0dwu",
+  ammPoolFeeSwitch:    "addr1w8j4uuacrrdhkm0rpdgl42fjfy9vaegqv05s4rzp6mczx6sj2c6a8",
   ammLock:             "addr1w8wma0rzvdexhnqrty6t8dcur7c5ffu2rjau2ayec3d3azg5qp35x"
 }
 
@@ -56,7 +56,7 @@ export const ScriptCredsV1: ScriptCreds = {
   ammRedeemDefault:    "83da79f531c19f9ce4d85359f56968a742cf05cc25ed3ca48c302dee",
   ammRedeemFeeSwitch:  "46a81d17db9f751bf2c9deb3ae5814ee040b9938b1f172dc3b6eb683",
   ammSwapDefault:      "2618e94cdb06792f05ae9b1ec78b0231f4b7f4215b1b4cf52e6342de",
-  ammSwapFeeSwitch:    "07562ee998ab391501a88357c30e0be84646ed7d463eca9b3828673b",
+  ammSwapFeeSwitch:    "88965d0816e8187cde4e7409cd6ab3148c7e68fc28f70ab0889e6c8d",
   ammLock:             "ddbebc6263726bcc035934b3b71c1fb144a78a1cbbc57499c45b1e89"
 }
 
